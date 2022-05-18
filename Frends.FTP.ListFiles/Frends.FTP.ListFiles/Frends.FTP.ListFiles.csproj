@@ -22,7 +22,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="AWSSDK.Core" Version="3.7.10.11" />
     <PackageReference Include="FluentFTP" Version="37.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
