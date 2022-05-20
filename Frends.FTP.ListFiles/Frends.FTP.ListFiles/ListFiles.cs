@@ -75,7 +75,7 @@ namespace Frends.FTP.ListFiles
             catch (Exception ex)
             {
                 if (ex.Message.Contains("Cannot determine the frame size or a corrupted frame was received.") && string.IsNullOrWhiteSpace(input.User))
-                    throw new Exception($"{ex.ToString()}. Check user and password credentials.");
+                    throw new Exception($"{ex}. Check user and password credentials.");
                 else
                     throw new Exception(ex.ToString());
             }

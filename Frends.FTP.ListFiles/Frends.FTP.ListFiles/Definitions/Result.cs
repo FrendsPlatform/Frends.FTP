@@ -10,11 +10,11 @@ namespace Frends.FTP.ListFiles.Definitions
         /// <summary>
         /// List of files.
         /// </summary>
-        public List<ListObject> ListObject { get; set; }
+        public List<ListObject> Files { get; set; }
 
         internal Result(List<ListObject> listObject)
         {
-            ListObject = listObject;
+            Files = listObject;
         }
     }
 }

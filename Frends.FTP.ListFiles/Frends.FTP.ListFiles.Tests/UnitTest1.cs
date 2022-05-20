@@ -32,10 +32,35 @@ public class UnitTest1
 
         var result = FTP.ListFiles(input, default);
         Assert.IsNotNull(result);
-        Assert.IsTrue(result.Result.ListObject.Any(x => x.Name.Contains("testfile.txt")));
-        Assert.IsTrue(result.Result.ListObject.Any(x => x.Name.Contains("usersdemo.txt")));
-        Assert.IsTrue(!result.Result.ListObject.Any(x => x.Name.Contains("TestData")));
-        Assert.IsTrue(!result.Result.ListObject.Any(x => x.Name.Contains("SFTPUploadTestFile.txt")));
+        Assert.IsTrue(result.Result.Files.Any(x => x.Name.Contains("testfile.txt")));
+        Assert.IsTrue(result.Result.Files.Any(x => x.Name.Contains("usersdemo.txt")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("TestData")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("SFTPUploadTestFile.txt")));
+    }
+
+    /// <summary>
+    /// List all files. Checking result count.
+    /// </summary>
+    [TestMethod]
+    public void ListAll2Test()
+    {
+        input = new Input()
+        {
+            Filename = "*",
+            Host = _host,
+            Port = 21,
+            Path = "/",
+            User = _user,
+            Password = _pw
+        };
+
+
+        var result = FTP.ListFiles(input, default);
+        Assert.IsNotNull(result);
+        Assert.IsTrue(result.Result.Files.Any(x => x.Name.Contains("testfile.txt")));
+        Assert.IsTrue(result.Result.Files.Any(x => x.Name.Contains("usersdemo.txt")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("TestData")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("SFTPUploadTestFile.txt")));
     }
 
     /// <summary>
@@ -57,11 +82,11 @@ public class UnitTest1
 
         var result = FTP.ListFiles(input, default);
         Assert.IsNotNull(result);
-        Assert.IsTrue(result.Result.ListObject.Any(x => x.Name.Contains("InSubDir.txt")));
-        Assert.IsTrue(!result.Result.ListObject.Any(x => x.Name.Contains("testfile.txt")));
-        Assert.IsTrue(!result.Result.ListObject.Any(x => x.Name.Contains("usersdemo.txt")));
-        Assert.IsTrue(!result.Result.ListObject.Any(x => x.Name.Contains("TestData")));
-        Assert.IsTrue(!result.Result.ListObject.Any(x => x.Name.Contains("SFTPUploadTestFile.txt")));
+        Assert.IsTrue(result.Result.Files.Any(x => x.Name.Contains("InSubDir.txt")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("testfile.txt")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("usersdemo.txt")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("TestData")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("SFTPUploadTestFile.txt")));
     }
 
     /// <summary>
@@ -83,7 +108,7 @@ public class UnitTest1
 
         var result = FTP.ListFiles(input, default);
         Assert.IsNotNull(result);
-        Assert.IsTrue(result.Result.ListObject.Any(x => x.Success.Equals(false)));
+        Assert.IsTrue(result.Result.Files.Any(x => x.Success.Equals(false)));
     }
 
     /// <summary>
@@ -105,10 +130,10 @@ public class UnitTest1
 
         var result = FTP.ListFiles(input, default);
         Assert.IsNotNull(result);
-        Assert.IsTrue(result.Result.ListObject.Any(x => x.Name.Contains("testfile.txt")));
-        Assert.IsTrue(!result.Result.ListObject.Any(x => x.Name.Contains("usersdemo.txt")));
-        Assert.IsTrue(!result.Result.ListObject.Any(x => x.Name.Contains("TestData")));
-        Assert.IsTrue(!result.Result.ListObject.Any(x => x.Name.Contains("SFTPUploadTestFile.txt")));
+        Assert.IsTrue(result.Result.Files.Any(x => x.Name.Contains("testfile.txt")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("usersdemo.txt")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("TestData")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("SFTPUploadTestFile.txt")));
     }
 
     /// <summary>
@@ -130,10 +155,89 @@ public class UnitTest1
 
         var result = FTP.ListFiles(input, default);
         Assert.IsNotNull(result);
-        Assert.IsTrue(result.Result.ListObject.Any(x => x.Name.Contains("testfile.txt")));
-        Assert.IsTrue(!result.Result.ListObject.Any(x => x.Name.Contains("usersdemo.txt")));
-        Assert.IsTrue(!result.Result.ListObject.Any(x => x.Name.Contains("TestData")));
-        Assert.IsTrue(!result.Result.ListObject.Any(x => x.Name.Contains("SFTPUploadTestFile.txt")));
+        Assert.IsTrue(result.Result.Files.Any(x => x.Name.Contains("testfile.txt")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("usersdemo.txt")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("TestData")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("SFTPUploadTestFile.txt")));
+    }
+
+
+    /// <summary>
+    /// Test with filename containing regex. Should only return Test1.txt and Test1.xlsx.
+    /// </summary>
+    [TestMethod]
+    public void ListWitPrefixTest()
+    {
+        input = new Input()
+        {
+            Filename = "Test1.(txt|xlsx)",
+            Host = _host,
+            Port = 21,
+            Path = "/",
+            User = _user,
+            Password = _pw
+        };
+
+
+        var result = FTP.ListFiles(input, default);
+        Assert.IsNotNull(result);
+        Assert.IsTrue(result.Result.Files.Any(x => x.Name.Contains("Test1.txt")));
+        Assert.IsTrue(result.Result.Files.Any(x => x.Name.Contains("Test1.xlsx")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("usersdemo.txt")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("TestData")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("SFTPUploadTestFile.txt")));
+    }
+
+    /// <summary>
+    /// List only Test1.xml.
+    /// </summary>
+    [TestMethod]
+    public void ListWitPrefix2Test()
+    {
+        input = new Input()
+        {
+            Filename = "Test1.[^t][^x][^t]",
+            Host = _host,
+            Port = 21,
+            Path = "/",
+            User = _user,
+            Password = _pw
+        };
+
+
+        var result = FTP.ListFiles(input, default);
+        Assert.IsNotNull(result);
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("Test1.txt")));
+        Assert.IsTrue(result.Result.Files.Any(x => x.Name.Contains("Test1.xml")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("usersdemo.txt")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("TestData")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("SFTPUploadTestFile.txt")));
+    }
+
+    /// <summary>
+    /// List pro_test.txt, pref_test.txt, _test.txt and skip prof_test.txt, pro_tet.txt. 
+    /// </summary>
+    [TestMethod]
+    public void ListWitPrefix3Test()
+    {
+        input = new Input()
+        {
+            Filename = "<regex>^(?!prof).*_test.txt",
+            Host = _host,
+            Port = 21,
+            Path = "/Pro",
+            User = _user,
+            Password = _pw
+        };
+
+
+        var result = FTP.ListFiles(input, default);
+        Assert.IsNotNull(result);
+        Assert.IsTrue(result.Result.Files.Any(x => x.Name.Contains("pro_test.txt")));
+        Assert.IsTrue(result.Result.Files.Any(x => x.Name.Contains("pref_test.txt")));
+        Assert.IsTrue(result.Result.Files.Any(x => x.Name.Contains("_test.txt")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("prof_test.txt")));
+        Assert.IsTrue(!result.Result.Files.Any(x => x.Name.Contains("pro_tet.txt")));
     }
 
     /// <summary>

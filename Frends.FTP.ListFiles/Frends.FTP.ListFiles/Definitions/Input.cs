@@ -45,9 +45,9 @@ namespace Frends.FTP.ListFiles.Definitions
         public string Path { get; set; }
 
         /// <summary>
-        /// Filename. Can contain wildcards * and ?. Leave empty to list all files from given path.
+        /// Filename. The file mask uses regular expressions, but for convenience, it has special handling for * and ? wildcards. Use * or leave empty to list all files.
         /// </summary>
-        /// <example>Test.txt, Test?.txt, Test*</example>
+        /// <example>test.txt, test*.txt, test?.txt, test.(txt|xml), test.[^t][^x][^t],  &lt;regex&gt;^(?!prof).*_test.txt</example>
         [DisplayFormat(DataFormatString = "Text")]
         public string Filename { get; set; }
     }
