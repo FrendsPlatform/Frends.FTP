@@ -23,7 +23,6 @@
   
   <ItemGroup>
     <PackageReference Include="FluentFTP" Version="37.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
 	  <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />

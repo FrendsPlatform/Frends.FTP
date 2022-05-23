@@ -16,11 +16,11 @@ namespace Frends.FTP.ListFiles.Definitions
         public string Host { get; set; }
 
         /// <summary>
-        /// User.
+        /// Username.
         /// </summary>
         /// <example>FtpUser</example>
         [DisplayFormat(DataFormatString = "Text")]
-        public string User { get; set; }
+        public string Username { get; set; }
 
         /// <summary>
         /// Password.
@@ -34,6 +34,7 @@ namespace Frends.FTP.ListFiles.Definitions
         /// Port.
         /// </summary>
         /// <example>21</example>
+        [DefaultValue(21)]
         public int Port { get; set; }
 
         /// <summary>
@@ -45,9 +46,12 @@ namespace Frends.FTP.ListFiles.Definitions
         public string Path { get; set; }
 
         /// <summary>
-        /// Filename. The file mask uses regular expressions, but for convenience, it has special handling for * and ? wildcards. Use * or leave empty to list all files.
+        /// Filename. 
+        /// The file mask uses regular expressions and for convenience it handles * and ? like wildcards (regex .* and .+).
+        /// Parameter can begin with &lt;regex&gt;. For example: &lt;regex&gt;^(?!prof).*_test.txt is same as ^(?!prof).*_test.txt).
+        /// Use * or leave empty to list all files.
         /// </summary>
-        /// <example>test.txt, test*.txt, test?.txt, test.(txt|xml), test.[^t][^x][^t],  &lt;regex&gt;^(?!prof).*_test.txt</example>
+        /// <example>test.txt, test*.txt, test?.txt, test.(txt|xml), test.[^t][^x][^t], &lt;regex&gt;^(?!prof).*_test.txt</example>
         [DisplayFormat(DataFormatString = "Text")]
         public string Filename { get; set; }
     }

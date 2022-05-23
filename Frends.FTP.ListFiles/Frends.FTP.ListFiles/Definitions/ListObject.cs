@@ -10,8 +10,8 @@ namespace Frends.FTP.ListFiles.Definitions
         /// <summary>
         /// Last modified timestamp of the file. 
         /// </summary>
-        /// <example>3.5.2022 0.00.00</example>
-        public DateTime Modified { get; set; }
+        /// <example>2022-05-20T13:21:42Z</example>
+        public DateTime LastModified { get; set; }
 
         /// <summary>
         /// Filename.
@@ -22,20 +22,14 @@ namespace Frends.FTP.ListFiles.Definitions
         /// <summary>
         /// Full path of the file.
         /// </summary>
-        /// <example>/testfile.txt</example>
+        /// <example>Top directory: /testfile.txt , subdirectory: /Subdirectory/testfile.txt</example>
         public string FullPath { get; set; }
 
         /// <summary>
-        /// File size.
+        /// File size in bytes.
         /// </summary>
-        /// <example>17</example>
-	    public long Size { get; set; }
-
-        /// <summary>
-        /// File was found and added into result. Success = false if no files found with given parameters. 
-        /// </summary>
-        /// <example>true</example>
-        public bool Success { get; set; }
+        /// <example>1048576</example>
+	    public long SizeBytes { get; set; }
     }
 }
 
