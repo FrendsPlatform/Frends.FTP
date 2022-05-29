@@ -163,7 +163,11 @@ namespace Frends.FTP.UploadFiles.Definitions
                     client.ClientCertificates.Add(new X509Certificate2(connect.ClientCertificatePath));
                 }
 
-                client.ValidateCertificate += (control, e) => { e.Accept = e.PolicyErrors == SslPolicyErrors.None; };
+                client.ValidateCertificate += (control, e) =>
+                {
+                    e.Accept = e.PolicyErrors == SslPolicyErrors.None ||
+                               e.Certificate.GetCertHashString() == connect.CertificateHashStringSHA256;
+                };
                 client.ValidateAnyCertificate = connect.ValidateAnyCertificate;
                 client.DataConnectionEncryption = connect.SecureDataChannel;
             }

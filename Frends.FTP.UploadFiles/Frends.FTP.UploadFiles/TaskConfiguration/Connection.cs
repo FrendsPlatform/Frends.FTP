@@ -140,6 +140,13 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         [DefaultValue("c:\\example.cer")]
         [UIHint(nameof(UseFTPS),"", true)]
         public string ClientCertificatePath { get; set; }
+        
+        /// <summary>
+        /// Certificate SHA256 hash string to validate against.
+        /// </summary>
+        [DefaultValue("")]
+        [UIHint(nameof(UseFTPS),"", true)]
+        public string CertificateHashStringSHA256 { get; set; }
 
         #endregion
     }
