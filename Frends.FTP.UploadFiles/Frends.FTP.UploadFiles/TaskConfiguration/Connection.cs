@@ -104,11 +104,14 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
 
         #region FTPS settings
 
+        /// <summary>
+        /// Whether to use FTPS or not.
+        /// </summary>
         [DefaultValue("false")]
         public bool UseFTPS { get; set; } = false;
         
         /// <summary>
-        /// Whether the data channel is secured or not
+        /// Whether the data channel is secured or not.
         /// </summary>
         [DefaultValue("true")]
         [UIHint(nameof(UseFTPS),"", true)]

@@ -1,6 +1,6 @@
 ﻿namespace Frends.FTP.UploadFiles.Enums
 {
-    public enum TransferResult
+    internal enum TransferResult
     {
         Success,
         Fail
