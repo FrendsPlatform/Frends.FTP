@@ -1,11 +1,9 @@
-using Frends.FTP.UploadFiles.Definitions;
 using Frends.FTP.UploadFiles.TaskConfiguration;
 using NUnit.Framework;
 using System;
 using System.IO;
 using System.Security.Authentication;
 using System.Threading;
-using System.Threading.Tasks;
 using Frends.FTP.UploadFiles.Enums;
 
 namespace Frends.FTP.UploadFiles.Tests
@@ -13,12 +11,6 @@ namespace Frends.FTP.UploadFiles.Tests
     [TestFixture]
     public class UploadFilesTests
     {
-        private readonly string _ftpHost = Environment.GetEnvironmentVariable("FTP_HOST");
-        private readonly int _ftpPort = int.Parse(Environment.GetEnvironmentVariable("FTP_PORT"));
-        private readonly int _ftpsPort = int.Parse(Environment.GetEnvironmentVariable("FTPS_PORT"));
-        private readonly string _ftpUsername = Environment.GetEnvironmentVariable("FTP_USERNAME");
-        private readonly string _ftpPassword = Environment.GetEnvironmentVariable("FTP_PASSWORD");
-
         private string _dir;
 
         private void CreateDummyFileInDummyDir(string fileName)
@@ -46,7 +38,13 @@ namespace Frends.FTP.UploadFiles.Tests
             CreateDummyFileInDummyDir("file1.txt");
             var source = new Source { Directory = _dir, FileName = "file1.txt" };
             var destination = new Destination { Directory = "/", Action = DestinationAction.Overwrite };
-            var connection = new Connection {  Address = _ftpHost, UserName = _ftpUsername, Password = _ftpPassword, Port = _ftpPort };
+            var connection = new Connection
+            {
+                Address = Helpers.FtpHost,
+                UserName = Helpers.FtpUsername,
+                Password = Helpers.FtpPassword,
+                Port = Helpers.FtpPort
+            };
 
             // Test and assert
             var result = FTP.UploadFiles(source, destination, connection, new Options(), new Info(), new CancellationToken());
@@ -67,10 +65,10 @@ namespace Frends.FTP.UploadFiles.Tests
             // SHA-1: d9:11:26:29:84:de:9c:c3:2a:35:18:a1:09:4c:d2:42:49:ea:5c:49
             var connection = new Connection
             {
-                Address = _ftpHost,
-                UserName = _ftpUsername,
-                Password = _ftpPassword,
-                Port = _ftpsPort,
+                Address = Helpers.FtpHost,
+                UserName = Helpers.FtpUsername,
+                Password = Helpers.FtpPassword,
+                Port = Helpers.FtpPort,
                 SslMode = FtpsSslMode.Explicit,
                 UseFTPS = true,
                 CertificateHashStringSHA1 = "D911262984DE9CC32A3518A1094CD24249EA5C49"
@@ -96,10 +94,10 @@ namespace Frends.FTP.UploadFiles.Tests
             // SHA-1: d9:11:26:29:84:de:9c:c3:2a:35:18:a1:09:4c:d2:42:49:ea:5c:49
             var connection = new Connection
             {
-                Address = _ftpHost,
-                UserName = _ftpUsername,
-                Password = _ftpPassword,
-                Port = _ftpsPort,
+                Address = Helpers.FtpHost,
+                UserName = Helpers.FtpUsername,
+                Password = Helpers.FtpPassword,
+                Port = Helpers.FtpsPort,
                 SslMode = FtpsSslMode.Explicit,
                 UseFTPS = true,
                 CertificateHashStringSHA1 = "nope"
