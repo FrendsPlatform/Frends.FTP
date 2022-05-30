@@ -1,0 +1,14 @@
+name: Frends.FTP.UploadFiles Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: FrendsPlatform/FrendsTasks/.github/workflows/linux_release.yml@ISSUE-9
+    with:
+      workdir: Frends.FTP.UploadFiles
+      prebuild_command: "docker-compose up"
+
+    secrets:
+      feed_api_key: ${{ secrets.TASKS_FEED_API_KEY }}
