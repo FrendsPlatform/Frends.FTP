@@ -12,24 +12,28 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         /// Will be included in the file transfer log 
         /// entries and also in all error messages in the event log.
         /// </summary>
-        [DefaultValue("\"SFTPUpload\"")]
+        /// <example>FTP Upload</example>
+        [DefaultValue("\"FTPUpload\"")]
         public string TransferName { get; set; }
 
         /// <summary>
         /// Directory where temporary files are stored during transfer.
         /// </summary>
+        /// <example>c:\workDir</example>
         [DefaultValue("")]
         public string WorkDir { get; set; }
 
         /// <summary>
         /// The process URI, use #process.uri
         /// </summary>
+        /// <example>#process.uri</example>
         [DefaultValue("#process.uri")]
         public string ProcessUri { get; set; }
 
         /// <summary>
         /// Reference to the Task execution id, use #process.executionid
         /// </summary>
+        /// <example>#process.executionid</example>
         [DefaultValue("#process.executionid")]
         public string TaskExecutionID { get; set; }
 

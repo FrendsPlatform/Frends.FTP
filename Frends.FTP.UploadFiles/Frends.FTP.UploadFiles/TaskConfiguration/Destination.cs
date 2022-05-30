@@ -12,6 +12,7 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         /// <summary>
         /// Directory on the server.
         /// </summary>
+        /// <example>/somedir</example>
         [DefaultValue("/")]
         [DisplayFormat(DataFormatString = "Text")]
         public string Directory { get; set; }
@@ -19,6 +20,7 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         /// <summary>
         /// File name of the destination file with possible macros.
         /// </summary>
+        /// <example>myFile%Year%.txt</example>
         [DefaultValue("")]
         [DisplayFormat(DataFormatString = "Text")]
         public string FileName { get; set; }
@@ -26,6 +28,7 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         /// <summary>
         /// Operation to determine what to do if destination file exists.
         /// </summary>
+        /// <example>DestinationAction.Error</example>
         [DefaultValue(DestinationAction.Error)]
         public DestinationAction Action { get; set; }
     }
