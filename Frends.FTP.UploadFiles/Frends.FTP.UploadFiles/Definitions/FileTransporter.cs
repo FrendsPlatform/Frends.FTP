@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
@@ -165,9 +166,17 @@ namespace Frends.FTP.UploadFiles.Definitions
 
                 client.ValidateCertificate += (control, e) =>
                 {
-                    e.Accept = e.PolicyErrors == SslPolicyErrors.None ||
-                               e.Certificate.GetCertHashString() == connect.CertificateHashStringSHA256;
+                    // If cert is valid and such - go on and accept
+                    if (e.PolicyErrors == SslPolicyErrors.None)
+                    {
+                        e.Accept = true;
+                        return;
+                    }
+                    
+                    // Accept if we want to accept a certain hash
+                    e.Accept = e.Certificate.GetCertHashString() == connect.CertificateHashStringSHA1;
                 };
+                
                 client.ValidateAnyCertificate = connect.ValidateAnyCertificate;
                 client.DataConnectionEncryption = connect.SecureDataChannel;
             }

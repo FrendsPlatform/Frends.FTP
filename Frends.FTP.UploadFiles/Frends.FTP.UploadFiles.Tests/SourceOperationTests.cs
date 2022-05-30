@@ -21,7 +21,7 @@ public class SourceOperationTests : UploadFilesTestBase
         var result = CallUploadFiles(
             SourceOperation.Delete,
             "file*.txt",
-            $"/{nameof(SourceOperation_Delete)}");
+            nameof(SourceOperation_Delete));
         
         Assert.IsTrue(result.Success);
         Assert.AreEqual(3, result.SuccessfulTransferCount);    
@@ -116,9 +116,10 @@ public class SourceOperationTests : UploadFilesTestBase
         };
         var destination = new Destination
             { Directory = targetDir, Action = DestinationAction.Overwrite };
-        var connection = Helpers.GetFtpConnection();
+        var options = new Options { CreateDestinationDirectories = true };
+        var connection = Helpers.GetFtpsConnection();
 
-        var result = FTP.UploadFiles(source, destination, connection, new Options(), new Info(), new CancellationToken());
+        var result = FTP.UploadFiles(source, destination, connection, options, new Info(), new CancellationToken());
         return result;
     }
 }

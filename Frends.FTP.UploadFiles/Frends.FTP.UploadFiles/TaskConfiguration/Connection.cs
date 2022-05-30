@@ -159,12 +159,12 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         public string ClientCertificatePath { get; set; }
         
         /// <summary>
-        /// Certificate SHA256 hash string to validate against.
+        /// Certificate SHA1 hash string to validate against.
         /// </summary>
         /// <example>BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD</example>
         [DefaultValue("")]
         [UIHint(nameof(UseFTPS),"", true)]
-        public string CertificateHashStringSHA256 { get; set; }
+        public string CertificateHashStringSHA1 { get; set; }
 
         #endregion
     }

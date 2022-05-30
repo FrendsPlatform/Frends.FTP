@@ -10,13 +10,16 @@ internal static class Helpers
     internal static readonly int FtpsPort = int.Parse(Environment.GetEnvironmentVariable("FTPS_PORT"));
     internal static readonly string FtpUsername = Environment.GetEnvironmentVariable("FTP_USERNAME");
     internal static readonly string FtpPassword = Environment.GetEnvironmentVariable("FTP_PASSWORD");
+    
+    internal static readonly string Sha1Hash = "D911262984DE9CC32A3518A1094CD24249EA5C49";
 
     internal static Connection GetFtpsConnection()
     {
         var connection = new Connection
         {
+            UseFTPS = true,
             Address = FtpHost, UserName = FtpUsername, Password = FtpPassword, Port = FtpsPort,
-            SslMode = FtpsSslMode.Implicit
+            SslMode = FtpsSslMode.Explicit, CertificateHashStringSHA1 = Sha1Hash
         };
 
         return connection;
