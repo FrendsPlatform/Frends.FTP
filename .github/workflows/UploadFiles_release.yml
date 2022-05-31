@@ -5,10 +5,9 @@ on:
 
 jobs:
   build:
-    uses: FrendsPlatform/FrendsTasks/.github/workflows/linux_release.yml@ISSUE-9
+    uses: FrendsPlatform/FrendsTasks/.github/workflows/release.yml@main
     with:
       workdir: Frends.FTP.UploadFiles
-      prebuild_command: "docker-compose up -d"
 
     secrets:
       feed_api_key: ${{ secrets.TASKS_FEED_API_KEY }}

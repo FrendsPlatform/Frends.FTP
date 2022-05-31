@@ -8,7 +8,7 @@ namespace Frends.FTP.UploadFiles.Definitions
     ///<summary>
     /// Policies for creating names for remote files: expands macros etc.
     ///</summary>
-    public class RenamingPolicy
+    internal class RenamingPolicy
     {
         private readonly IDictionary<string, Func<string, string>> _macroHandlers;
         private readonly IDictionary<string, Func<string, string>> _sourceFileNameMacroHandlers;
@@ -29,25 +29,19 @@ namespace Frends.FTP.UploadFiles.Definitions
         /// </summary>
         /// <param name="originalFileName">The original file.</param>
         /// <param name="remoteFileDefinition">The remote file path with macros.</param>
-        /// <returns></returns>
+        /// <returns>Remote file name based on the settings and remote file definition</returns>
         public string CreateRemoteFileName(string originalFileName, string remoteFileDefinition)
         {
-            if (!string.IsNullOrEmpty(remoteFileDefinition) && remoteFileDefinition.Contains("?"))
-            {
+            if (!string.IsNullOrWhiteSpace(remoteFileDefinition) && remoteFileDefinition.Contains("?"))
                 throw new ArgumentException("Character '?' not allowed in remote filename.", nameof(remoteFileDefinition));
-            }
 
-            if (string.IsNullOrEmpty(originalFileName))
-            {
+            if (string.IsNullOrWhiteSpace(originalFileName))
                 throw new ArgumentException("Original filename must be set.", nameof(originalFileName));
-            }
 
             var originalFileNameWithoutPath = Path.GetFileName(originalFileName);
 
-            if (string.IsNullOrEmpty(remoteFileDefinition))
-            {
+            if (string.IsNullOrWhiteSpace(remoteFileDefinition))
                 return originalFileNameWithoutPath;
-            }
 
             if (!IsFileMask(remoteFileDefinition) &&
                 !IsFileMacro(remoteFileDefinition, _macroHandlers) &&
@@ -56,10 +50,8 @@ namespace Frends.FTP.UploadFiles.Definitions
                 // remoteFileDefinition does not have macros
                 var remoteFileName = Path.GetFileName(remoteFileDefinition);
 
-                if (string.IsNullOrEmpty(remoteFileName))
-                {
+                if (string.IsNullOrWhiteSpace(remoteFileName))
                     remoteFileDefinition = Path.Combine(remoteFileDefinition, originalFileNameWithoutPath);
-                }
 
                 return remoteFileDefinition;
             }
@@ -67,9 +59,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             var result = this.ExpandMacrosAndMasks(originalFileName, remoteFileDefinition);
 
             if (result.EndsWith("\\"))
-            {
                 result = Path.Combine(result, originalFileNameWithoutPath);
-            }
 
             return result;
         }
@@ -78,7 +68,7 @@ namespace Frends.FTP.UploadFiles.Definitions
         /// Method for expanding source/destination endpoint directory name for macros when opening the endpoint connection
         /// </summary>
         /// <param name="directory">Directory path including unexpanded macros</param>
-        /// <returns></returns>
+        /// <returns>Path with macros expanded</returns>
         public string ExpandDirectoryForMacros(string directory)
         {
             if (directory.Contains("%SourceFileName%") || directory.Contains("%SourceFileExtension%"))
@@ -107,9 +97,8 @@ namespace Frends.FTP.UploadFiles.Definitions
 
             // this should always be a directory
             if (!directoryName.EndsWith("/"))
-            {
                 directoryName += "/";
-            }
+            
             var sourceFileName = Path.GetFileName(sourceFilePath);
             return Path.Combine(directoryName, sourceFileName);
         }
@@ -140,7 +129,7 @@ namespace Frends.FTP.UploadFiles.Definitions
         /// <param name="sourceOperationTo">The new name to put files to</param>
         public string CreateFilePathForRename(string originalFilePath, string sourceOperationTo)
         {
-            if (string.IsNullOrEmpty(sourceOperationTo))
+            if (string.IsNullOrWhiteSpace(sourceOperationTo))
                 throw new ArgumentException("When using rename as a source operation, you need to define the new name");
 
             var filePath = ExpandMacrosAndMasks(originalFilePath, sourceOperationTo);
@@ -204,9 +193,7 @@ namespace Frends.FTP.UploadFiles.Definitions
         {
             //remove extension if it is wanted to be changed, new extension is added later on to new filename
             if (mask.Contains("*.") && Path.HasExtension(filename))
-            {
                 filename = Path.GetFileNameWithoutExtension(filename);
-            }
 
             int i = mask.IndexOf("*", StringComparison.InvariantCulture);
             if (i >= 0)
@@ -219,16 +206,14 @@ namespace Frends.FTP.UploadFiles.Definitions
             return mask;
         }
 
-        private bool IsFileMacro(string s, IDictionary<string, Func<string, string>> macroDictionary)
+        private bool IsFileMacro(string input, IDictionary<string, Func<string, string>> macroDictionary)
         {
-            if (s == null)
-            {
+            if (input == null)
                 return false;
-            }
 
             foreach (var key in macroDictionary.Keys)
             {
-                if (s.ToUpperInvariant().Contains(key.ToUpperInvariant()))
+                if (input.ToUpperInvariant().Contains(key.ToUpperInvariant()))
                     return true;
             }
 
@@ -239,23 +224,20 @@ namespace Frends.FTP.UploadFiles.Definitions
         /// <summary>
         /// Defines if string is file mask
         /// </summary>
-        /// <param name="s">filename or file mask</param>
+        /// <param name="input">filename or file mask</param>
         /// <returns>true if string represents file mask, false if it represents single file</returns>
-        private static bool IsFileMask(string s)
+        private static bool IsFileMask(string input)
         {
-            bool b = false;
-            if (s == null)
-            {
+            var b = false;
+            if (input == null)
                 return false;
-            }
-            if (s.IndexOf("*", StringComparison.InvariantCulture) >= 0)
-            {
+            
+            if (input.IndexOf("*", StringComparison.InvariantCulture) >= 0)
                 b = true;
-            }
-            if (s.IndexOf("?", StringComparison.InvariantCulture) >= 0)
-            {
+            
+            if (input.IndexOf("?", StringComparison.InvariantCulture) >= 0)
                 b = true;
-            }
+            
             return b;
         }
 
@@ -285,7 +267,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                     {"%Second%", (s) => DateTime.Now.ToString("ss")},
                     {"%Millisecond%", (s) => DateTime.Now.ToString("fff")},
                     {"%Guid%", (s) => Guid.NewGuid().ToString()},
-                    {"%TransferName%", (s) => !String.IsNullOrEmpty(transferName) ? transferName : String.Empty},
+                    {"%TransferName%", (s) => !string.IsNullOrWhiteSpace(transferName) ? transferName : string.Empty},
                     {"%TransferId%", (s) => transferId.ToString().ToUpper()},
                     {"%WeekDay%", (s) => (DateTime.Now.DayOfWeek > 0 ? (int)DateTime.Now.DayOfWeek : 7).ToString()}
                 };

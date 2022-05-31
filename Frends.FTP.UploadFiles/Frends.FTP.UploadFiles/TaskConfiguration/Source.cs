@@ -10,8 +10,9 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
     public class Source
     {
         /// <summary>
-        /// Directory on the server.
+        /// Source directory.
         /// </summary>
+        /// <example>C:\sourcefiles</example>
         [DefaultValue("/")]
         [DisplayFormat(DataFormatString = "Text")]
         public string Directory { get; set; } = "/";
@@ -19,6 +20,7 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         /// <summary>
         /// File name or file mask of the files to be fetched.
         /// </summary>
+        /// <example>my_files*.txt</example>
         [DefaultValue("\"\"")]
         public string FileName { get; set; }
 
@@ -43,6 +45,7 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         /// </summary>
         /// <example>%SourceFileName%%SourceFileExtension%</example>
         [UIHint(nameof(Operation), "", SourceOperation.Rename)]
+        [DisplayFormat(DataFormatString = "Text")]
         public string FileNameAfterTransfer { get; set; }
 
         /// <summary>
@@ -50,6 +53,7 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         /// </summary>
         /// <example>c:\movedFiles</example>
         [UIHint(nameof(Operation), "", SourceOperation.Move)]
+        [DisplayFormat(DataFormatString = "Text")]
         public string DirectoryToMoveAfterTransfer { get; set; }
 
         /// <summary>

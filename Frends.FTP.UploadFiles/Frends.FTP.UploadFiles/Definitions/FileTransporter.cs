@@ -306,8 +306,6 @@ namespace Frends.FTP.UploadFiles.Definitions
             var actionSkipped = success && singleResults.All(x => x.ActionSkipped);
             var userResultMessage = GetUserResultMessage(singleResults.ToList());
 
-            _logger.LogBatchFinished(_batchContext, userResultMessage, success, actionSkipped);
-
             var transferErrors = singleResults.Where(r => !r.Success).GroupBy(r => r.TransferredFile ?? "--unknown--")
                     .ToDictionary(rg => rg.Key, rg => (IList<string>)rg.SelectMany(r => r.ErrorMessages).ToList());
 
