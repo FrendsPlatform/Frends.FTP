@@ -5,12 +5,12 @@
     <authors>Jefim Borissov</authors>
     <copyright>Frends</copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/FrendsPlatform/Frends.Regex</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/FrendsPlatform/Frends.FTP</PackageProjectUrl>
     <IncludeSource>true</IncludeSource>
     <PackageTags>Frends</PackageTags>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.0.1</Version>
-    <Description>Task for checking if a string matches a certain Regex pattern.</Description>
+    <Version>1.0.2</Version>
+    <Description>Task for uploading files to FTP(S) servers.</Description>
   </PropertyGroup>
 
   <ItemGroup>

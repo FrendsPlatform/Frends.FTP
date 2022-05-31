@@ -1,5 +1,5 @@
 ﻿{
   "Tasks": [
-    { "TaskMethod": "Frends.Regex.IsMatch.Regex.IsMatch" }
+    { "TaskMethod": "Frends.FTP.UploadFiles.FTP.UploadFiles" }
   ]
 }
