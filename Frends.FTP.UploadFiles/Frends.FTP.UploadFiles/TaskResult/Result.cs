@@ -18,7 +18,7 @@ namespace Frends.FTP.UploadFiles.TaskResult
         /// </summary>
         /// <example>false</example>
         public bool Success { get; }
-
+ 
         /// <summary>
         /// Message of the transfer operations containing a simple representation of what happened in the task.
         /// </summary>
