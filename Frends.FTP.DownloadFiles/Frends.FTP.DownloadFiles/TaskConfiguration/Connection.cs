@@ -118,12 +118,14 @@ namespace Frends.FTP.DownloadFiles.TaskConfiguration
         /// <summary>
         /// Whether to use FTPS or not.
         /// </summary>
+        /// <example>false</example>
         [DefaultValue("false")]
         public bool UseFTPS { get; set; } = false;
         
         /// <summary>
         /// Whether the data channel is secured or not.
         /// </summary>
+        /// <example>false</example>
         [DefaultValue("true")]
         [UIHint(nameof(UseFTPS),"", true)]
         public bool SecureDataChannel { get; set; }
@@ -139,6 +141,7 @@ namespace Frends.FTP.DownloadFiles.TaskConfiguration
         /// <summary>
         /// If enabled the client certificate is searched from user's certificate store
         /// </summary>
+        /// <example>false</example>
         [DefaultValue("false")]
         [UIHint(nameof(UseFTPS),"", true)]
         public bool EnableClientAuth { get; set; }
@@ -146,6 +149,7 @@ namespace Frends.FTP.DownloadFiles.TaskConfiguration
         /// <summary>
         /// If enabled the any certificate will be considered valid.
         /// </summary>
+        /// <example>false</example>
         [DefaultValue("false")]
         [UIHint(nameof(UseFTPS),"", true)]
         public bool ValidateAnyCertificate { get; set; }
@@ -161,7 +165,7 @@ namespace Frends.FTP.DownloadFiles.TaskConfiguration
         /// <summary>
         /// Certificate SHA1 hash string to validate against.
         /// </summary>
-        /// <example>BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD</example>
+        /// <example>BA7816BF8F01CFEA414140DE5DAE2223B00361A3</example>
         [DefaultValue("")]
         [UIHint(nameof(UseFTPS),"", true)]
         public string CertificateHashStringSHA1 { get; set; }

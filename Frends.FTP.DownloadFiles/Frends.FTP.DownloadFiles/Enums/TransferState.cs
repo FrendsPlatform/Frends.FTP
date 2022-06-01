@@ -9,7 +9,6 @@
         SourceOperationDelete,
         RestoreSourceFile,
         RemoveTemporaryDestinationFile,
-        AppendToDestinationFile,
         DeleteDestinationFile,
         RenameDestinationFile,
         CleanUpFiles,

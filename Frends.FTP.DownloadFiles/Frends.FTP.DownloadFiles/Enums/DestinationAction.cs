@@ -6,11 +6,6 @@
     public enum DestinationAction
     {
         /// <summary>
-        /// Will either create the file(s) or append content to existing file(s). 
-        /// </summary>
-        Append,
-        
-        /// <summary>
         /// Will overwrite existing file(s).
         /// </summary>
         Overwrite,

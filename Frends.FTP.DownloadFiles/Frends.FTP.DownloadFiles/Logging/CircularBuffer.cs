@@ -6,7 +6,7 @@ using System.Threading;
 namespace Frends.FTP.DownloadFiles.Logging
 {
     /// <summary>
-    ///     Circular buffer impl, original from https://codereview.stackexchange.com/a/134147
+    /// Circular buffer impl, original from https://codereview.stackexchange.com/a/134147
     /// </summary>
     /// <typeparam name="T"></typeparam>
     internal class CircularBuffer<T>
@@ -15,11 +15,6 @@ namespace Frends.FTP.DownloadFiles.Logging
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
         private readonly int _size;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="size"></param>
-        /// <exception cref="ArgumentException"></exception>
         public CircularBuffer(int size)
         {
             if (size < 1) throw new ArgumentException($"{nameof(size)} cannot be negative or zero");

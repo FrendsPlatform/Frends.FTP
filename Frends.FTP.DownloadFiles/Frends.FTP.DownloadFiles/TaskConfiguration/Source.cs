@@ -12,6 +12,7 @@ namespace Frends.FTP.DownloadFiles.TaskConfiguration
         /// <summary>
         /// Directory on the server.
         /// </summary>
+        /// <example>/directory</example>
         [DefaultValue("/")]
         [DisplayFormat(DataFormatString = "Text")]
         public string Directory { get; set; } = "/";
@@ -19,6 +20,7 @@ namespace Frends.FTP.DownloadFiles.TaskConfiguration
         /// <summary>
         /// File name or file mask of the files to be fetched.
         /// </summary>
+        /// <example>example*.csv</example>
         [DefaultValue("\"\"")]
         public string FileName { get; set; }
 
@@ -46,17 +48,10 @@ namespace Frends.FTP.DownloadFiles.TaskConfiguration
         public string FileNameAfterTransfer { get; set; }
 
         /// <summary>
-        /// Parameter for Move operation. Set the full file path for source file.
+        /// Parameter for Move operation. Sets the directory to which source files will be moved after transfer.
         /// </summary>
-        /// <example>c:\movedFiles</example>
+        /// <example>/movedFiles</example>
         [UIHint(nameof(Operation), "", SourceOperation.Move)]
         public string DirectoryToMoveAfterTransfer { get; set; }
-
-        /// <summary>
-        /// The paths to the files to transfer, mainly meant to be used with the file trigger with the syntax: #trigger.data.filePaths
-        /// </summary>
-        /// <example>#trigger.data.filePaths</example>
-        [DefaultValue("")]
-        public object FilePaths { get; set; }
     }
 }

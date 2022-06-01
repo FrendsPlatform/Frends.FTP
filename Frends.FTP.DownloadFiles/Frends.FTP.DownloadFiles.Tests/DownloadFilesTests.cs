@@ -5,39 +5,20 @@ using System.IO;
 using System.Security.Authentication;
 using System.Threading;
 using Frends.FTP.DownloadFiles.Enums;
+using Frends.FTP.DownloadFiles.Tests.Lib;
 
 namespace Frends.FTP.DownloadFiles.Tests
 {
     [TestFixture]
-    public class DownloadFilesTests
+    public class DownloadFilesTests : DownloadFilesTestBase
     {
-        private string _dir;
-
-        private void CreateDummyFileInDummyDir(string fileName)
-        {
-            File.WriteAllText(Path.Combine(_dir, fileName), "test");
-        }
-
-        [SetUp]
-        public void SetUp()
-        {
-            _dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-            Directory.CreateDirectory(_dir);
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            Directory.Delete(_dir, true);
-        }
-
         [Test]
-        public void UploadFTP()
+        public void DownloadFTP()
         {
             // Setup
-            CreateDummyFileInDummyDir("file1.txt");
-            var source = new Source { Directory = _dir, FileName = "file1.txt" };
-            var destination = new Destination { Directory = "/", Action = DestinationAction.Overwrite };
+            CreateDummyFileInFtpDir("file1.txt");
+            var source = new Source { Directory = FtpSubDirName, FileName = "file1.txt" };
+            var destination = new Destination { Directory = LocalDirFullPath, Action = DestinationAction.Overwrite };
             var connection = new Connection
             {
                 Address = Helpers.FtpHost,
@@ -48,17 +29,18 @@ namespace Frends.FTP.DownloadFiles.Tests
 
             // Test and assert
             var result = FTP.DownloadFiles(source, destination, connection, new Options(), new Info(), new CancellationToken());
-            Assert.IsTrue(result.Success);
+            Assert.IsTrue(result.Success, result.UserResultMessage);
             Assert.AreEqual(1, result.SuccessfulTransferCount);
+            Assert.IsTrue(LocalFileExists("file1.txt"), result.UserResultMessage);
         }
 
         [Test]
-        public void UploadFTPS_CorrectFingerprint()
+        public void DownloadFTPS_CorrectFingerprint()
         {
             // Setup
-            CreateDummyFileInDummyDir("file1.txt");
-            var source = new Source { Directory = _dir, FileName = "file1.txt" };
-            var destination = new Destination { Directory = "/", Action = DestinationAction.Overwrite };
+            CreateDummyFileInFtpDir("file1.txt");
+            var source = new Source { Directory = FtpSubDirName, FileName = "file1.txt" };
+            var destination = new Destination { Directory = LocalDirFullPath, Action = DestinationAction.Overwrite };
             
             // Our test certificate hashes:
             // SHA-256: 90:bc:7f:71:14:f5:c2:ad:03:46:d6:ff:75:d5:fe:12:ba:74:23:73:54:31:70:60:b4:8b:bd:8e:87:21:9c:16
@@ -79,15 +61,16 @@ namespace Frends.FTP.DownloadFiles.Tests
             var result = FTP.DownloadFiles(source, destination, connection, new Options(), new Info(), new CancellationToken());
             Assert.IsTrue(result.Success);
             Assert.AreEqual(1, result.SuccessfulTransferCount);
+            Assert.IsTrue(LocalFileExists("file1.txt"));
         }
 
         [Test]
-        public void UploadFTPS_IncorrectFingerprint()
+        public void DownloadFTPS_IncorrectFingerprint()
         {
             // Setup
-            CreateDummyFileInDummyDir("file1.txt");
-            var source = new Source { Directory = _dir, FileName = "file1.txt" };
-            var destination = new Destination { Directory = "/", Action = DestinationAction.Overwrite };
+            CreateDummyFileInFtpDir("file1.txt");
+            var source = new Source { Directory = FtpSubDirName, FileName = "file1.txt" };
+            var destination = new Destination { Directory = LocalDirFullPath, Action = DestinationAction.Overwrite };
             
             // Our test certificate hashes:
             // SHA-256: 90:bc:7f:71:14:f5:c2:ad:03:46:d6:ff:75:d5:fe:12:ba:74:23:73:54:31:70:60:b4:8b:bd:8e:87:21:9c:16

@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
@@ -15,20 +14,14 @@ using Frends.FTP.DownloadFiles.TaskConfiguration;
 using Frends.FTP.DownloadFiles.TaskResult;
 
 namespace Frends.FTP.DownloadFiles.Definitions
+
 {
-    /// <summary>
-    /// Main class for FTP file transfers
-    /// </summary>
     internal class FileTransporter
     {
         private readonly IFtpLogger _logger;
         private readonly BatchContext _batchContext;
-        private readonly string[] _filePaths;
         private readonly RenamingPolicy _renamingPolicy;
 
-        /// <summary>
-        ///     Constructor for SFTP file transfers
-        /// </summary>
         public FileTransporter(IFtpLogger logger, BatchContext context, Guid instanceId)
         {
             _logger = logger;
@@ -36,94 +29,58 @@ namespace Frends.FTP.DownloadFiles.Definitions
             _renamingPolicy = new RenamingPolicy(_batchContext.Info.TransferName, instanceId);
 
             Result = new List<SingleFileTransferResult>();
-            _filePaths = ConvertObjectToStringArray(context.Source.FilePaths);
         }
 
-        /// <summary>
-        /// List of transfer results.
-        /// </summary>
         private List<SingleFileTransferResult> Result { get; }
 
-        /// <summary>
-        /// Executes file transfers
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        /// <exception cref="DirectoryNotFoundException"></exception>
-        /// <exception cref="FileNotFoundException"></exception>
-        /// <exception cref="ArgumentException"></exception>
         public FileTransferResult Run(CancellationToken cancellationToken)
         {
             var userResultMessage = "";
             try
             {
-                // Fetch source file info and check if files were returned.
-                var (files, success) = GetSourceFiles(_batchContext.Source);
-
-                // If source directory doesn't exist, modify userResultMessage accordingly.
-                if (!success)
+                using (var client = CreateFtpClient(_batchContext.Connection))
                 {
-                    userResultMessage = $"Directory '{_batchContext.Source.Directory}' doesn't exists.";
-                    return FormFailedFileTransferResult(userResultMessage);
-                }
+                    client.Connect();
 
-                if (files == null || !files.Any())
-                {
-                    if (files == null)
-                        _logger.NotifyInformation(_batchContext,
-                            "Source end point returned null list for file list. If there are no files to transfer, the result should be an empty list.");
-
-                    var noSourceResult = NoSourceOperation(_batchContext, _batchContext.Source);
-                    Result.Add(noSourceResult);
-                }
-                else
-                {
-                    //_batchContext.SourceFiles = files;
-
-                    using (var client = CreateFtpClient(_batchContext.Connection))
+                    if (!client.IsConnected)
                     {
-                        client.Connect();
+                        _logger.NotifyError(null, "Error while connecting to FTP: ", new Exception(userResultMessage));
+                        return FormFailedFileTransferResult(userResultMessage);
+                    }
+                    
+                    var (files, success) = GetSourceFiles(_batchContext.Source, client);
+                    if (!success)
+                    {
+                        // If source directory doesn't exist, modify userResultMessage accordingly.
+                        userResultMessage = $"FTP directory '{_batchContext.Source.Directory}' doesn't exist.";
+                        return FormFailedFileTransferResult(userResultMessage);
+                    }
+                    
+                    if (files == null || !files.Any())
+                    {
+                        if (files == null)
+                            _logger.NotifyInformation(_batchContext,
+                                "Source end point returned null list for file list. If there are no files to transfer, the result should be an empty list.");
 
-                        if (!client.IsConnected)
-                        {
-                            _logger.NotifyError(null, "Error while connecting to destination: ", new Exception(userResultMessage));
-                            return FormFailedFileTransferResult(userResultMessage);
-                        }
+                        var noSourceResult = NoSourceOperation(_batchContext, _batchContext.Source);
+                        Result.Add(noSourceResult);
+                    }
+                    else
+                    {
+                        if (!CreateDestinationDirIfNeeded(out var failedResult)) return failedResult;
 
-                        // Check does the destination directory exists.
-                        if (!client.DirectoryExists(_batchContext.Destination.Directory))
-                        {
-                            if (_batchContext.Options.CreateDestinationDirectories)
-                            {
-                                try
-                                {
-                                    CreateAllDirectories(client, _batchContext.Destination.Directory);
-                                }
-                                catch (Exception ex)
-                                {
-                                    userResultMessage = $"Error while creating destination directory '{_batchContext.Destination.Directory}': {ex.Message}";
-                                    return FormFailedFileTransferResult(userResultMessage);
-                                }
-                            }
-                            else
-                            {
-                                userResultMessage = $"Destination directory '{_batchContext.Destination.Directory}' was not found.";
-                                return FormFailedFileTransferResult(userResultMessage);
-                            }
-                        }
-
-                        client.SetWorkingDirectory(_batchContext.Destination.Directory);
-
-                        //_batchContext.DestinationFiles = client.GetListing(".");
+                        client.SetWorkingDirectory(_batchContext.Source.Directory);
 
                         foreach (var file in files)
                         {
-                            var singleTransfer = new SingleFileTransfer(file, _batchContext, client, _renamingPolicy, _logger);
+                            var singleTransfer =
+                                new SingleFileTransfer(file, _batchContext, client, _renamingPolicy, _logger);
                             var result = singleTransfer.TransferSingleFile();
                             Result.Add(result);
                         }
-                        client.Disconnect();
                     }
+
+                    client.Disconnect();
                 }
             }
             catch (SocketException)
@@ -133,6 +90,42 @@ namespace Frends.FTP.DownloadFiles.Definitions
             }
 
             return FormResultFromSingleTransferResults(Result);
+        }
+
+        private bool CreateDestinationDirIfNeeded(out FileTransferResult fileTransferResult)
+        {
+            string userResultMessage;
+            if (!Directory.Exists(_batchContext.Destination.Directory))
+            {
+                if (_batchContext.Options.CreateDestinationDirectories)
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(_batchContext.Destination.Directory);
+                    }
+                    catch (Exception ex)
+                    {
+                        userResultMessage =
+                            $"Error while creating destination directory '{_batchContext.Destination.Directory}': {ex.Message}";
+                        {
+                            fileTransferResult = FormFailedFileTransferResult(userResultMessage);
+                            return false;
+                        }
+                    }
+                }
+                else
+                {
+                    userResultMessage =
+                        $"Destination directory '{_batchContext.Destination.Directory}' was not found.";
+                    {
+                        fileTransferResult = FormFailedFileTransferResult(userResultMessage);
+                        return false;
+                    }
+                }
+            }
+
+            fileTransferResult = null;
+            return true;
         }
 
         #region Helper methods
@@ -220,62 +213,25 @@ namespace Frends.FTP.DownloadFiles.Definitions
             return client;
         }
 
-        private Tuple<List<FileItem>, bool> GetSourceFiles(Source source)
+        private Tuple<List<FileItem>, bool> GetSourceFiles(Source source, FtpClient client)
         {
-            var fileItems = new List<FileItem>();
+            if (!client.DirectoryExists(source.Directory)) return new Tuple<List<FileItem>, bool>(null, false);
+            
+            var ftpFiles = client.GetListing(source.Directory);
 
-            if (_filePaths != null)
+            var list = new List<FileItem>();
+            foreach (var ftpFile in ftpFiles)
             {
-                fileItems = _filePaths.Select(p => new FileItem(p) { Name = p }).ToList();
-                if (fileItems.Any())
-                    return new Tuple<List<FileItem>, bool>(fileItems, true);
-                return new Tuple<List<FileItem>, bool>(fileItems, false);
+                if (ftpFile.Type == FtpFileSystemObjectType.Directory ||
+                    ftpFile.Type == FtpFileSystemObjectType.Link)
+                    continue; // skip directories and links
+
+                if (!Util.FileMatchesMask(ftpFile.Name, source.FileName)) continue;
+                
+                var fItm = new FileItem(ftpFile);
+                list.Add(fItm);
             }
-
-            // Return empty list if source directory doesn't exists.
-            if (!Directory.Exists(source.Directory))
-                return new Tuple<List<FileItem>, bool>(fileItems, false);
-
-            // fetch all file names in given directory
-            var files = Directory.GetFiles(source.Directory);
-
-            // return Tuple with empty list and success.true if files are not found.
-            if (!files.Any())
-                return new Tuple<List<FileItem>, bool>(fileItems, true);
-
-            // create List of FileItems from found files.
-            foreach (var file in files)
-            {
-                if (Util.FileMatchesMask(Path.GetFileName(file), source.FileName))
-                {
-                    FileItem item = new FileItem(Path.GetFullPath(file));
-                    _logger.NotifyInformation(_batchContext, $"FILE LIST {item.FullPath}");
-                    fileItems.Add(item);
-                }
-
-            }
-
-            return new Tuple<List<FileItem>, bool>(fileItems, true);
-        }
-
-        private static void CreateAllDirectories(FtpClient client, string path)
-        {
-            // Consistent forward slashes
-            path = path.Replace(@"\", "/");
-            foreach (string dir in path.Split('/'))
-            {
-                // Ignoring leading/ending/multiple slashes
-                if (!string.IsNullOrWhiteSpace(dir))
-                {
-                    if (!client.DirectoryExists(dir))
-                    {
-                        client.CreateDirectory(dir);
-                    }
-                    client.SetWorkingDirectory(dir);
-                }
-            }
-            // Going back to default directory
-            client.SetWorkingDirectory("/");
+            return new Tuple<List<FileItem>, bool>(list, true);
         }
 
         private static string[] ConvertObjectToStringArray(object objectArray)
@@ -305,8 +261,6 @@ namespace Frends.FTP.DownloadFiles.Definitions
             var success = singleResults.All(x => x.Success);
             var actionSkipped = success && singleResults.All(x => x.ActionSkipped);
             var userResultMessage = GetUserResultMessage(singleResults.ToList());
-
-            _logger.LogBatchFinished(_batchContext, userResultMessage, success, actionSkipped);
 
             var transferErrors = singleResults.Where(r => !r.Success).GroupBy(r => r.TransferredFile ?? "--unknown--")
                     .ToDictionary(rg => rg.Key, rg => (IList<string>)rg.SelectMany(r => r.ErrorMessages).ToList());
@@ -356,9 +310,8 @@ namespace Frends.FTP.DownloadFiles.Definitions
         {
             var transferName = context.Info.TransferName ?? string.Empty;
 
-            var msg = context.Source.FilePaths == null 
-                ? $"No source files found from directory '{source.Directory}' with file mask '{source.FileName}' for transfer '{transferName}'"
-                : $"No source files found from FilePaths '{string.Join(", ", context.Source.FilePaths)}' for transfer '{transferName}'";
+            var msg =
+                $"No source files found from directory '{source.Directory}' with file mask '{source.FileName}' for transfer '{transferName}'";
 
             switch (_batchContext.Source.NotFoundAction)
             {

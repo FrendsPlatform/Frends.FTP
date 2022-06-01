@@ -7,45 +7,19 @@ using Serilog;
 
 namespace Frends.FTP.DownloadFiles.Logging
 {
-    /// <summary>
-    /// FTP internal logger interface
-    /// </summary>
     internal interface IFtpLogger : IDisposable
     {
-        /// <summary>
-        /// Notifies of errors
-        /// </summary>
         void NotifyError(BatchContext context, string msg, Exception e);
-
-        /// <summary>
-        /// Notifies of info-level messages
-        /// </summary>
+        
         void NotifyInformation(BatchContext context, string msg);
 
-        /// <summary>
-        /// Notifies of debug trace messages
-        /// </summary>
         void NotifyTrace(string message);
 
-        /// <summary>
-        /// Logs a single successful file transfer
-        /// </summary>
         void LogTransferSuccess(SingleFileTransfer transfer, BatchContext context);
 
-        /// <summary>
-        /// Logs a single failed file transfer
-        /// </summary>
         void LogTransferFailed(SingleFileTransfer transfer, BatchContext context, string errorMessage, Exception exception);
-
-        /// <summary>
-        /// Logs a batch finished event
-        /// </summary>
-        void LogBatchFinished(BatchContext context, string userResultMessage, bool success, bool actionSkipped);
     }
 
-    /// <summary>
-    /// SFTP internal logger implementation
-    /// </summary>
     internal class FtpLogger : IFtpLogger
     {
         private ConcurrentBag<FileTransferInfo> _fileTransfers;
@@ -62,20 +36,11 @@ namespace Frends.FTP.DownloadFiles.Logging
             _log = log;
         }
 
-        /// <summary>
-        /// Destructor disposes the SFTPLogger
-        /// </summary>
         ~FtpLogger()
         {
             Dispose(false);
         }
 
-        /// <summary>
-        /// Notifies Error
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="msg"></param>
-        /// <param name="e"></param>
         public void NotifyError(BatchContext context, string msg, Exception e)
         {
             try
@@ -99,11 +64,6 @@ namespace Frends.FTP.DownloadFiles.Logging
             }
         }
 
-        /// <summary>
-        /// Notifies information
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="msg"></param>
         public void NotifyInformation(BatchContext context, string msg)
         {
             try
@@ -116,11 +76,6 @@ namespace Frends.FTP.DownloadFiles.Logging
             }
         }
 
-        /// <summary>
-        /// Logs succesful tranfer
-        /// </summary>
-        /// <param name="transfer"></param>
-        /// <param name="context"></param>
         public void LogTransferSuccess(SingleFileTransfer transfer, BatchContext context)
         {
             try
@@ -158,22 +113,6 @@ namespace Frends.FTP.DownloadFiles.Logging
             }
         }
 
-        /// <summary>
-        /// Derived method from ILogger
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="userResultMessage"></param>
-        /// <param name="success"></param>
-        /// <param name="actionSkipped"></param>
-        public void LogBatchFinished(BatchContext context, string userResultMessage, bool success, bool actionSkipped)
-        {
-            // Do nothing? This is the same as in Cobalt, so until further needs we are not going to fill this
-        }
-
-        /// <summary>
-        /// Notifies Trace
-        /// </summary>
-        /// <param name="message"></param>
         public void NotifyTrace(string message)
         {
             // only log to debug trace
@@ -182,11 +121,6 @@ namespace Frends.FTP.DownloadFiles.Logging
 
         private string GetSourceEndPointName(BatchContext context)
         {
-            if (context.Source.FilePaths != null)
-            {
-                return "Files:" + string.Join(", ", context.Source.FilePaths);
-            }
-
             return "File: " + context.Source.Directory + context.Source.FileName;
         }
 
@@ -195,14 +129,6 @@ namespace Frends.FTP.DownloadFiles.Logging
             return $"FTP://{context.Connection.Address}/{context.Destination.Directory}/{context.Destination.FileName}";
         }
 
-        /// <summary>
-        /// Creates FileTransferInfo
-        /// </summary>
-        /// <param name="result"></param>
-        /// <param name="transfer"></param>
-        /// <param name="context"></param>
-        /// <param name="errorMessage"></param>
-        /// <returns></returns>
         public static FileTransferInfo CreateFileTransferInfo(TransferResult result, SingleFileTransfer transfer, BatchContext context, string errorMessage = null)
         {
             // Create 2 dummy endpoints and initialize some local variables which are needed in case if cobalt config is not
@@ -249,20 +175,13 @@ namespace Frends.FTP.DownloadFiles.Logging
             return File.Exists(filepath) ? new FileInfo(filepath).Length : 0;
         }
 
-        /// <summary>
-        /// Method starts dispose.
-        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        /// Virtual method dispose for SFTPLogger
-        /// </summary>
-        /// <param name="disposing"></param>
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (_disposed)
             {

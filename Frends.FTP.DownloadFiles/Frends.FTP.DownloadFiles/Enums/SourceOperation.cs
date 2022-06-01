@@ -6,21 +6,21 @@
     public enum SourceOperation
     {
         /// <summary>
-        /// Will delete files after uploading.
+        /// Will delete files after downloading.
         /// </summary>
         Delete,
         /// <summary>
-        /// Will rename the files after uploading.
+        /// Will rename the files after downloading.
         /// </summary>
         Rename,
         
         /// <summary>
-        /// Will move the files after uploading.
+        /// Will move the files after downloading.
         /// </summary>
         Move,
         
         /// <summary>
-        /// Will do nothing to source files after uploading.
+        /// Will do nothing to source files after downloading.
         /// </summary>
         Nothing
     }

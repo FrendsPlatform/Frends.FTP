@@ -12,8 +12,8 @@ namespace Frends.FTP.DownloadFiles.TaskConfiguration
         /// Will be included in the file transfer log 
         /// entries and also in all error messages in the event log.
         /// </summary>
-        /// <example>FTP Upload</example>
-        [DefaultValue("\"FTPUpload\"")]
+        /// <example>FTP Download</example>
+        [DefaultValue("\"FTPDownload\"")]
         public string TransferName { get; set; }
 
         /// <summary>

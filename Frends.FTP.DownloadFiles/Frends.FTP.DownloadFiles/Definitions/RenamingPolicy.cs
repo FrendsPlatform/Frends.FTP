@@ -8,16 +8,11 @@ namespace Frends.FTP.DownloadFiles.Definitions
     ///<summary>
     /// Policies for creating names for remote files: expands macros etc.
     ///</summary>
-    public class RenamingPolicy
+    internal class RenamingPolicy
     {
         private readonly IDictionary<string, Func<string, string>> _macroHandlers;
         private readonly IDictionary<string, Func<string, string>> _sourceFileNameMacroHandlers;
 
-        /// <summary>
-        /// Constructor with parameters.
-        /// </summary>
-        /// <param name="transferName"></param>
-        /// <param name="transferId"></param>
         public RenamingPolicy(string transferName, Guid transferId)
         {
             _macroHandlers = InitializeMacroHandlers(transferName, transferId);
@@ -29,7 +24,7 @@ namespace Frends.FTP.DownloadFiles.Definitions
         /// </summary>
         /// <param name="originalFileName">The original file.</param>
         /// <param name="remoteFileDefinition">The remote file path with macros.</param>
-        /// <returns></returns>
+        /// <returns>Remote file name with expanded macros.</returns>
         public string CreateRemoteFileName(string originalFileName, string remoteFileDefinition)
         {
             if (!string.IsNullOrEmpty(remoteFileDefinition) && remoteFileDefinition.Contains("?"))
@@ -78,7 +73,7 @@ namespace Frends.FTP.DownloadFiles.Definitions
         /// Method for expanding source/destination endpoint directory name for macros when opening the endpoint connection
         /// </summary>
         /// <param name="directory">Directory path including unexpanded macros</param>
-        /// <returns></returns>
+        /// <returns>Directory with macros expanded.</returns>
         public string ExpandDirectoryForMacros(string directory)
         {
             if (directory.Contains("%SourceFileName%") || directory.Contains("%SourceFileExtension%"))
@@ -152,16 +147,6 @@ namespace Frends.FTP.DownloadFiles.Definitions
             // contains absolute path. Thus we either get the whole path in result or, if
             // it is not an absolute path - then we get a path with original file dir as base.
             return Path.Combine(originalFileDirectory, result);
-        }
-
-        /// <summary>
-        /// Check if macro is indeed a macro.
-        /// </summary>
-        /// <param name="macro"></param>
-        /// <returns></returns>
-        public bool IsMacro(string macro)
-        {
-            return IsFileMacro(macro, _macroHandlers) || IsFileMacro(macro, _sourceFileNameMacroHandlers);
         }
 
         private string ExpandMacrosAndMasks(string originalFilePath, string filePath)
@@ -239,24 +224,15 @@ namespace Frends.FTP.DownloadFiles.Definitions
         /// <summary>
         /// Defines if string is file mask
         /// </summary>
-        /// <param name="s">filename or file mask</param>
+        /// <param name="input">filename or file mask</param>
         /// <returns>true if string represents file mask, false if it represents single file</returns>
-        private static bool IsFileMask(string s)
+        private static bool IsFileMask(string input)
         {
-            bool b = false;
-            if (s == null)
-            {
-                return false;
-            }
-            if (s.IndexOf("*", StringComparison.InvariantCulture) >= 0)
-            {
-                b = true;
-            }
-            if (s.IndexOf("?", StringComparison.InvariantCulture) >= 0)
-            {
-                b = true;
-            }
-            return b;
+            var isFileMask = false;
+            if (input == null) return false;
+            if (input.Contains("*")) isFileMask = true;
+            if (input.Contains("?")) isFileMask = true;
+            return isFileMask;
         }
 
         private IDictionary<string, Func<string, string>> InitializeSourceFileNameMacroHandlers()
@@ -305,7 +281,11 @@ namespace Frends.FTP.DownloadFiles.Definitions
         {
             foreach (var macroHandler in macroHandlers)
             {
-                fileDefinition = Regex.Replace(fileDefinition, Regex.Escape(macroHandler.Key), macroHandler.Value.Invoke(originalFile), RegexOptions.IgnoreCase);
+                fileDefinition = Regex.Replace(
+                    fileDefinition,
+                    Regex.Escape(macroHandler.Key),
+                    macroHandler.Value.Invoke(originalFile),
+                    RegexOptions.IgnoreCase);
             }
 
             return fileDefinition;

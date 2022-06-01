@@ -33,7 +33,7 @@ namespace Frends.FTP.DownloadFiles.Definitions
                 pattern = mask.Replace(".", "\\.");
                 pattern = pattern.Replace("*", ".*");
                 pattern = pattern.Replace("?", ".+");
-                pattern = String.Concat("^", pattern, "$");
+                pattern = string.Concat("^", pattern, "$");
             }
 
             return Regex.IsMatch(filename, pattern, RegexOptions.IgnoreCase);

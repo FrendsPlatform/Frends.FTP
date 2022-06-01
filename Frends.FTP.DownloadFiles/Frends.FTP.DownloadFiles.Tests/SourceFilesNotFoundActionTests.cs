@@ -14,12 +14,13 @@ public class SourceFilesNotFoundActionTests : DownloadFilesTestBase
     [Test]
     public void SourceFilesNotFoundAction_Ignore()
     {
-        var result = CallUploadFiles(
+        var result = CallDownloadFiles(
             SourceNotFoundAction.Ignore, "file*.txt",
-            $"/{nameof(SourceFilesNotFoundAction_Ignore)}");
+            nameof(SourceFilesNotFoundAction_Ignore));
         
         Assert.IsTrue(result.Success);
         Assert.IsTrue(result.ActionSkipped);
+        
         // User result should contain message
         Assert.IsTrue(result.UserResultMessage.Contains("No source files"));
         // Operations logs should NOT contain message
@@ -29,7 +30,7 @@ public class SourceFilesNotFoundActionTests : DownloadFilesTestBase
     [Test]
     public void SourceFilesNotFoundAction_Info()
     {
-        var result = CallUploadFiles(
+        var result = CallDownloadFiles(
             SourceNotFoundAction.Info, "file*.txt",
             nameof(SourceFilesNotFoundAction_Info));
         
@@ -45,7 +46,7 @@ public class SourceFilesNotFoundActionTests : DownloadFilesTestBase
     [Test]
     public void SourceFilesNotFoundAction_Error()
     {
-        var result = CallUploadFiles(
+        var result = CallDownloadFiles(
             SourceNotFoundAction.Error, "file*.txt",
             nameof(SourceFilesNotFoundAction_Error));
         
@@ -58,11 +59,11 @@ public class SourceFilesNotFoundActionTests : DownloadFilesTestBase
         Assert.IsTrue(result.OperationsLog.Any(o => o.Value.Contains("No source files")));
     }
     
-    private Result CallUploadFiles(SourceNotFoundAction sourceNotFoundAction, string sourceFileName, string targetDir)
+    private Result CallDownloadFiles(SourceNotFoundAction sourceNotFoundAction, string sourceFileName, string targetDir)
     {
         var source = new Source
         {
-            Directory = Dir, FileName = sourceFileName, Operation = SourceOperation.Delete,
+            Directory = FtpSubDirName, FileName = sourceFileName, Operation = SourceOperation.Delete,
             NotFoundAction = sourceNotFoundAction
         };
         var destination = new Destination

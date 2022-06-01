@@ -4,24 +4,42 @@ using NUnit.Framework;
 
 namespace Frends.FTP.DownloadFiles.Tests.Lib;
 
-/// <summary>
-/// Provides simple dir and helper methods for local file creation
-/// </summary>
 public class DownloadFilesTestBase
 {
-    protected string Dir;
+    private string dockerDataVolumePath = "..\\..\\..\\..\\DockerVolumes\\data";
+    protected string FtpSubDirName;
+    protected string FtpSubDirFullPath;
+    protected string LocalDirFullPath;
     
-    protected void CreateDummyFileInDummyDir(string fileName)
+    protected void CreateDummyFileInFtpDir(string fileName)
     {
-        File.WriteAllText(Path.Combine(Dir, fileName), "test");
+        File.WriteAllText(Path.Combine(FtpSubDirFullPath, fileName), "test");
     }
 
-    protected bool DummyFileExists(string fileName, string dir = null)
+    protected bool LocalFileExists(string fileName)
     {
-        return File.Exists(Path.Combine(dir ?? Dir, fileName));
+        return File.Exists(Path.Combine(LocalDirFullPath, fileName));
+    }
+    
+    protected bool FtpFileExists(string fileName)
+    {
+        return File.Exists(Path.Combine(FtpSubDirFullPath, fileName));
+    }
+    
+    protected bool FtpFileExists(string fileName, string subdir)
+    {
+        // We need ../subdir because our FtpDir is already a dummy ftp subdir anyway
+        return File.Exists(Path.Combine(FtpSubDirFullPath, "../"+subdir, fileName));
     }
 
-    protected string CreateDummyDir()
+    protected string CreateDummyFtpDir()
+    {
+        var dir = Path.Combine(dockerDataVolumePath, Guid.NewGuid().ToString());
+        var di = Directory.CreateDirectory(dir);
+        return di.FullName;
+    }
+
+    protected string CreateDummyLocalDir()
     {
         var dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
         Directory.CreateDirectory(dir);
@@ -31,12 +49,15 @@ public class DownloadFilesTestBase
     [SetUp]
     public void SetUp()
     {
-        Dir = CreateDummyDir();
+        FtpSubDirFullPath = CreateDummyFtpDir();
+        FtpSubDirName = Path.GetFileName(FtpSubDirFullPath);
+        LocalDirFullPath = CreateDummyLocalDir();
     }
 
     [TearDown]
     public void TearDown()
     {
-        Directory.Delete(Dir, true);
+        Directory.Delete(FtpSubDirFullPath, true);
+        Directory.Delete(LocalDirFullPath, true);
     }
 }

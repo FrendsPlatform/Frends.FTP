@@ -12,12 +12,12 @@ using Frends.FTP.DownloadFiles.TaskResult;
 namespace Frends.FTP.DownloadFiles
 {
     /// <summary>
-    /// Class containing the FTP.UploadFiles task
+    /// Class containing the FTP.DownloadFiles task
     /// </summary>
     public static class FTP
     {
         /// <summary>
-        /// Upload files to an FTP server.
+        /// Download files to an FTP server.
         /// [Documentation](https://tasks.frends.com/tasks#frends-tasks/Frends.FTP.DownloadFiles)
         /// </summary>
         /// <param name="info">Transfer info parameters</param>

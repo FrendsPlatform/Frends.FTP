@@ -9,11 +9,9 @@ namespace Frends.FTP.DownloadFiles.Logging
     /// <summary>
     /// Sink that is used to store messages and events from seriolog Logger
     /// </summary>
-    public class TransferLogSink : ILogEventSink
+    internal class TransferLogSink : ILogEventSink
     {
-        /// <summary>
-        ///     Always store some initial log messages first
-        /// </summary>
+        // Always store some initial log messages first
         private const int DefaultInitialLogMessages = 20;
 
         private readonly IList<Tuple<DateTimeOffset, string>> _allMsgsBuffer;
@@ -21,10 +19,6 @@ namespace Frends.FTP.DownloadFiles.Logging
 
         private readonly IList<Tuple<DateTimeOffset, string>> _initialLogMessages;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="maxLogEntries"></param>
         public TransferLogSink(int? maxLogEntries)
         {
             if (maxLogEntries != null)
@@ -38,10 +32,6 @@ namespace Frends.FTP.DownloadFiles.Logging
             }
         }
 
-        /// <summary>
-        /// Emits new messages to the sink
-        /// </summary>
-        /// <param name="logEvent"></param>
         public void Emit(LogEvent logEvent)
         {
             if (_allMsgsBuffer != null)
@@ -59,10 +49,6 @@ namespace Frends.FTP.DownloadFiles.Logging
             }
         }
 
-        /// <summary>
-        /// Gets the log messages from sink
-        /// </summary>
-        /// <returns></returns>
         public IList<Tuple<DateTimeOffset, string>> GetBufferedLogMessages()
         {
             if (_allMsgsBuffer != null) return _allMsgsBuffer;
