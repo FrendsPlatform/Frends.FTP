@@ -159,6 +159,7 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         /// </summary>
         /// <example>c:\example.cer</example>
         [DefaultValue("c:\\example.cer")]
+        [DisplayFormat(DataFormatString = "Text")]
         [UIHint(nameof(UseFTPS),"", true)]
         public string ClientCertificatePath { get; set; }
         

@@ -9,7 +9,7 @@ namespace Frends.FTP.UploadFiles.Logging
     /// <summary>
     /// Sink that is used to store messages and events from seriolog Logger
     /// </summary>
-    public class TransferLogSink : ILogEventSink
+    internal class TransferLogSink : ILogEventSink
     {
         /// <summary>
         ///     Always store some initial log messages first
