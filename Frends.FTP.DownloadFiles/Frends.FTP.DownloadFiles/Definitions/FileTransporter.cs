@@ -317,7 +317,7 @@ namespace Frends.FTP.DownloadFiles.Definitions
             {
                 case SourceNotFoundAction.Error:
                     _logger.NotifyError(context, msg, new FileNotFoundException());
-                    return new SingleFileTransferResult { Success = false, ErrorMessages = { msg } };
+                    return new SingleFileTransferResult { Success = false, ActionSkipped = false, ErrorMessages = { msg } };
                 case SourceNotFoundAction.Info:
                     _logger.NotifyInformation(context, msg);
                     return new SingleFileTransferResult { Success = true, ActionSkipped = true, ErrorMessages = { msg } };

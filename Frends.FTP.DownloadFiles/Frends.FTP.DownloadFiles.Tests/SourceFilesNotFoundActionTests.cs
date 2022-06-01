@@ -50,8 +50,8 @@ public class SourceFilesNotFoundActionTests : DownloadFilesTestBase
             SourceNotFoundAction.Error, "file*.txt",
             nameof(SourceFilesNotFoundAction_Error));
         
-        Assert.IsFalse(result.Success);
-        Assert.IsFalse(result.ActionSkipped);
+        Assert.IsFalse(result.Success, result.UserResultMessage);
+        Assert.IsFalse(result.ActionSkipped, result.UserResultMessage);
         
         // User result should contain message
         Assert.IsTrue(result.UserResultMessage.Contains("No source files"));
