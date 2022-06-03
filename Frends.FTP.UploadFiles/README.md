@@ -12,18 +12,24 @@ https://www.myget.org/F/frends-tasks/api/v2.
 
 ## Building
 
-Clone a copy of the repository
+### Clone a copy of the repository
 
 `git clone https://github.com/FrendsPlatform/Frends.FTP.git`
 
-Rebuild the project
+### Build the project
 
 `dotnet build`
 
-Run tests
+### Run tests
+
+Run the Docker compose from solution root using 
+
+`docker-compose -f Frends.FTP.UploadFiles.Tests/docker-compose.yml up`
+
+Run the tests
 
 `dotnet test`
 
-Create a NuGet package
+### Create a NuGet package
 
 `dotnet pack --configuration Release`

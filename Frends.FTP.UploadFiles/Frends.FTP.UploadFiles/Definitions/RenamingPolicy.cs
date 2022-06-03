@@ -13,11 +13,6 @@ namespace Frends.FTP.UploadFiles.Definitions
         private readonly IDictionary<string, Func<string, string>> _macroHandlers;
         private readonly IDictionary<string, Func<string, string>> _sourceFileNameMacroHandlers;
 
-        /// <summary>
-        /// Constructor with parameters.
-        /// </summary>
-        /// <param name="transferName"></param>
-        /// <param name="transferId"></param>
         public RenamingPolicy(string transferName, Guid transferId)
         {
             _macroHandlers = InitializeMacroHandlers(transferName, transferId);
@@ -141,16 +136,6 @@ namespace Frends.FTP.UploadFiles.Definitions
             // contains absolute path. Thus we either get the whole path in result or, if
             // it is not an absolute path - then we get a path with original file dir as base.
             return Path.Combine(originalFileDirectory, result);
-        }
-
-        /// <summary>
-        /// Check if macro is indeed a macro.
-        /// </summary>
-        /// <param name="macro"></param>
-        /// <returns></returns>
-        public bool IsMacro(string macro)
-        {
-            return IsFileMacro(macro, _macroHandlers) || IsFileMacro(macro, _sourceFileNameMacroHandlers);
         }
 
         private string ExpandMacrosAndMasks(string originalFilePath, string filePath)
