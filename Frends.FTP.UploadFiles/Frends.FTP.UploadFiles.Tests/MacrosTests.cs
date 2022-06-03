@@ -21,7 +21,7 @@ namespace Frends.FTP.UploadFiles.Tests;
 [TestFixture]
 public class MacrosTests
 {
-    private readonly string _dockerDataVolumePath = Path.GetFullPath("..\\..\\..\\DockerVolumes\\data");
+    private readonly string _dockerDataVolumePath = Path.GetFullPath("../../../DockerVolumes/data");
 
     private string CreateLocalDir(string name)
     {
