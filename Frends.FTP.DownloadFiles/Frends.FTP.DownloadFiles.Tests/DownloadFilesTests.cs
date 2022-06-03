@@ -16,8 +16,9 @@ namespace Frends.FTP.DownloadFiles.Tests
         public void DownloadFTP()
         {
             // Setup
-            CreateDummyFileInFtpDir("file1.txt");
-            var source = new Source { Directory = DummyFtpSubDirName, FileName = "file1.txt" };
+            var guid = Guid.NewGuid().ToString();
+            Helpers.CreateFileOnFTP(guid, "file1.txt");
+            var source = new Source { Directory = guid, FileName = "file1.txt" };
             var destination = new Destination { Directory = LocalDirFullPath, Action = DestinationAction.Overwrite };
             var connection = new Connection
             {
@@ -38,8 +39,9 @@ namespace Frends.FTP.DownloadFiles.Tests
         public void DownloadFTPS_CorrectFingerprint()
         {
             // Setup
-            CreateDummyFileInFtpDir("file1.txt");
-            var source = new Source { Directory = DummyFtpSubDirName, FileName = "file1.txt" };
+            var guid = Guid.NewGuid().ToString();
+            Helpers.CreateFileOnFTP(guid, "file1.txt");
+            var source = new Source { Directory = guid, FileName = "file1.txt" };
             var destination = new Destination { Directory = LocalDirFullPath, Action = DestinationAction.Overwrite };
             
             // Our test certificate hashes:
@@ -68,8 +70,9 @@ namespace Frends.FTP.DownloadFiles.Tests
         public void DownloadFTPS_IncorrectFingerprint()
         {
             // Setup
-            CreateDummyFileInFtpDir("file1.txt");
-            var source = new Source { Directory = DummyFtpSubDirName, FileName = "file1.txt" };
+            var guid = Guid.NewGuid().ToString();
+            Helpers.CreateFileOnFTP(guid, "file1.txt");
+            var source = new Source { Directory = guid, FileName = "file1.txt" };
             var destination = new Destination { Directory = LocalDirFullPath, Action = DestinationAction.Overwrite };
             
             // Our test certificate hashes:

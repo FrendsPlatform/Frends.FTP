@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text;
+using FluentFTP;
 using Frends.FTP.DownloadFiles.TaskConfiguration;
 
 namespace Frends.FTP.DownloadFiles.Tests;
@@ -34,5 +36,31 @@ internal static class Helpers
         };
 
         return connection;
+    }
+
+    internal static void CreateFileOnFTP(string subDir, string fileName)
+    {
+        using (var client = new FtpClient(FtpHost, FtpPort, FtpUsername, FtpPassword))
+        {
+            client.CreateDirectory(subDir);
+            client.SetWorkingDirectory(subDir);
+            client.Upload(Encoding.UTF8.GetBytes("hello"), fileName);
+        }
+    }
+
+    internal static void CreateDirectoryOnFTP(string subDir)
+    {
+        using (var client = new FtpClient(FtpHost, FtpPort, FtpUsername, FtpPassword))
+        {
+            client.CreateDirectory(subDir);
+        }
+    }
+
+    internal static bool FileExistsOnFTP(string subDir, string fileName)
+    {
+        using (var client = new FtpClient(FtpHost, FtpPort, FtpUsername, FtpPassword))
+        {
+            return client.FileExists(subDir + "/" + fileName);
+        }
     }
 }

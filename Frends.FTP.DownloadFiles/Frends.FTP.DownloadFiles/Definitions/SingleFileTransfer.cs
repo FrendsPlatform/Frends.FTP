@@ -25,7 +25,6 @@ namespace Frends.FTP.DownloadFiles.Definitions
             SourceFile = file;
             _batchContext = context;
 
-            
             DestinationFileNameWithMacrosExpanded = renamingPolicy.CreateRemoteFileName(
                     file.Name,
                     context.Destination.FileName);

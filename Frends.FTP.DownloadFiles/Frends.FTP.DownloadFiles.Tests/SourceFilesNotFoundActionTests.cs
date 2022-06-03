@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using Frends.FTP.DownloadFiles.Enums;
 using Frends.FTP.DownloadFiles.TaskConfiguration;
@@ -61,9 +62,11 @@ public class SourceFilesNotFoundActionTests : DownloadFilesTestBase
     
     private Result CallDownloadFiles(SourceNotFoundAction sourceNotFoundAction, string sourceFileName, string targetDir)
     {
+        var guid = Guid.NewGuid().ToString();
+        Helpers.CreateDirectoryOnFTP(guid);
         var source = new Source
         {
-            Directory = DummyFtpSubDirName, FileName = sourceFileName, Operation = SourceOperation.Delete,
+            Directory = guid, FileName = sourceFileName, Operation = SourceOperation.Delete,
             NotFoundAction = sourceNotFoundAction
         };
         var destination = new Destination
