@@ -19,6 +19,7 @@ namespace Frends.FTP.UploadFiles.Definitions
         private TransferState _state;
         private string _sourceFileDuringTransfer;
         private string _destinationFileDuringTransfer;
+        private readonly string _destinationDirectoryWithMacrosExpanded;
 
         public SingleFileTransfer(FileItem file, BatchContext context, FtpClient client, RenamingPolicy renamingPolicy, IFtpLogger logger)
         {
@@ -28,6 +29,8 @@ namespace Frends.FTP.UploadFiles.Definitions
             SourceFile = file;
             _batchContext = context;
 
+            _destinationDirectoryWithMacrosExpanded =
+                renamingPolicy.ExpandDirectoryForMacros(context.Destination.Directory);
             DestinationFileNameWithMacrosExpanded = renamingPolicy.CreateRemoteFileName(
                     file.Name,
                     context.Destination.FileName);
@@ -127,9 +130,9 @@ namespace Frends.FTP.UploadFiles.Definitions
                 DestinationFileNameWithMacrosExpanded);
 
             // Determine path to use to the destination file.
-            var path = (_batchContext.Destination.Directory.Contains("/")) 
-                ? $"{_batchContext.Destination.Directory}/{DestinationFileNameWithMacrosExpanded}"
-                : Path.Combine(_batchContext.Destination.Directory, DestinationFileNameWithMacrosExpanded);
+            var path = (_destinationDirectoryWithMacrosExpanded.Contains("/")) 
+                ? $"{_destinationDirectoryWithMacrosExpanded}/{DestinationFileNameWithMacrosExpanded}"
+                : Path.Combine(_destinationDirectoryWithMacrosExpanded, DestinationFileNameWithMacrosExpanded);
 
             // If destination rename during transfer is enabled, use that instead 
             if (!string.IsNullOrEmpty(_destinationFileDuringTransfer))
@@ -249,7 +252,7 @@ namespace Frends.FTP.UploadFiles.Definitions
         {
             _result.Success = false; // the routine instance should be marked as failed if even one transfer fails
             var errorMessage =
-                $"Failure in {_state}: File '{SourceFile.Name}' could not be transferred to '{_batchContext.Destination.Directory}'. Error: {exception.Message}";
+                $"Failure in {_state}: File '{SourceFile.Name}' could not be transferred to '{_destinationDirectoryWithMacrosExpanded}'. Error: {exception.Message}";
             if (!string.IsNullOrWhiteSpace(sourceFileRestoreMessage))
                 errorMessage += " " + sourceFileRestoreMessage;
 

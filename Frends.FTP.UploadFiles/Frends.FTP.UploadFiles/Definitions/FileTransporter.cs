@@ -25,6 +25,8 @@ namespace Frends.FTP.UploadFiles.Definitions
         private readonly BatchContext _batchContext;
         private readonly string[] _filePaths;
         private readonly RenamingPolicy _renamingPolicy;
+        private readonly string _sourceDirectoryWithMacrosExpanded;
+        private readonly string _destinationDirectoryWithMacrosExpanded;
 
         /// <summary>
         ///     Constructor for SFTP file transfers
@@ -35,6 +37,11 @@ namespace Frends.FTP.UploadFiles.Definitions
             _batchContext = context;
             _renamingPolicy = new RenamingPolicy(_batchContext.Info.TransferName, instanceId);
 
+            _sourceDirectoryWithMacrosExpanded =
+                _renamingPolicy.ExpandDirectoryForMacros(_batchContext.Source.Directory);
+            _destinationDirectoryWithMacrosExpanded =
+                _renamingPolicy.ExpandDirectoryForMacros(_batchContext.Destination.Directory);
+            
             Result = new List<SingleFileTransferResult>();
             _filePaths = ConvertObjectToStringArray(context.Source.FilePaths);
         }
@@ -58,12 +65,12 @@ namespace Frends.FTP.UploadFiles.Definitions
             try
             {
                 // Fetch source file info and check if files were returned.
-                var (files, success) = GetSourceFiles(_batchContext.Source);
+                var (files, success) = GetSourceFiles();
 
                 // If source directory doesn't exist, modify userResultMessage accordingly.
                 if (!success)
                 {
-                    userResultMessage = $"Directory '{_batchContext.Source.Directory}' doesn't exists.";
+                    userResultMessage = $"Directory '{_sourceDirectoryWithMacrosExpanded}' doesn't exist.";
                     return FormFailedFileTransferResult(userResultMessage);
                 }
 
@@ -78,8 +85,6 @@ namespace Frends.FTP.UploadFiles.Definitions
                 }
                 else
                 {
-                    //_batchContext.SourceFiles = files;
-
                     using (var client = CreateFtpClient(_batchContext.Connection))
                     {
                         client.Connect();
@@ -91,28 +96,28 @@ namespace Frends.FTP.UploadFiles.Definitions
                         }
 
                         // Check does the destination directory exists.
-                        if (!client.DirectoryExists(_batchContext.Destination.Directory))
+                        if (!client.DirectoryExists(_destinationDirectoryWithMacrosExpanded))
                         {
                             if (_batchContext.Options.CreateDestinationDirectories)
                             {
                                 try
                                 {
-                                    CreateAllDirectories(client, _batchContext.Destination.Directory);
+                                    CreateAllDirectories(client, _destinationDirectoryWithMacrosExpanded);
                                 }
                                 catch (Exception ex)
                                 {
-                                    userResultMessage = $"Error while creating destination directory '{_batchContext.Destination.Directory}': {ex.Message}";
+                                    userResultMessage = $"Error while creating destination directory '{_destinationDirectoryWithMacrosExpanded}': {ex.Message}";
                                     return FormFailedFileTransferResult(userResultMessage);
                                 }
                             }
                             else
                             {
-                                userResultMessage = $"Destination directory '{_batchContext.Destination.Directory}' was not found.";
+                                userResultMessage = $"Destination directory '{_destinationDirectoryWithMacrosExpanded}' was not found.";
                                 return FormFailedFileTransferResult(userResultMessage);
                             }
                         }
 
-                        client.SetWorkingDirectory(_batchContext.Destination.Directory);
+                        client.SetWorkingDirectory(_destinationDirectoryWithMacrosExpanded);
 
                         //_batchContext.DestinationFiles = client.GetListing(".");
 
@@ -220,7 +225,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             return client;
         }
 
-        private Tuple<List<FileItem>, bool> GetSourceFiles(Source source)
+        private Tuple<List<FileItem>, bool> GetSourceFiles()
         {
             var fileItems = new List<FileItem>();
 
@@ -233,11 +238,11 @@ namespace Frends.FTP.UploadFiles.Definitions
             }
 
             // Return empty list if source directory doesn't exists.
-            if (!Directory.Exists(source.Directory))
+            if (!Directory.Exists(_sourceDirectoryWithMacrosExpanded))
                 return new Tuple<List<FileItem>, bool>(fileItems, false);
 
             // fetch all file names in given directory
-            var files = Directory.GetFiles(source.Directory);
+            var files = Directory.GetFiles(_sourceDirectoryWithMacrosExpanded);
 
             // return Tuple with empty list and success.true if files are not found.
             if (!files.Any())
@@ -246,7 +251,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             // create List of FileItems from found files.
             foreach (var file in files)
             {
-                if (Util.FileMatchesMask(Path.GetFileName(file), source.FileName))
+                if (Util.FileMatchesMask(Path.GetFileName(file), _batchContext.Source.FileName))
                 {
                     FileItem item = new FileItem(Path.GetFullPath(file));
                     _logger.NotifyInformation(_batchContext, $"FILE LIST {item.FullPath}");
@@ -355,7 +360,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             var transferName = context.Info.TransferName ?? string.Empty;
 
             var msg = context.Source.FilePaths == null 
-                ? $"No source files found from directory '{source.Directory}' with file mask '{source.FileName}' for transfer '{transferName}'"
+                ? $"No source files found from directory '{_sourceDirectoryWithMacrosExpanded}' with file mask '{source.FileName}' for transfer '{transferName}'"
                 : $"No source files found from FilePaths '{string.Join(", ", context.Source.FilePaths)}' for transfer '{transferName}'";
 
             switch (_batchContext.Source.NotFoundAction)
