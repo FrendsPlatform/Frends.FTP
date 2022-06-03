@@ -22,7 +22,7 @@ namespace Frends.FTP.UploadFiles.Tests;
 public class MacrosTests
 {
     private readonly string _dockerDataVolumePath = Path.GetFullPath("..\\..\\..\\DockerVolumes\\data");
-    
+
     private string CreateLocalDir(string name)
     {
         var path = Path.Combine(Path.GetTempPath(), name);
@@ -42,12 +42,12 @@ public class MacrosTests
         var path = Path.Combine(Path.GetTempPath(), dir, file);
         return File.Exists(path);
     }
-    
+
     protected bool FtpFileExists(string fileName, string subDir)
     {
         return File.Exists(Path.Combine(_dockerDataVolumePath, subDir, fileName));
     }
-    
+
     [Test]
     public void MacrosWorkInSourceDirectory()
     {
@@ -68,7 +68,9 @@ public class MacrosTests
         
         Assert.IsTrue(result.Success, result.UserResultMessage);
         Assert.AreEqual(1, result.SuccessfulTransferCount);
-        Assert.IsTrue(FtpFileExists("file1.txt", nameof(MacrosWorkInSourceDirectory)), result.UserResultMessage);
+        Assert.IsTrue(FtpFileExists("file1.txt", nameof(MacrosWorkInSourceDirectory)), 
+            string.Join(",", Directory.EnumerateDirectories(_dockerDataVolumePath)) + "| " +
+            string.Join(",", Directory.EnumerateFiles(Path.Combine(_dockerDataVolumePath, nameof(MacrosWorkInSourceDirectory)))));
     }
     
     [Test]
