@@ -63,7 +63,7 @@ public class SourceFilesNotFoundActionTests : DownloadFilesTestBase
     {
         var source = new Source
         {
-            Directory = FtpSubDirName, FileName = sourceFileName, Operation = SourceOperation.Delete,
+            Directory = DummyFtpSubDirName, FileName = sourceFileName, Operation = SourceOperation.Delete,
             NotFoundAction = sourceNotFoundAction
         };
         var destination = new Destination

@@ -6,42 +6,43 @@ namespace Frends.FTP.DownloadFiles.Tests.Lib;
 
 public class DownloadFilesTestBase
 {
-    private string dockerDataVolumePath = "..\\..\\..\\DockerVolumes\\data";
-    protected string FtpSubDirName;
-    protected string FtpSubDirFullPath;
+    private string _dockerDataVolumePath = "..\\..\\..\\DockerVolumes\\data";
+    private string _ftpSubDirFullPath;
+    protected string DummyFtpSubDirName;
     protected string LocalDirFullPath;
     
-    protected void CreateDummyFileInFtpDir(string fileName)
+    protected void CreateDummyFileInFtpDir(string fileName, string subDir = null)
     {
-        File.WriteAllText(Path.Combine(FtpSubDirFullPath, fileName), "test");
+        subDir ??= DummyFtpSubDirName;
+        File.WriteAllText(Path.Combine(_dockerDataVolumePath, subDir, fileName), "test");
     }
 
-    protected bool LocalFileExists(string fileName)
+    protected bool LocalFileExists(string fileName, string subDir = null)
     {
-        return File.Exists(Path.Combine(LocalDirFullPath, fileName));
+        var path = subDir == null ? LocalDirFullPath : Path.Combine(Path.GetTempPath(), subDir);
+        return File.Exists(Path.Combine(path, fileName));
     }
     
-    protected bool FtpFileExists(string fileName)
+    protected bool FtpFileExistsInDummyDir(string fileName)
     {
-        return File.Exists(Path.Combine(FtpSubDirFullPath, fileName));
+        return File.Exists(Path.Combine(_ftpSubDirFullPath, fileName));
     }
     
-    protected bool FtpFileExists(string fileName, string subdir)
+    protected bool FtpFileExists(string fileName, string subDir)
     {
-        // We need ../subdir because our FtpDir is already a dummy ftp subdir anyway
-        return File.Exists(Path.Combine(FtpSubDirFullPath, "../"+subdir, fileName));
+        return File.Exists(Path.Combine(_dockerDataVolumePath, subDir, fileName));
     }
 
-    protected string CreateDummyFtpDir()
+    protected string CreateFtpDir(string name)
     {
-        var dir = Path.Combine(dockerDataVolumePath, Guid.NewGuid().ToString());
+        var dir = Path.Combine(_dockerDataVolumePath, name);
         var di = Directory.CreateDirectory(dir);
         return di.FullName;
     }
 
-    protected string CreateDummyLocalDir()
+    protected string CreateLocalDir(string name)
     {
-        var dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        var dir = Path.Combine(Path.GetTempPath(), name);
         Directory.CreateDirectory(dir);
         return dir;
     }
@@ -49,15 +50,15 @@ public class DownloadFilesTestBase
     [SetUp]
     public void SetUp()
     {
-        FtpSubDirFullPath = CreateDummyFtpDir();
-        FtpSubDirName = Path.GetFileName(FtpSubDirFullPath);
-        LocalDirFullPath = CreateDummyLocalDir();
+        _ftpSubDirFullPath = CreateFtpDir(Guid.NewGuid().ToString());
+        DummyFtpSubDirName = Path.GetFileName(_ftpSubDirFullPath);
+        LocalDirFullPath = CreateLocalDir(Guid.NewGuid().ToString());
     }
 
     [TearDown]
     public void TearDown()
     {
-        Directory.Delete(FtpSubDirFullPath, true);
+        Directory.Delete(_ftpSubDirFullPath, true);
         Directory.Delete(LocalDirFullPath, true);
     }
 }

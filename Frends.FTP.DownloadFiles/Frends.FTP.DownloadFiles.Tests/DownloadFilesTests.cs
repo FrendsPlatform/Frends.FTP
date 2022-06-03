@@ -17,7 +17,7 @@ namespace Frends.FTP.DownloadFiles.Tests
         {
             // Setup
             CreateDummyFileInFtpDir("file1.txt");
-            var source = new Source { Directory = FtpSubDirName, FileName = "file1.txt" };
+            var source = new Source { Directory = DummyFtpSubDirName, FileName = "file1.txt" };
             var destination = new Destination { Directory = LocalDirFullPath, Action = DestinationAction.Overwrite };
             var connection = new Connection
             {
@@ -39,7 +39,7 @@ namespace Frends.FTP.DownloadFiles.Tests
         {
             // Setup
             CreateDummyFileInFtpDir("file1.txt");
-            var source = new Source { Directory = FtpSubDirName, FileName = "file1.txt" };
+            var source = new Source { Directory = DummyFtpSubDirName, FileName = "file1.txt" };
             var destination = new Destination { Directory = LocalDirFullPath, Action = DestinationAction.Overwrite };
             
             // Our test certificate hashes:
@@ -69,7 +69,7 @@ namespace Frends.FTP.DownloadFiles.Tests
         {
             // Setup
             CreateDummyFileInFtpDir("file1.txt");
-            var source = new Source { Directory = FtpSubDirName, FileName = "file1.txt" };
+            var source = new Source { Directory = DummyFtpSubDirName, FileName = "file1.txt" };
             var destination = new Destination { Directory = LocalDirFullPath, Action = DestinationAction.Overwrite };
             
             // Our test certificate hashes:

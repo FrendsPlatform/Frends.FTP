@@ -26,10 +26,12 @@ public class SourceOperationTests : DownloadFilesTestBase
             nameof(SourceOperation_Delete));
         
         Assert.IsTrue(result.Success);
-        Assert.AreEqual(3, result.SuccessfulTransferCount);    
-        Assert.IsFalse(FtpFileExists("file1.txt"));
-        Assert.IsFalse(FtpFileExists("file2.txt"));
-        Assert.IsFalse(FtpFileExists("file3.txt"));
+        Assert.AreEqual(3, result.SuccessfulTransferCount);
+        
+        // Make sure we deleted the files
+        Assert.IsFalse(FtpFileExistsInDummyDir("file1.txt"));
+        Assert.IsFalse(FtpFileExistsInDummyDir("file2.txt"));
+        Assert.IsFalse(FtpFileExistsInDummyDir("file3.txt"));
     }
 
     [Test]
@@ -47,9 +49,11 @@ public class SourceOperationTests : DownloadFilesTestBase
         
         Assert.IsTrue(result.Success);
         Assert.AreEqual(3, result.SuccessfulTransferCount);    
-        Assert.IsTrue(FtpFileExists("file1.txt"));
-        Assert.IsTrue(FtpFileExists("file2.txt"));
-        Assert.IsTrue(FtpFileExists("file3.txt"));
+        
+        // Make sure nothing happened to files
+        Assert.IsTrue(FtpFileExistsInDummyDir("file1.txt"));
+        Assert.IsTrue(FtpFileExistsInDummyDir("file2.txt"));
+        Assert.IsTrue(FtpFileExistsInDummyDir("file3.txt"));
     }
 
     [Test]
@@ -59,7 +63,7 @@ public class SourceOperationTests : DownloadFilesTestBase
         CreateDummyFileInFtpDir("file1.txt");
         CreateDummyFileInFtpDir("file2.txt");
         CreateDummyFileInFtpDir("file3.txt");
-        var moveToFullPath = CreateDummyFtpDir();
+        var moveToFullPath = CreateFtpDir(Guid.NewGuid().ToString());
         var moveToSubdirName = Path.GetFileName(moveToFullPath);
         
         var result = CallDownloadFiles(
@@ -72,9 +76,9 @@ public class SourceOperationTests : DownloadFilesTestBase
         Assert.AreEqual(3, result.SuccessfulTransferCount);
         
         // Check that original files are gone
-        Assert.IsFalse(FtpFileExists("file1.txt"));
-        Assert.IsFalse(FtpFileExists("file2.txt"));
-        Assert.IsFalse(FtpFileExists("file3.txt"));
+        Assert.IsFalse(FtpFileExistsInDummyDir("file1.txt"));
+        Assert.IsFalse(FtpFileExistsInDummyDir("file2.txt"));
+        Assert.IsFalse(FtpFileExistsInDummyDir("file3.txt"));
         
         // Check that they are moved to new dir
         Assert.IsTrue(FtpFileExists("file1.txt", moveToSubdirName));
@@ -84,7 +88,7 @@ public class SourceOperationTests : DownloadFilesTestBase
     
 
     [Test]
-    public void SourceOperation_Rename()
+    public void SourceOperation_RenameWithMacro()
     {
         // Setup
         CreateDummyFileInFtpDir("file1.txt");
@@ -94,16 +98,16 @@ public class SourceOperationTests : DownloadFilesTestBase
         var result = CallDownloadFiles(
             SourceOperation.Rename,
             "file*.txt",
-            $"/{nameof(SourceOperation_Rename)}",
+            $"/{nameof(SourceOperation_RenameWithMacro)}",
             renameTo: "%Year%-%SourceFileName%%SourceFileExtension%");
         
         Assert.IsTrue(result.Success, result.UserResultMessage);
         Assert.AreEqual(3, result.SuccessfulTransferCount);
 
         var year = DateTime.Today.Year;
-        Assert.IsTrue(FtpFileExists($"{year}-file1.txt"));
-        Assert.IsTrue(FtpFileExists($"{year}-file2.txt"));
-        Assert.IsTrue(FtpFileExists($"{year}-file3.txt"));
+        Assert.IsTrue(FtpFileExistsInDummyDir($"{year}-file1.txt"));
+        Assert.IsTrue(FtpFileExistsInDummyDir($"{year}-file2.txt"));
+        Assert.IsTrue(FtpFileExistsInDummyDir($"{year}-file3.txt"));
     }
     
     private Result CallDownloadFiles(
@@ -113,7 +117,7 @@ public class SourceOperationTests : DownloadFilesTestBase
     {
         var source = new Source
         {
-            Directory = FtpSubDirName, FileName = sourceFileName, Operation = sourceOperation,
+            Directory = DummyFtpSubDirName, FileName = sourceFileName, Operation = sourceOperation,
             DirectoryToMoveAfterTransfer = moveToDir,
             FileNameAfterTransfer = renameTo
         };
