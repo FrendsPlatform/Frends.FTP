@@ -78,7 +78,6 @@ public class SourceOperationTests : UploadFilesTestBase
         Assert.IsTrue(DummyFileExists("file2.txt", moveTo));
         Assert.IsTrue(DummyFileExists("file3.txt", moveTo));
     }
-    
 
     [Test]
     public void SourceOperation_Rename()

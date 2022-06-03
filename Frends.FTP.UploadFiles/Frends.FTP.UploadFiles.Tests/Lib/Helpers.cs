@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using FluentFTP;
 using Frends.FTP.UploadFiles.TaskConfiguration;
 
 namespace Frends.FTP.UploadFiles.Tests;
@@ -34,5 +36,17 @@ internal static class Helpers
         };
 
         return connection;
+    }
+
+    internal static string GetFileFromFtp(string subDir, string file)
+    {
+        var tmpFile = Path.GetTempFileName();
+        using (var client = new FtpClient(FtpHost, FtpPort, FtpUsername, FtpPassword))
+        {
+            client.Connect();
+            client.SetWorkingDirectory(subDir);
+            client.DownloadFile(tmpFile,file);
+            return File.ReadAllText(tmpFile);
+        }
     }
 }

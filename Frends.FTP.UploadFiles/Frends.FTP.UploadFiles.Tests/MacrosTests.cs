@@ -36,13 +36,7 @@ public class MacrosTests
         File.WriteAllText(path, "hello");
         return path;
     }
-
-    private bool LocalFileExists(string dir, string file)
-    {
-        var path = Path.Combine(Path.GetTempPath(), dir, file);
-        return File.Exists(path);
-    }
-
+    
     protected bool FtpFileExists(string fileName, string subDir)
     {
         return File.Exists(Path.Combine(_dockerDataVolumePath, subDir, fileName));

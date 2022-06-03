@@ -123,21 +123,33 @@ namespace Frends.FTP.UploadFiles.Definitions
         /// </summary>
         private void AppendDestinationFile()
         {
+            var doRename = _batchContext.Options.RenameDestinationFileDuringTransfer;
+            
             Trace(
                 TransferState.AppendToDestinationFile,
                 "Appending file {0} to existing file {1}",
                 SourceFile.Name,
                 DestinationFileNameWithMacrosExpanded);
-
-            // Determine path to use to the destination file.
-            var path = (_destinationDirectoryWithMacrosExpanded.Contains("/")) 
-                ? $"{_destinationDirectoryWithMacrosExpanded}/{DestinationFileNameWithMacrosExpanded}"
-                : Path.Combine(_destinationDirectoryWithMacrosExpanded, DestinationFileNameWithMacrosExpanded);
-
-            // If destination rename during transfer is enabled, use that instead 
-            if (!string.IsNullOrEmpty(_destinationFileDuringTransfer))
-                path = _destinationFileDuringTransfer;
-            _client.UploadFile(_sourceFileDuringTransfer, path, FtpRemoteExists.AddToEnd);
+            
+            // No renaming needed - just do the native call with client
+            if (!doRename)
+            {
+                _client.UploadFile(_sourceFileDuringTransfer, DestinationFileNameWithMacrosExpanded, FtpRemoteExists.AddToEnd);
+            }
+            else
+            {
+                var destinationFileDuringTransfer = Util.CreateUniqueFileName();
+                
+                // Move file to temp location if file already exists
+                if (_client.FileExists(DestinationFileNameWithMacrosExpanded))
+                    _client.MoveFile(DestinationFileNameWithMacrosExpanded, destinationFileDuringTransfer);
+                
+                // Do the upload to temp location
+                _client.UploadFile(_sourceFileDuringTransfer, destinationFileDuringTransfer, FtpRemoteExists.AddToEnd);
+                
+                // Move file back to original location
+                _client.MoveFile(destinationFileDuringTransfer, DestinationFileNameWithMacrosExpanded);
+            }
         }
 
         private void PutDestinationFile(bool removeExisting = false)

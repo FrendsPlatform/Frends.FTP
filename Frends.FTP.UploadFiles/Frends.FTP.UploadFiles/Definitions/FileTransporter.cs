@@ -28,9 +28,6 @@ namespace Frends.FTP.UploadFiles.Definitions
         private readonly string _sourceDirectoryWithMacrosExpanded;
         private readonly string _destinationDirectoryWithMacrosExpanded;
 
-        /// <summary>
-        ///     Constructor for SFTP file transfers
-        /// </summary>
         public FileTransporter(IFtpLogger logger, BatchContext context, Guid instanceId)
         {
             _logger = logger;
@@ -46,19 +43,8 @@ namespace Frends.FTP.UploadFiles.Definitions
             _filePaths = ConvertObjectToStringArray(context.Source.FilePaths);
         }
 
-        /// <summary>
-        /// List of transfer results.
-        /// </summary>
         private List<SingleFileTransferResult> Result { get; }
 
-        /// <summary>
-        /// Executes file transfers
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        /// <exception cref="DirectoryNotFoundException"></exception>
-        /// <exception cref="FileNotFoundException"></exception>
-        /// <exception cref="ArgumentException"></exception>
         public FileTransferResult Run(CancellationToken cancellationToken)
         {
             var userResultMessage = "";

@@ -11,9 +11,9 @@ public class UploadFilesTestBase
 {
     protected string Dir;
     
-    protected void CreateDummyFileInDummyDir(string fileName)
+    protected void CreateDummyFileInDummyDir(string fileName, string contents = "test")
     {
-        File.WriteAllText(Path.Combine(Dir, fileName), "test");
+        File.WriteAllText(Path.Combine(Dir, fileName), contents);
     }
 
     protected bool DummyFileExists(string fileName, string dir = null)
