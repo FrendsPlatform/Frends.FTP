@@ -6,7 +6,7 @@ namespace Frends.FTP.DownloadFiles.Tests.Lib;
 
 public class DownloadFilesTestBase
 {
-    private string _dockerDataVolumePath = "..\\..\\..\\DockerVolumes\\data";
+    private readonly string _dockerDataVolumePath = Path.GetFullPath("../../../DockerVolumes/data");
     private string _ftpSubDirFullPath;
     protected string DummyFtpSubDirName;
     protected string LocalDirFullPath;

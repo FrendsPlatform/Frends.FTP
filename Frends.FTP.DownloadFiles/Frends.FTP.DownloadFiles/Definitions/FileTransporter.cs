@@ -22,6 +22,7 @@ namespace Frends.FTP.DownloadFiles.Definitions
         private readonly BatchContext _batchContext;
         private readonly RenamingPolicy _renamingPolicy;
         private readonly string _sourceDirectoryWithMacrosExpanded;
+        private readonly string _destinationDirectoryWithMacrosExpanded;
 
         public FileTransporter(IFtpLogger logger, BatchContext context, Guid instanceId)
         {
@@ -29,6 +30,7 @@ namespace Frends.FTP.DownloadFiles.Definitions
             _batchContext = context;
             _renamingPolicy = new RenamingPolicy(_batchContext.Info.TransferName, instanceId);
 
+            _destinationDirectoryWithMacrosExpanded = _renamingPolicy.ExpandDirectoryForMacros(context.Destination.Directory);
             _sourceDirectoryWithMacrosExpanded = _renamingPolicy.ExpandDirectoryForMacros(context.Source.Directory);
 
             Result = new List<SingleFileTransferResult>();
@@ -98,18 +100,18 @@ namespace Frends.FTP.DownloadFiles.Definitions
         private bool CreateDestinationDirIfNeeded(out FileTransferResult fileTransferResult)
         {
             string userResultMessage;
-            if (!Directory.Exists(_batchContext.Destination.Directory))
+            if (!Directory.Exists(_destinationDirectoryWithMacrosExpanded))
             {
                 if (_batchContext.Options.CreateDestinationDirectories)
                 {
                     try
                     {
-                        Directory.CreateDirectory(_batchContext.Destination.Directory);
+                        Directory.CreateDirectory(_destinationDirectoryWithMacrosExpanded);
                     }
                     catch (Exception ex)
                     {
                         userResultMessage =
-                            $"Error while creating destination directory '{_batchContext.Destination.Directory}': {ex.Message}";
+                            $"Error while creating destination directory '{_destinationDirectoryWithMacrosExpanded}': {ex.Message}";
                         {
                             fileTransferResult = FormFailedFileTransferResult(userResultMessage);
                             return false;
@@ -119,7 +121,7 @@ namespace Frends.FTP.DownloadFiles.Definitions
                 else
                 {
                     userResultMessage =
-                        $"Destination directory '{_batchContext.Destination.Directory}' was not found.";
+                        $"Destination directory '{_destinationDirectoryWithMacrosExpanded}' was not found.";
                     {
                         fileTransferResult = FormFailedFileTransferResult(userResultMessage);
                         return false;
