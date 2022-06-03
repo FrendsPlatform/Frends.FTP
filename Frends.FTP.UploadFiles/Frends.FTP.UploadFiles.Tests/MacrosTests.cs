@@ -21,7 +21,8 @@ namespace Frends.FTP.UploadFiles.Tests;
 [TestFixture]
 public class MacrosTests
 {
-    private string _dockerDataVolumePath = "..\\..\\..\\DockerVolumes\\data";
+    private readonly string _dockerDataVolumePath = Path.GetFullPath("..\\..\\..\\DockerVolumes\\data");
+    
     private string CreateLocalDir(string name)
     {
         var path = Path.Combine(Path.GetTempPath(), name);
@@ -67,7 +68,7 @@ public class MacrosTests
         
         Assert.IsTrue(result.Success, result.UserResultMessage);
         Assert.AreEqual(1, result.SuccessfulTransferCount);
-        Assert.IsTrue(FtpFileExists("file1.txt", nameof(MacrosWorkInSourceDirectory)));
+        Assert.IsTrue(FtpFileExists("file1.txt", nameof(MacrosWorkInSourceDirectory)), result.UserResultMessage);
     }
     
     [Test]
@@ -90,7 +91,7 @@ public class MacrosTests
         
         Assert.IsTrue(result.Success, result.UserResultMessage);
         Assert.AreEqual(1, result.SuccessfulTransferCount);
-        Assert.IsTrue(FtpFileExists("file1.txt", destinationWithMacrosExpanded));
+        Assert.IsTrue(FtpFileExists("file1.txt", destinationWithMacrosExpanded), result.UserResultMessage);
     }
     
     [Test]
@@ -114,7 +115,7 @@ public class MacrosTests
         
         Assert.IsTrue(result.Success, result.UserResultMessage);
         Assert.AreEqual(1, result.SuccessfulTransferCount);
-        Assert.IsTrue(FtpFileExists(destinationFileNameWithMacrosExpanded, nameof(MacrosWorkInDestinationFileName)));
+        Assert.IsTrue(FtpFileExists(destinationFileNameWithMacrosExpanded, nameof(MacrosWorkInDestinationFileName)), result.UserResultMessage);
     }
     
     private Result CallUploadFiles(
