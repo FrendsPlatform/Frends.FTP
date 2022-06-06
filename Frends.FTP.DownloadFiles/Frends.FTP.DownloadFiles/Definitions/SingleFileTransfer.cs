@@ -154,7 +154,7 @@ namespace Frends.FTP.DownloadFiles.Definitions
             var renamedFile = Path.Combine(workdir, uniqueFileName);
 
             Trace(TransferState.RenameSourceFileBeforeTransfer, "Renaming source file {0} to temporary file name {1} before transfer", SourceFile.Name, uniqueFileName);
-            File.Move(SourceFile.FullPath, renamedFile);
+            _client.MoveFile(SourceFile.Name, renamedFile);
 
             _sourceFileDuringTransfer = renamedFile;
         }
@@ -243,11 +243,9 @@ namespace Frends.FTP.DownloadFiles.Definitions
                     {
                         Trace(
                             TransferState.RestoreSourceFile,
-                            "Restoring source file from {0} to the original name {1}",
-                            Path.GetFileName(_sourceFileDuringTransfer),
-                            Path.GetFileName(SourceFile.FullPath));
+                            $"Restoring source file from {_sourceFileDuringTransfer} to the original name {SourceFile.Name}");
 
-                        _client.MoveFile(filePath, SourceFile.FullPath);
+                        _client.MoveFile(_sourceFileDuringTransfer, SourceFile.Name);
                     }
                     break;
             }

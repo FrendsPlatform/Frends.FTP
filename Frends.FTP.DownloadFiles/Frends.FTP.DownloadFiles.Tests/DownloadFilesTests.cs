@@ -33,6 +33,33 @@ namespace Frends.FTP.DownloadFiles.Tests
             Assert.AreEqual(1, result.SuccessfulTransferCount);
             Assert.IsTrue(LocalFileExists("file1.txt"), result.UserResultMessage);
         }
+        
+        [Test]
+        public void DownloadFTP_RenameSourceFileBeforeTransfer()
+        {
+            // Setup
+            FtpHelper.CreateFileOnFTP(FtpDir, "file1.txt");
+            var source = new Source { Directory = FtpDir, FileName = "file1.txt", Operation = SourceOperation.Nothing };
+            var destination = new Destination { Directory = LocalDirFullPath, Action = DestinationAction.Overwrite };
+            var connection = new Connection
+            {
+                Address = FtpHelper.FtpHost,
+                UserName = FtpHelper.FtpUsername,
+                Password = FtpHelper.FtpPassword,
+                Port = FtpHelper.FtpPort
+            };
+
+            // Test and assert
+            var result = FTP.DownloadFiles(
+                source, destination, connection, new Options { RenameSourceFileBeforeTransfer = true },
+                new Info(), new CancellationToken());
+            Assert.IsTrue(result.Success, result.UserResultMessage);
+            Assert.AreEqual(1, result.SuccessfulTransferCount);
+            Assert.IsTrue(LocalFileExists("file1.txt"), result.UserResultMessage);
+            
+            // Make sure file still exists on FTP
+            Assert.IsTrue(FtpHelper.FileExistsOnFTP(FtpDir, "file1.txt"));
+        }
 
         [Test]
         public void DownloadFTPS_CorrectFingerprint()

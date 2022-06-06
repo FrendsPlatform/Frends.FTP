@@ -99,7 +99,7 @@ public class MacrosTests : DownloadFilesTestBase
                 Action = DestinationAction.Overwrite,
                 FileName = targetFileName
             };
-        var options = new Options { CreateDestinationDirectories = true };
+        var options = new Options { CreateDestinationDirectories = true, RenameSourceFileBeforeTransfer = true };
         var connection = FtpHelper.GetFtpsConnection();
 
         var result = FTP.DownloadFiles(source, destination, connection, options, new Info(), new CancellationToken());
