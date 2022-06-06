@@ -17,81 +17,81 @@ public class SourceOperationTests : DownloadFilesTestBase
     {
         // Setup
         var guid = Guid.NewGuid().ToString();
-        Helpers.CreateFileOnFTP(guid, "file1.txt");
-        Helpers.CreateFileOnFTP(guid, "file2.txt");
-        Helpers.CreateFileOnFTP(guid, "file3.txt");
+        FtpHelper.CreateFileOnFTP(guid, "file1.txt");
+        FtpHelper.CreateFileOnFTP(guid, "file2.txt");
+        FtpHelper.CreateFileOnFTP(guid, "file3.txt");
         
         var result = CallDownloadFiles(
             SourceOperation.Delete,
             guid,
             "file*.txt",
-            nameof(SourceOperation_Delete));
+            LocalDirFullPath);
         
         Assert.IsTrue(result.Success);
         Assert.AreEqual(3, result.SuccessfulTransferCount);
         
         // Make sure we deleted the files
-        Assert.IsFalse(Helpers.FileExistsOnFTP(guid, "file1.txt"));
-        Assert.IsFalse(Helpers.FileExistsOnFTP(guid, "file2.txt"));
-        Assert.IsFalse(Helpers.FileExistsOnFTP(guid, "file3.txt"));
+        Assert.IsFalse(FtpHelper.FileExistsOnFTP(guid, "file1.txt"));
+        Assert.IsFalse(FtpHelper.FileExistsOnFTP(guid, "file2.txt"));
+        Assert.IsFalse(FtpHelper.FileExistsOnFTP(guid, "file3.txt"));
     }
 
     [Test]
     public void SourceOperation_Nothing()
     {
         // Setup
-        var guid = Guid.NewGuid().ToString();
-        Helpers.CreateFileOnFTP(guid, "file1.txt");
-        Helpers.CreateFileOnFTP(guid, "file2.txt");
-        Helpers.CreateFileOnFTP(guid, "file3.txt");
+        FtpHelper.CreateFileOnFTP(FtpDir, "file1.txt");
+        FtpHelper.CreateFileOnFTP(FtpDir, "file2.txt");
+        FtpHelper.CreateFileOnFTP(FtpDir, "file3.txt");
         
         var result = CallDownloadFiles(
             SourceOperation.Nothing,
-            guid,
+            FtpDir,
             "file*.txt",
-            nameof(SourceOperation_Nothing));
+            LocalDirFullPath);
         
         Assert.IsTrue(result.Success);
         Assert.AreEqual(3, result.SuccessfulTransferCount);    
         
         // Make sure nothing happened to files
-        Assert.IsTrue(Helpers.FileExistsOnFTP(guid, "file1.txt"));
-        Assert.IsTrue(Helpers.FileExistsOnFTP(guid, "file2.txt"));
-        Assert.IsTrue(Helpers.FileExistsOnFTP(guid, "file3.txt"));
+        Assert.IsTrue(FtpHelper.FileExistsOnFTP(FtpDir, "file1.txt"));
+        Assert.IsTrue(FtpHelper.FileExistsOnFTP(FtpDir, "file2.txt"));
+        Assert.IsTrue(FtpHelper.FileExistsOnFTP(FtpDir, "file3.txt"));
     }
 
     [Test]
     public void SourceOperation_Move()
     {
         // Setup
-        var guid = Guid.NewGuid().ToString();
-        Helpers.CreateFileOnFTP(guid, "file1.txt");
-        Helpers.CreateFileOnFTP(guid, "file2.txt");
-        Helpers.CreateFileOnFTP(guid, "file3.txt");
-        var moveToFullPath = Guid.NewGuid().ToString();
+        var FtpDir = Guid.NewGuid().ToString();
+        FtpHelper.CreateFileOnFTP(FtpDir, "file1.txt");
+        FtpHelper.CreateFileOnFTP(FtpDir, "file2.txt");
+        FtpHelper.CreateFileOnFTP(FtpDir, "file3.txt");
+        var moveToSubDir = Guid.NewGuid().ToString();
+        FtpHelper.CreateDirectoryOnFTP(moveToSubDir);
         
         var result = CallDownloadFiles(
             SourceOperation.Move,
-            guid,
+            FtpDir,
             "file*.txt",
-            nameof(SourceOperation_Move),
-            moveToFullPath);
+            LocalDirFullPath,
+            $"/{moveToSubDir}");
         
         Assert.IsTrue(result.Success, result.UserResultMessage);
         Assert.AreEqual(3, result.SuccessfulTransferCount);
         
         // Check that original files are gone
-        Assert.IsFalse(Helpers.FileExistsOnFTP(guid, "file1.txt"));
-        Assert.IsFalse(Helpers.FileExistsOnFTP(guid, "file2.txt"));
-        Assert.IsFalse(Helpers.FileExistsOnFTP(guid, "file3.txt"));
+        Assert.IsFalse(FtpHelper.FileExistsOnFTP(FtpDir, "file1.txt"));
+        Assert.IsFalse(FtpHelper.FileExistsOnFTP(FtpDir, "file2.txt"));
+        Assert.IsFalse(FtpHelper.FileExistsOnFTP(FtpDir, "file3.txt"));
         
         // Check that they are moved to new dir
-        Assert.IsFalse(Helpers.FileExistsOnFTP(guid, "file1.txt"));
-        Assert.IsFalse(Helpers.FileExistsOnFTP(guid, "file2.txt"));
-        Assert.IsFalse(Helpers.FileExistsOnFTP(guid, "file3.txt"));
-        Assert.IsTrue(Helpers.FileExistsOnFTP("file1.txt", moveToFullPath));
-        Assert.IsTrue(Helpers.FileExistsOnFTP("file2.txt", moveToFullPath));
-        Assert.IsTrue(Helpers.FileExistsOnFTP("file3.txt", moveToFullPath));
+        Assert.IsFalse(FtpHelper.FileExistsOnFTP(FtpDir, "file1.txt"));
+        Assert.IsFalse(FtpHelper.FileExistsOnFTP(FtpDir, "file2.txt"));
+        Assert.IsFalse(FtpHelper.FileExistsOnFTP(FtpDir, "file3.txt"));
+        Assert.IsTrue(FtpHelper.FileExistsOnFTP(moveToSubDir, "file1.txt"));
+        Assert.IsTrue(FtpHelper.FileExistsOnFTP(moveToSubDir, "file2.txt"));
+        Assert.IsTrue(FtpHelper.FileExistsOnFTP(moveToSubDir, "file3.txt"));
     }
     
 
@@ -99,25 +99,27 @@ public class SourceOperationTests : DownloadFilesTestBase
     public void SourceOperation_RenameWithMacro()
     {
         // Setup
-        var guid = Guid.NewGuid().ToString();
-        Helpers.CreateFileOnFTP(guid, "file1.txt");
-        Helpers.CreateFileOnFTP(guid, "file2.txt");
-        Helpers.CreateFileOnFTP(guid, "file3.txt");
+        FtpHelper.CreateFileOnFTP(FtpDir, "file1.txt");
+        FtpHelper.CreateFileOnFTP(FtpDir, "file2.txt");
+        FtpHelper.CreateFileOnFTP(FtpDir, "file3.txt");
         
         var result = CallDownloadFiles(
             SourceOperation.Rename,
-            guid,
+            FtpDir,
             "file*.txt",
-            $"/{nameof(SourceOperation_RenameWithMacro)}",
+            LocalDirFullPath,
             renameTo: "%Year%-%SourceFileName%%SourceFileExtension%");
         
         Assert.IsTrue(result.Success, result.UserResultMessage);
         Assert.AreEqual(3, result.SuccessfulTransferCount);
 
         var year = DateTime.Today.Year;
-        Assert.IsFalse(Helpers.FileExistsOnFTP(guid, $"{year}-file1.txt"));
-        Assert.IsFalse(Helpers.FileExistsOnFTP(guid, $"{year}-file2.txt"));
-        Assert.IsFalse(Helpers.FileExistsOnFTP(guid, $"{year}-file3.txt"));
+        Assert.IsFalse(FtpHelper.FileExistsOnFTP(FtpDir, $"file1.txt"));
+        Assert.IsFalse(FtpHelper.FileExistsOnFTP(FtpDir, $"file2.txt"));
+        Assert.IsFalse(FtpHelper.FileExistsOnFTP(FtpDir, $"file3.txt"));
+        Assert.IsTrue(FtpHelper.FileExistsOnFTP(FtpDir, $"{year}-file1.txt"));
+        Assert.IsTrue(FtpHelper.FileExistsOnFTP(FtpDir, $"{year}-file2.txt"));
+        Assert.IsTrue(FtpHelper.FileExistsOnFTP(FtpDir, $"{year}-file3.txt"));
     }
     
     private Result CallDownloadFiles(
@@ -137,7 +139,7 @@ public class SourceOperationTests : DownloadFilesTestBase
         var destination = new Destination
             { Directory = targetDir, Action = DestinationAction.Overwrite };
         var options = new Options { CreateDestinationDirectories = true };
-        var connection = Helpers.GetFtpsConnection();
+        var connection = FtpHelper.GetFtpsConnection();
 
         var result = FTP.DownloadFiles(source, destination, connection, options, new Info(), new CancellationToken());
         return result;

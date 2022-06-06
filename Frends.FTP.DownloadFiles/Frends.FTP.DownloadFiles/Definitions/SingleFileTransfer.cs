@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using FluentFTP;
 using Frends.FTP.DownloadFiles.Enums;
 using Frends.FTP.DownloadFiles.Logging;
@@ -51,6 +52,9 @@ namespace Frends.FTP.DownloadFiles.Definitions
                 {
                     switch (_batchContext.Destination.Action)
                     {
+                        case DestinationAction.Append:
+                            AppendDestinationFile();
+                            break;
                         case DestinationAction.Overwrite:
                             PutDestinationFile(removeExisting: true);
                             break;
@@ -77,6 +81,49 @@ namespace Frends.FTP.DownloadFiles.Definitions
             }
             CleanUpFiles();
             return _result;
+        }
+
+        private void AppendDestinationFile()
+        {
+            var doRename = _batchContext.Options.RenameDestinationFileDuringTransfer;
+            
+            Trace(
+                TransferState.AppendToDestinationFile,
+                "Appending file {0} to existing file {1}",
+                SourceFile.Name,
+                DestinationFileNameWithMacrosExpanded);
+            
+            // No renaming needed - just do the native call with client
+            if (!doRename)
+            {
+                var tmp = Path.GetTempFileName();
+                _client.DownloadFile(tmp, _sourceFileDuringTransfer);
+                Append(DestinationFileNameWithMacrosExpanded, tmp);
+            }
+            else
+            {
+                var destinationFileDuringTransfer = Util.CreateUniqueFileName();
+                var fullDestTempFilePath = GetDestinationFilePath(destinationFileDuringTransfer);
+                
+                // Move file to temp location if file already exists
+                var fullDestFilePath = GetDestinationFilePath(DestinationFileNameWithMacrosExpanded);
+                if (File.Exists(fullDestFilePath))
+                    File.Move(fullDestFilePath, fullDestTempFilePath);
+                
+                // Do the download to temp location
+                var tmp = Path.GetTempFileName();
+                _client.DownloadFile(tmp, _sourceFileDuringTransfer);
+                Append(destinationFileDuringTransfer, tmp);
+                
+                // Move file back to original location
+                File.Move(fullDestTempFilePath, fullDestFilePath);
+            }
+        }
+
+        private void Append(string fileName, string fileToAppendFrom)
+        {
+            var fullDestinationFilePath = GetDestinationFilePath(fileName);
+            File.AppendAllText(fullDestinationFilePath, File.ReadAllText(fileToAppendFrom));
         }
 
         private bool DestinationFileExists(string fileName)
@@ -145,7 +192,9 @@ namespace Frends.FTP.DownloadFiles.Definitions
                 _destinationFileDuringTransfer,
                 DestinationFileNameWithMacrosExpanded);
 
-            File.Move(_destinationFileDuringTransfer, GetDestinationFilePath(DestinationFileNameWithMacrosExpanded));
+            File.Move(
+                GetDestinationFilePath(_destinationFileDuringTransfer),
+                GetDestinationFilePath(DestinationFileNameWithMacrosExpanded));
         }
 
         /// <summary>
@@ -326,17 +375,16 @@ namespace Frends.FTP.DownloadFiles.Definitions
                 return true;
             }
 
-            if (_batchContext.Source.Operation == SourceOperation.Move)
+            switch (_batchContext.Source.Operation)
             {
-                return true;
+                case SourceOperation.Move:
+                case SourceOperation.Rename:
+                    return true;
+                case SourceOperation.Delete:
+                case SourceOperation.Nothing:
+                default:
+                    return false;
             }
-
-            if (_batchContext.Source.Operation == SourceOperation.Rename)
-            {
-                return true;
-            }
-
-            return false;
         }
 
         private void Trace(TransferState state, string format, params object[] args)

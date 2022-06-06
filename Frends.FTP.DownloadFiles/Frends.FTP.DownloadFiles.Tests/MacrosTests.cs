@@ -27,7 +27,7 @@ public class MacrosTests : DownloadFilesTestBase
     {
         // Setup
         var year = DateTime.Now.Year;
-        Helpers.CreateFileOnFTP($"dir{year}", "file1.txt");
+        FtpHelper.CreateFileOnFTP($"dir{year}", "file1.txt");
         
         var result = CallDownloadFiles(
             "dir%Year%",
@@ -44,12 +44,12 @@ public class MacrosTests : DownloadFilesTestBase
     {
         var year = DateTime.Now.Year;
         var guid = Guid.NewGuid().ToString();
-        Helpers.CreateFileOnFTP(guid, "file1.txt");
+        FtpHelper.CreateFileOnFTP(FtpDir, "file1.txt");
         var destinationDirWithMacros = Path.Combine(Path.GetTempPath(), $"transfer-%Year%-{guid}");
         var destinationDirWithMacrosExpanded = Path.Combine(Path.GetTempPath(), $"transfer-{year}-{guid}");
         
         var result = CallDownloadFiles(
-            guid,
+            FtpDir,
             "file1.txt",
             destinationDirWithMacros);
         
@@ -63,12 +63,12 @@ public class MacrosTests : DownloadFilesTestBase
     {
         var year = DateTime.Now.Year;
         var guid = Guid.NewGuid().ToString();
-        Helpers.CreateFileOnFTP(guid, "file1.txt");
+        FtpHelper.CreateFileOnFTP(FtpDir, "file1.txt");
         var destinationFileNameWithMacros = $"f-%Year%-%SourceFileName%-{guid}";
         var destinationFileNameWithMacrosExpanded = $"f-{year}-file1-{guid}";
         
         var result = CallDownloadFiles(
-            guid,
+            FtpDir,
             "file1.txt",
             LocalDirFullPath,
             destinationFileNameWithMacros);
@@ -100,7 +100,7 @@ public class MacrosTests : DownloadFilesTestBase
                 FileName = targetFileName
             };
         var options = new Options { CreateDestinationDirectories = true };
-        var connection = Helpers.GetFtpsConnection();
+        var connection = FtpHelper.GetFtpsConnection();
 
         var result = FTP.DownloadFiles(source, destination, connection, options, new Info(), new CancellationToken());
         return result;

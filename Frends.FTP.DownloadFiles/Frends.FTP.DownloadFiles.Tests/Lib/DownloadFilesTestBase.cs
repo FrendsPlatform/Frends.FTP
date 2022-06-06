@@ -7,6 +7,20 @@ namespace Frends.FTP.DownloadFiles.Tests.Lib;
 public class DownloadFilesTestBase
 {
     protected string LocalDirFullPath;
+    protected static FtpHelper FtpHelper;
+    protected string FtpDir;
+
+    [OneTimeSetUp]
+    public void OneTimeSetUp()
+    {
+        FtpHelper = new FtpHelper();
+    }
+
+    [OneTimeTearDown]
+    public void OneTimeTearDown()
+    {
+        FtpHelper.Dispose();
+    }
     
     protected bool LocalFileExists(string fileName, string subDir = null)
     {
@@ -25,11 +39,14 @@ public class DownloadFilesTestBase
     public void SetUp()
     {
         LocalDirFullPath = CreateLocalDir(Guid.NewGuid().ToString());
+        FtpDir = Guid.NewGuid().ToString();
+        FtpHelper.CreateDirectoryOnFTP(FtpDir);
     }
 
     [TearDown]
     public void TearDown()
     {
         Directory.Delete(LocalDirFullPath, true);
+        FtpHelper.DeleteDirectoryOnFTP(FtpDir);
     }
 }

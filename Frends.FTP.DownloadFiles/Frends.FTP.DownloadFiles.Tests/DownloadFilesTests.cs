@@ -16,16 +16,15 @@ namespace Frends.FTP.DownloadFiles.Tests
         public void DownloadFTP()
         {
             // Setup
-            var guid = Guid.NewGuid().ToString();
-            Helpers.CreateFileOnFTP(guid, "file1.txt");
-            var source = new Source { Directory = guid, FileName = "file1.txt" };
+            FtpHelper.CreateFileOnFTP(FtpDir, "file1.txt");
+            var source = new Source { Directory = FtpDir, FileName = "file1.txt" };
             var destination = new Destination { Directory = LocalDirFullPath, Action = DestinationAction.Overwrite };
             var connection = new Connection
             {
-                Address = Helpers.FtpHost,
-                UserName = Helpers.FtpUsername,
-                Password = Helpers.FtpPassword,
-                Port = Helpers.FtpPort
+                Address = FtpHelper.FtpHost,
+                UserName = FtpHelper.FtpUsername,
+                Password = FtpHelper.FtpPassword,
+                Port = FtpHelper.FtpPort
             };
 
             // Test and assert
@@ -39,9 +38,8 @@ namespace Frends.FTP.DownloadFiles.Tests
         public void DownloadFTPS_CorrectFingerprint()
         {
             // Setup
-            var guid = Guid.NewGuid().ToString();
-            Helpers.CreateFileOnFTP(guid, "file1.txt");
-            var source = new Source { Directory = guid, FileName = "file1.txt" };
+            FtpHelper.CreateFileOnFTP(FtpDir, "file1.txt");
+            var source = new Source { Directory = FtpDir, FileName = "file1.txt" };
             var destination = new Destination { Directory = LocalDirFullPath, Action = DestinationAction.Overwrite };
             
             // Our test certificate hashes:
@@ -49,10 +47,10 @@ namespace Frends.FTP.DownloadFiles.Tests
             // SHA-1: d9:11:26:29:84:de:9c:c3:2a:35:18:a1:09:4c:d2:42:49:ea:5c:49
             var connection = new Connection
             {
-                Address = Helpers.FtpHost,
-                UserName = Helpers.FtpUsername,
-                Password = Helpers.FtpPassword,
-                Port = Helpers.FtpPort,
+                Address = FtpHelper.FtpHost,
+                UserName = FtpHelper.FtpUsername,
+                Password = FtpHelper.FtpPassword,
+                Port = FtpHelper.FtpPort,
                 SslMode = FtpsSslMode.Explicit,
                 UseFTPS = true,
                 CertificateHashStringSHA1 = "D911262984DE9CC32A3518A1094CD24249EA5C49"
@@ -70,9 +68,8 @@ namespace Frends.FTP.DownloadFiles.Tests
         public void DownloadFTPS_IncorrectFingerprint()
         {
             // Setup
-            var guid = Guid.NewGuid().ToString();
-            Helpers.CreateFileOnFTP(guid, "file1.txt");
-            var source = new Source { Directory = guid, FileName = "file1.txt" };
+            FtpHelper.CreateFileOnFTP(FtpDir, "file1.txt");
+            var source = new Source { Directory = FtpDir, FileName = "file1.txt" };
             var destination = new Destination { Directory = LocalDirFullPath, Action = DestinationAction.Overwrite };
             
             // Our test certificate hashes:
@@ -80,10 +77,10 @@ namespace Frends.FTP.DownloadFiles.Tests
             // SHA-1: d9:11:26:29:84:de:9c:c3:2a:35:18:a1:09:4c:d2:42:49:ea:5c:49
             var connection = new Connection
             {
-                Address = Helpers.FtpHost,
-                UserName = Helpers.FtpUsername,
-                Password = Helpers.FtpPassword,
-                Port = Helpers.FtpsPort,
+                Address = FtpHelper.FtpHost,
+                UserName = FtpHelper.FtpUsername,
+                Password = FtpHelper.FtpPassword,
+                Port = FtpHelper.FtpsPort,
                 SslMode = FtpsSslMode.Explicit,
                 UseFTPS = true,
                 CertificateHashStringSHA1 = "nope"

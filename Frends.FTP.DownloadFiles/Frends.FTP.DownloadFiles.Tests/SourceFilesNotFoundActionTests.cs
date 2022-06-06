@@ -62,16 +62,14 @@ public class SourceFilesNotFoundActionTests : DownloadFilesTestBase
     
     private Result CallDownloadFiles(SourceNotFoundAction sourceNotFoundAction, string sourceFileName, string targetDir)
     {
-        var guid = Guid.NewGuid().ToString();
-        Helpers.CreateDirectoryOnFTP(guid);
         var source = new Source
         {
-            Directory = guid, FileName = sourceFileName, Operation = SourceOperation.Delete,
+            Directory = FtpDir, FileName = sourceFileName, Operation = SourceOperation.Delete,
             NotFoundAction = sourceNotFoundAction
         };
         var destination = new Destination
             { Directory = targetDir, Action = DestinationAction.Overwrite };
-        var connection = Helpers.GetFtpConnection();
+        var connection = FtpHelper.GetFtpConnection();
 
         var result = FTP.DownloadFiles(
             source, destination, connection, 

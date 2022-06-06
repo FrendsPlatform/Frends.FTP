@@ -3,6 +3,7 @@
     internal enum TransferState
     {
         RenameSourceFileBeforeTransfer,
+        AppendToDestinationFile,
         PutFile,
         SourceOperationMove,
         SourceOperationRename,
