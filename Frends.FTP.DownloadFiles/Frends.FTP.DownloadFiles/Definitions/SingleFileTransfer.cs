@@ -17,6 +17,7 @@ namespace Frends.FTP.DownloadFiles.Definitions
         private TransferState _state;
         private string _sourceFileDuringTransfer;
         private string _destinationFileDuringTransfer;
+        private readonly string _destinationDirectoryWithMacrosExpanded;
 
         public SingleFileTransfer(FileItem file, BatchContext context, FtpClient client, RenamingPolicy renamingPolicy, IFtpLogger logger)
         {
@@ -26,6 +27,7 @@ namespace Frends.FTP.DownloadFiles.Definitions
             SourceFile = file;
             _batchContext = context;
 
+            _destinationDirectoryWithMacrosExpanded = _renamingPolicy.ExpandDirectoryForMacros(_batchContext.Destination.Directory);
             DestinationFileNameWithMacrosExpanded = renamingPolicy.CreateRemoteFileName(
                     file.Name,
                     context.Destination.FileName);
@@ -207,7 +209,7 @@ namespace Frends.FTP.DownloadFiles.Definitions
 
         private void ExecuteSourceOperation()
         {
-            var filePath = (string.IsNullOrEmpty(_sourceFileDuringTransfer) ? SourceFile.FullPath : _sourceFileDuringTransfer);
+            var filePath = string.IsNullOrEmpty(_sourceFileDuringTransfer) ? SourceFile.FullPath : _sourceFileDuringTransfer;
             switch (_batchContext.Source.Operation)
             {
                 case SourceOperation.Move:
@@ -272,7 +274,7 @@ namespace Frends.FTP.DownloadFiles.Definitions
         {
             _result.Success = false; // the routine instance should be marked as failed if even one transfer fails
             var errorMessage =
-                $"Failure in {_state}: File '{SourceFile.Name}' could not be transferred to '{_batchContext.Destination.Directory}'. Error: {exception.Message}";
+                $"Failure in {_state}: File '{SourceFile.Name}' could not be transferred to '{_destinationDirectoryWithMacrosExpanded}'. Error: {exception.Message}";
             if (!string.IsNullOrEmpty(sourceFileRestoreMessage))
             {
                 errorMessage += " " + sourceFileRestoreMessage;
@@ -347,7 +349,8 @@ namespace Frends.FTP.DownloadFiles.Definitions
             {
                 if (ShouldSourceFileBeRestoredOnError())
                 {
-                    File.Move(_sourceFileDuringTransfer, SourceFile.FullPath);
+                    if (_sourceFileDuringTransfer != SourceFile.FullPath)
+                        _client.MoveFile(_sourceFileDuringTransfer, SourceFile.FullPath);
                     return "[Source file restored.]";
                 }
             }

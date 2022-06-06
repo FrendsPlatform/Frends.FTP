@@ -146,7 +146,7 @@ namespace Frends.FTP.DownloadFiles
                 var result = fileTransporter.Run(cancellationToken);
 
                 if (options.ThrowErrorOnFail && !result.Success)
-                    throw new Exception($"SFTP transfer failed: {result.UserResultMessage}. " +
+                    throw new Exception($"FTP transfer failed: {result.UserResultMessage}. " +
                                         $"Latest operations: \n{GetLogLines(transferSink.GetBufferedLogMessages())}");
 
                 if (options.OperationLog)

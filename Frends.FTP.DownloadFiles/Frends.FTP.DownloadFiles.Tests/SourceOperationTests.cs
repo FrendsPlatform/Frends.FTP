@@ -63,7 +63,6 @@ public class SourceOperationTests : DownloadFilesTestBase
     public void SourceOperation_Move()
     {
         // Setup
-        var FtpDir = Guid.NewGuid().ToString();
         FtpHelper.CreateFileOnFTP(FtpDir, "file1.txt");
         FtpHelper.CreateFileOnFTP(FtpDir, "file2.txt");
         FtpHelper.CreateFileOnFTP(FtpDir, "file3.txt");
@@ -94,6 +93,28 @@ public class SourceOperationTests : DownloadFilesTestBase
         Assert.IsTrue(FtpHelper.FileExistsOnFTP(moveToSubDir, "file3.txt"));
     }
     
+    [Test]
+    public void SourceOperation_MoveToFolderDoesNotExist_ProducesError()
+    {
+        // Setup
+        FtpHelper.CreateFileOnFTP(FtpDir, "file1.txt");
+        var moveToSubDir = Guid.NewGuid().ToString();
+        FtpHelper.CreateDirectoryOnFTP(moveToSubDir);
+        
+        var result = CallDownloadFiles(
+            SourceOperation.Move,
+            FtpDir,
+            "file*.txt",
+            LocalDirFullPath,
+            $"/does-not-exist{Guid.NewGuid()}");
+        
+        Assert.IsFalse(result.Success, result.UserResultMessage);
+        Assert.AreEqual(0, result.SuccessfulTransferCount);
+        Assert.AreEqual(1, result.FailedTransferCount);
+        
+        // Check that original file is still there
+        Assert.IsTrue(FtpHelper.FileExistsOnFTP(FtpDir, "file1.txt"), result.UserResultMessage);
+    }
 
     [Test]
     public void SourceOperation_RenameWithMacro()
@@ -138,7 +159,7 @@ public class SourceOperationTests : DownloadFilesTestBase
         };
         var destination = new Destination
             { Directory = targetDir, Action = DestinationAction.Overwrite };
-        var options = new Options { CreateDestinationDirectories = true };
+        var options = new Options { CreateDestinationDirectories = true, RenameSourceFileBeforeTransfer = true };
         var connection = FtpHelper.GetFtpsConnection();
 
         var result = FTP.DownloadFiles(source, destination, connection, options, new Info(), new CancellationToken());
