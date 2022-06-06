@@ -18,7 +18,7 @@ namespace Frends.FTP.UploadFiles
     {
         /// <summary>
         /// Upload files to an FTP server.
-        /// [Documentation](https://tasks.frends.com/tasks#frends-tasks/Frends.FTP.UploadFiles)
+        /// [Documentation](https://tasks.frends.com/tasks/frends-tasks/Frends.FTP.UploadFiles)
         /// </summary>
         /// <remarks>
         /// # Transfer overview
