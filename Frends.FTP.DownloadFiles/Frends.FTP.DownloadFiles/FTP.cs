@@ -18,7 +18,7 @@ namespace Frends.FTP.DownloadFiles
     {
         /// <summary>
         /// Download files from an FTP server.
-        /// [Documentation](https://tasks.frends.com/tasks#frends-tasks/Frends.FTP.DownloadFiles)
+        /// [Documentation](https://tasks.frends.com/tasks/frends-tasks/Frends.FTP.DownloadFiles)
         /// </summary>
         /// <remarks>
         /// # Transfer overview
