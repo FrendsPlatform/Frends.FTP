@@ -27,9 +27,6 @@ namespace Frends.FTP.DownloadFiles.Logging
 
         private bool _disposed;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
         public FtpLogger(ILogger log)
         {
             _fileTransfers = new ConcurrentBag<FileTransferInfo>();
@@ -89,15 +86,7 @@ namespace Frends.FTP.DownloadFiles.Logging
                 _log.Error("Error when logging success message: " + ex.Message, ex);
             }
         }
-
-
-        /// <summary>
-        /// Logs failed transfer.
-        /// </summary>
-        /// <param name="transfer"></param>
-        /// <param name="context"></param>
-        /// <param name="errorMessage"></param>
-        /// <param name="exception"></param>
+        
         public void LogTransferFailed(SingleFileTransfer transfer, BatchContext context, string errorMessage, Exception exception)
         {
             try

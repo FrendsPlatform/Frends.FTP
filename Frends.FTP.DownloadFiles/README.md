@@ -5,7 +5,7 @@
  ![GitHub](https://img.shields.io/github/license/FrendsPlatform/Frends.FTP?label=License)
  ![Coverage](https://app-github-custom-badges.azurewebsites.net/Badge?key=FrendsPlatform/Frends.FTP|Frends.FTP.DownloadFiles|main)
 
-Returns a boolean depicting if the input text matches with the specified regular expression.
+Downloads files from a FTP(S) server.
 
 ## Installing
 
@@ -26,7 +26,7 @@ https://www.myget.org/F/frends-tasks/api/v2.
 
 Run the Docker compose from solution root using
 
-`docker-compose -f Frends.FTP.UploadFiles.Tests/docker-compose.yml up`
+`docker-compose -f Frends.FTP.DownloadFiles.Tests/docker-compose.yml up`
 
 Run the tests
 

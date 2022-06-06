@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using FluentFTP;
+using Frends.FTP.DownloadFiles.Enums;
 using Frends.FTP.DownloadFiles.TaskConfiguration;
 
 namespace Frends.FTP.DownloadFiles.Tests;

@@ -22,19 +22,11 @@ namespace Frends.FTP.DownloadFiles.Logging
             _size = size;
         }
 
-        /// <summary>
-        /// Get latest data in a readonly list
-        /// </summary>
-        /// <returns></returns>
         public IReadOnlyList<T> Latest()
         {
             return _data.ToArray();
         }
 
-        /// <summary>
-        /// Add data to the buffer.
-        /// </summary>
-        /// <param name="t"></param>
         public void Add(T t)
         {
             _lock.EnterWriteLock();

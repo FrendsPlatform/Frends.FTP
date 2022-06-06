@@ -128,11 +128,6 @@ namespace Frends.FTP.DownloadFiles.Definitions
         }
 
 
-        /// <summary>
-        /// Creates the file path to use for source operation: Rename
-        /// </summary>        
-        /// <param name="originalFilePath">The original file name with path - the path is needed so the directory settings are preserved</param>
-        /// <param name="sourceOperationTo">The new name to put files to</param>
         public string CreateFilePathForRename(string originalFilePath, string sourceOperationTo)
         {
             if (string.IsNullOrEmpty(sourceOperationTo))
@@ -219,13 +214,7 @@ namespace Frends.FTP.DownloadFiles.Definitions
 
             return false;
         }
-
-
-        /// <summary>
-        /// Defines if string is file mask
-        /// </summary>
-        /// <param name="input">filename or file mask</param>
-        /// <returns>true if string represents file mask, false if it represents single file</returns>
+        
         private static bool IsFileMask(string input)
         {
             var isFileMask = false;
