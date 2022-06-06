@@ -7,6 +7,7 @@ using NUnit.Framework;
 
 namespace Frends.FTP.UploadFiles.Tests;
 
+[TestFixture]
 public class DestinationActionTests : UploadFilesTestBase
 {
     [Test]
