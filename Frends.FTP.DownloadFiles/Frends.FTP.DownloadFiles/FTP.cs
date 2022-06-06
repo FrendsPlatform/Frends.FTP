@@ -20,7 +20,7 @@ namespace Frends.FTP.DownloadFiles
         /// Download files from an FTP server.
         /// [Documentation](https://tasks.frends.com/tasks/frends-tasks/Frends.FTP.DownloadFiles)
         /// </summary>
-        /// <remarks>
+        /// <frendsdocs>
         /// # Transfer overview
         /// The file transfer progress has the following steps:
         ///
@@ -94,7 +94,7 @@ namespace Frends.FTP.DownloadFiles
         ///
         /// - %SourceFileName% = will be replaced with source file name without extension.
         /// - %SourceFileExtension% = will be replaced with source file's extension, with the dot '.' included, i.e. if the source file is named 'foo.txt', the %SourceFileExtension% will be expanded as '.txt'. If the source file name does not have an extension, the macro result will be empty, i.e. for original file name "foo", "bar%SourceFileExtension%" will result in "bar"
-        /// </remarks>
+        /// </frendsdocs>
         /// <param name="info">Transfer info parameters</param>
         /// <param name="connection">Transfer connection parameters</param>
         /// <param name="source">Source file location</param>
