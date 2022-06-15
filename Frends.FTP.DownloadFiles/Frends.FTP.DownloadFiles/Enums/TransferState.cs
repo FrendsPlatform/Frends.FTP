@@ -1,18 +1,18 @@
-﻿namespace Frends.FTP.DownloadFiles.Enums
+﻿namespace Frends.FTP.DownloadFiles.Enums;
+
+internal enum TransferState
 {
-    internal enum TransferState
-    {
-        RenameSourceFileBeforeTransfer,
-        AppendToDestinationFile,
-        PutFile,
-        SourceOperationMove,
-        SourceOperationRename,
-        SourceOperationDelete,
-        RestoreSourceFile,
-        RemoveTemporaryDestinationFile,
-        DeleteDestinationFile,
-        RenameDestinationFile,
-        CleanUpFiles,
-        CheckIfDestinationFileExists
-    }
+    RenameSourceFileBeforeTransfer,
+    AppendToDestinationFile,
+    PutFile,
+    SourceOperationMove,
+    SourceOperationRename,
+    SourceOperationDelete,
+    RestoreSourceFile,
+    RemoveTemporaryDestinationFile,
+    DeleteDestinationFile,
+    RenameDestinationFile,
+    CleanUpFiles,
+    CheckIfDestinationFileExists
 }
+
