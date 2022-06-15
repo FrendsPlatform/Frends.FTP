@@ -14,7 +14,7 @@ using Frends.FTP.DownloadFiles.TaskConfiguration;
 using Frends.FTP.DownloadFiles.TaskResult;
 
 namespace Frends.FTP.DownloadFiles.Definitions;
-{
+
 internal class FileTransporter
 {
     private readonly IFtpLogger _logger;
@@ -51,7 +51,7 @@ internal class FileTransporter
                     _logger.NotifyError(null, "Error while connecting to FTP: ", new Exception(userResultMessage));
                     return FormFailedFileTransferResult(userResultMessage);
                 }
-                    
+
                 var (files, success) = GetSourceFiles(client);
                 if (!success)
                 {
@@ -59,7 +59,7 @@ internal class FileTransporter
                     userResultMessage = $"FTP directory '{_sourceDirectoryWithMacrosExpanded}' doesn't exist.";
                     return FormFailedFileTransferResult(userResultMessage);
                 }
-                    
+
                 if (files == null || !files.Any())
                 {
                     if (files == null)
@@ -169,25 +169,25 @@ internal class FileTransporter
                     e.Accept = true;
                     return;
                 }
-                    
+
                 // Accept if we want to accept a certain hash
                 e.Accept = e.Certificate.GetCertHashString() == connect.CertificateHashStringSHA1;
             };
-                
+
             client.ValidateAnyCertificate = connect.ValidateAnyCertificate;
             client.DataConnectionEncryption = connect.SecureDataChannel;
         }
 
         client.NoopInterval = connect.KeepConnectionAliveInterval;
-            
+
         if (!string.IsNullOrWhiteSpace(connect.Encoding)) client.Encoding = Encoding.GetEncoding(connect.Encoding);
-            
+
         // Client lib timeout is in milliseconds, ours is in seconds, thus *1000 conversion
         client.ConnectTimeout = connect.ConnectionTimeout * 1000;
         client.LocalFileBufferSize = connect.BufferSize;
 
         // Transport type Binary / ASCII
-        switch(connect.TransportType)
+        switch (connect.TransportType)
         {
             case FtpTransportType.Binary:
                 client.UploadDataType = FtpDataType.Binary;
@@ -200,7 +200,7 @@ internal class FileTransporter
             default:
                 throw new ArgumentOutOfRangeException($"Unknown FTP transport type {connect.TransportType}");
         }
-            
+
         // Active/passive
         switch (connect.Mode)
         {
@@ -220,7 +220,7 @@ internal class FileTransporter
     private Tuple<List<FileItem>, bool> GetSourceFiles(FtpClient client)
     {
         if (!client.DirectoryExists(_sourceDirectoryWithMacrosExpanded)) return new Tuple<List<FileItem>, bool>(null, false);
-            
+
         var ftpFiles = client.GetListing(_sourceDirectoryWithMacrosExpanded);
 
         var list = new List<FileItem>();
@@ -231,7 +231,7 @@ internal class FileTransporter
                 continue; // skip directories and links
 
             if (!Util.FileMatchesMask(ftpFile.Name, _batchContext.Source.FileName)) continue;
-                
+
             var fItm = new FileItem(ftpFile);
             list.Add(fItm);
         }
