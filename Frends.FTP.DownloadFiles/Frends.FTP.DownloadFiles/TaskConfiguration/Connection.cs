@@ -126,6 +126,7 @@ namespace Frends.FTP.DownloadFiles.TaskConfiguration
         /// <example>c:\example.cer</example>
         [DefaultValue("c:\\example.cer")]
         [UIHint(nameof(UseFTPS),"", true)]
+        [DisplayFormat(DataFormatString = "Text")]
         public string ClientCertificatePath { get; set; }
         
         /// <summary>
@@ -134,6 +135,7 @@ namespace Frends.FTP.DownloadFiles.TaskConfiguration
         /// <example>BA7816BF8F01CFEA414140DE5DAE2223B00361A3</example>
         [DefaultValue("")]
         [UIHint(nameof(UseFTPS),"", true)]
+        [DisplayFormat(DataFormatString = "Text")]
         public string CertificateHashStringSHA1 { get; set; }
 
         #endregion
