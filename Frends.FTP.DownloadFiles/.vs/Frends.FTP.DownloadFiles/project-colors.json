@@ -1,0 +1,16 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "6efa4927-7ee0-4b47-9497-44dee7ed5b47": {
+      "ProjectGuid": "6efa4927-7ee0-4b47-9497-44dee7ed5b47",
+      "DisplayName": "Frends.FTP.DownloadFiles",
+      "ColorIndex": 0
+    },
+    "6d984aaa-f3d3-4d0b-bb3f-b1d621c89b30": {
+      "ProjectGuid": "6d984aaa-f3d3-4d0b-bb3f-b1d621c89b30",
+      "DisplayName": "Solution Items",
+      "ColorIndex": 1
+    }
+  },
+  "NextColorIndex": 2
+}

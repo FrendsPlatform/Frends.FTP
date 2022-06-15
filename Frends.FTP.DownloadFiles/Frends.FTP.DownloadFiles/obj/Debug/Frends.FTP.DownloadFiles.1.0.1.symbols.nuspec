@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Frends.FTP.DownloadFiles</id>
+    <version>1.0.1</version>
+    <authors>Jefim Borissov</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <projectUrl>https://github.com/FrendsPlatform/Frends.FTP</projectUrl>
+    <description>Task for downloading files from FTP(S) servers.</description>
+    <copyright>Frends</copyright>
+    <tags>Frends</tags>
+    <dependencies>
+      <group targetFramework=".NETFramework4.7.1">
+        <dependency id="FluentFTP" version="37.0.2" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.CSharp" version="4.7.0" exclude="Build,Analyzers" />
+        <dependency id="Serilog" version="2.11.0" exclude="Build,Analyzers" />
+        <dependency id="System.ComponentModel.Annotations" version="4.7.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net6.0">
+        <dependency id="FluentFTP" version="37.0.2" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.CSharp" version="4.7.0" exclude="Build,Analyzers" />
+        <dependency id="Serilog" version="2.11.0" exclude="Build,Analyzers" />
+        <dependency id="System.ComponentModel.Annotations" version="4.7.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="FluentFTP" version="37.0.2" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.CSharp" version="4.7.0" exclude="Build,Analyzers" />
+        <dependency id="Serilog" version="2.11.0" exclude="Build,Analyzers" />
+        <dependency id="System.ComponentModel.Annotations" version="4.7.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\bin\Debug\net471\Frends.FTP.DownloadFiles.pdb" target="lib\net471\Frends.FTP.DownloadFiles.pdb" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\bin\Debug\net6.0\Frends.FTP.DownloadFiles.pdb" target="lib\net6.0\Frends.FTP.DownloadFiles.pdb" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\bin\Debug\netstandard2.0\Frends.FTP.DownloadFiles.pdb" target="lib\netstandard2.0\Frends.FTP.DownloadFiles.pdb" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\bin\Debug\net471\Frends.FTP.DownloadFiles.dll" target="lib\net471\Frends.FTP.DownloadFiles.dll" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\bin\Debug\net471\Frends.FTP.DownloadFiles.xml" target="lib\net471\Frends.FTP.DownloadFiles.xml" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\bin\Debug\net6.0\Frends.FTP.DownloadFiles.dll" target="lib\net6.0\Frends.FTP.DownloadFiles.dll" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\bin\Debug\net6.0\Frends.FTP.DownloadFiles.xml" target="lib\net6.0\Frends.FTP.DownloadFiles.xml" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\bin\Debug\netstandard2.0\Frends.FTP.DownloadFiles.dll" target="lib\netstandard2.0\Frends.FTP.DownloadFiles.dll" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\bin\Debug\netstandard2.0\Frends.FTP.DownloadFiles.xml" target="lib\netstandard2.0\Frends.FTP.DownloadFiles.xml" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\FrendsTaskMetadata.json" target="\FrendsTaskMetadata.json" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\Definitions\BatchContext.cs" target="src\Frends.FTP.DownloadFiles\Definitions\BatchContext.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\Definitions\FileItem.cs" target="src\Frends.FTP.DownloadFiles\Definitions\FileItem.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\Definitions\FileTransferInfo.cs" target="src\Frends.FTP.DownloadFiles\Definitions\FileTransferInfo.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\Definitions\FileTransporter.cs" target="src\Frends.FTP.DownloadFiles\Definitions\FileTransporter.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\Definitions\RenamingPolicy.cs" target="src\Frends.FTP.DownloadFiles\Definitions\RenamingPolicy.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\Definitions\SingleFileTransfer.cs" target="src\Frends.FTP.DownloadFiles\Definitions\SingleFileTransfer.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\Definitions\SingleFileTransferResult.cs" target="src\Frends.FTP.DownloadFiles\Definitions\SingleFileTransferResult.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\Definitions\Util.cs" target="src\Frends.FTP.DownloadFiles\Definitions\Util.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\Enums\DestinationAction.cs" target="src\Frends.FTP.DownloadFiles\Enums\DestinationAction.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\Enums\FtpMode.cs" target="src\Frends.FTP.DownloadFiles\Enums\FtpMode.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\Enums\FtpsSslMode.cs" target="src\Frends.FTP.DownloadFiles\Enums\FtpsSslMode.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\Enums\FtpTransportType.cs" target="src\Frends.FTP.DownloadFiles\Enums\FtpTransportType.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\Enums\SourceNotFoundAction.cs" target="src\Frends.FTP.DownloadFiles\Enums\SourceNotFoundAction.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\Enums\SourceOperation.cs" target="src\Frends.FTP.DownloadFiles\Enums\SourceOperation.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\Enums\TransferResult.cs" target="src\Frends.FTP.DownloadFiles\Enums\TransferResult.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\Enums\TransferState.cs" target="src\Frends.FTP.DownloadFiles\Enums\TransferState.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\FTP.cs" target="src\Frends.FTP.DownloadFiles\FTP.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\Logging\CircularBuffer.cs" target="src\Frends.FTP.DownloadFiles\Logging\CircularBuffer.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\Logging\FtpLogger.cs" target="src\Frends.FTP.DownloadFiles\Logging\FtpLogger.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\Logging\TransferLogSink.cs" target="src\Frends.FTP.DownloadFiles\Logging\TransferLogSink.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\TaskConfiguration\Connection.cs" target="src\Frends.FTP.DownloadFiles\TaskConfiguration\Connection.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\TaskConfiguration\Destination.cs" target="src\Frends.FTP.DownloadFiles\TaskConfiguration\Destination.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\TaskConfiguration\Info.cs" target="src\Frends.FTP.DownloadFiles\TaskConfiguration\Info.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\TaskConfiguration\Options.cs" target="src\Frends.FTP.DownloadFiles\TaskConfiguration\Options.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\TaskConfiguration\Source.cs" target="src\Frends.FTP.DownloadFiles\TaskConfiguration\Source.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\TaskResult\FileTransferResult.cs" target="src\Frends.FTP.DownloadFiles\TaskResult\FileTransferResult.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\TaskResult\Result.cs" target="src\Frends.FTP.DownloadFiles\TaskResult\Result.cs" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles.csproj" target="src\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles.csproj" />
+  </files>
+</package>

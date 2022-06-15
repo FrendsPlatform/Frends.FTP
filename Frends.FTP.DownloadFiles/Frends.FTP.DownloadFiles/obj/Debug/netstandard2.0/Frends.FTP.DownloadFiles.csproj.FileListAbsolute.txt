@@ -1,0 +1,13 @@
+C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\bin\Debug\netstandard2.0\FrendsTaskMetadata.json
+C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\bin\Debug\netstandard2.0\Frends.FTP.DownloadFiles.deps.json
+C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\bin\Debug\netstandard2.0\Frends.FTP.DownloadFiles.dll
+C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\bin\Debug\netstandard2.0\Frends.FTP.DownloadFiles.pdb
+C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\bin\Debug\netstandard2.0\Frends.FTP.DownloadFiles.xml
+C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\obj\Debug\netstandard2.0\Frends.FTP.DownloadFiles.csproj.AssemblyReference.cache
+C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\obj\Debug\netstandard2.0\Frends.FTP.DownloadFiles.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\obj\Debug\netstandard2.0\Frends.FTP.DownloadFiles.AssemblyInfoInputs.cache
+C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\obj\Debug\netstandard2.0\Frends.FTP.DownloadFiles.AssemblyInfo.cs
+C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\obj\Debug\netstandard2.0\Frends.FTP.DownloadFiles.csproj.CoreCompileInputs.cache
+C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\obj\Debug\netstandard2.0\Frends.FTP.DownloadFiles.dll
+C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\obj\Debug\netstandard2.0\Frends.FTP.DownloadFiles.xml
+C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\obj\Debug\netstandard2.0\Frends.FTP.DownloadFiles.pdb

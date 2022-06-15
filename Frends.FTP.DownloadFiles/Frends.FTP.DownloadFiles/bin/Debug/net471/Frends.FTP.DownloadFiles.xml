@@ -1,0 +1,567 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Frends.FTP.DownloadFiles</name>
+    </assembly>
+    <members>
+        <member name="P:Frends.FTP.DownloadFiles.Definitions.FileItem.Modified">
+            <summary>
+            The last modified timestamp of the file, if available.
+            If not available, set to the default value, i.e. <see cref="F:System.DateTime.MinValue"/>.
+            </summary>
+        </member>
+        <member name="T:Frends.FTP.DownloadFiles.Definitions.RenamingPolicy">
+            <summary>
+             Policies for creating names for remote files: expands macros etc.
+            </summary>
+        </member>
+        <member name="M:Frends.FTP.DownloadFiles.Definitions.RenamingPolicy.CreateRemoteFileName(System.String,System.String)">
+            <summary>
+            Creates a remote file name based on the settings and remote file definition
+            </summary>
+            <param name="originalFileName">The original file.</param>
+            <param name="remoteFileDefinition">The remote file path with macros.</param>
+            <returns>Remote file name with expanded macros.</returns>
+        </member>
+        <member name="M:Frends.FTP.DownloadFiles.Definitions.RenamingPolicy.ExpandDirectoryForMacros(System.String)">
+            <summary>
+            Method for expanding source/destination endpoint directory name for macros when opening the endpoint connection
+            </summary>
+            <param name="directory">Directory path including unexpanded macros</param>
+            <returns>Directory with macros expanded.</returns>
+        </member>
+        <member name="M:Frends.FTP.DownloadFiles.Definitions.RenamingPolicy.CreateRemoteFileNameForMove(System.String,System.String)">
+            <summary>
+            Creates the file path to use for source operation: Move
+            The SourceOperationTo should always be a directory. If it is empty, an error should be thrown
+            The current file name should always be appended to the directory name
+            The directory name cannot use file macros or file masks        
+            </summary>        
+        </member>
+        <member name="M:Frends.FTP.DownloadFiles.Definitions.SingleFileTransfer.RenameSourceFile">
+            <summary>
+            Rename file with unique file name. 
+            </summary>
+        </member>
+        <member name="M:Frends.FTP.DownloadFiles.Definitions.SingleFileTransfer.RestoreModified">
+            <summary>
+            Restores the LastWriteTime stamp to the destination file.
+            </summary>
+        </member>
+        <member name="T:Frends.FTP.DownloadFiles.Enums.DestinationAction">
+            <summary>
+            Enumeration to specify actions if destination file exists.
+            </summary>
+        </member>
+        <member name="F:Frends.FTP.DownloadFiles.Enums.DestinationAction.Append">
+            <summary>
+            Will either create the file(s) or append content to existing file(s). 
+            </summary>
+        </member>
+        <member name="F:Frends.FTP.DownloadFiles.Enums.DestinationAction.Overwrite">
+            <summary>
+            Will overwrite existing file(s).
+            </summary>
+        </member>
+        <member name="F:Frends.FTP.DownloadFiles.Enums.DestinationAction.Error">
+            <summary>
+            Will throw an error if destination file(s) already exist.
+            </summary>
+        </member>
+        <member name="T:Frends.FTP.DownloadFiles.Enums.FtpMode">
+            <summary>FTP connection modes.</summary>
+        </member>
+        <member name="F:Frends.FTP.DownloadFiles.Enums.FtpMode.Passive">
+            <summary>Passive mode</summary>
+        </member>
+        <member name="F:Frends.FTP.DownloadFiles.Enums.FtpMode.Active">
+            <summary>Active mode.</summary>
+        </member>
+        <member name="T:Frends.FTP.DownloadFiles.Enums.FtpsSslMode">
+            <summary>FTPS encryption modes.</summary>
+        </member>
+        <member name="F:Frends.FTP.DownloadFiles.Enums.FtpsSslMode.None">
+            <summary>No encryption (plain text).</summary>
+        </member>
+        <member name="F:Frends.FTP.DownloadFiles.Enums.FtpsSslMode.Explicit">
+            <summary>Use explicit encryption.</summary>
+        </member>
+        <member name="F:Frends.FTP.DownloadFiles.Enums.FtpsSslMode.Implicit">
+            <summary>Use implicit encryption.</summary>
+        </member>
+        <member name="F:Frends.FTP.DownloadFiles.Enums.FtpsSslMode.Auto">
+            <summary>Tries to use FTPS encryption and falls back to plain text FTP.</summary>
+        </member>
+        <member name="T:Frends.FTP.DownloadFiles.Enums.FtpTransportType">
+            <summary>FTP transport types.</summary>
+        </member>
+        <member name="F:Frends.FTP.DownloadFiles.Enums.FtpTransportType.Binary">
+            <summary>Binary transport.</summary>
+        </member>
+        <member name="F:Frends.FTP.DownloadFiles.Enums.FtpTransportType.Ascii">
+            <summary>ASCII transport.</summary>
+        </member>
+        <member name="T:Frends.FTP.DownloadFiles.Enums.SourceNotFoundAction">
+            <summary>
+            Enumeration to specify actions if the source file is not found.
+            </summary>
+        </member>
+        <member name="F:Frends.FTP.DownloadFiles.Enums.SourceNotFoundAction.Error">
+            <summary>
+            Will log an error in case source files are missing.
+            </summary>
+        </member>
+        <member name="F:Frends.FTP.DownloadFiles.Enums.SourceNotFoundAction.Info">
+            <summary>
+            Will log a notification in case source files are missing.
+            </summary>
+        </member>
+        <member name="F:Frends.FTP.DownloadFiles.Enums.SourceNotFoundAction.Ignore">
+            <summary>
+            Will not log anything and continue execution without any additional actions.
+            </summary>
+        </member>
+        <member name="T:Frends.FTP.DownloadFiles.Enums.SourceOperation">
+            <summary>
+            Enumeration to specify operation for the source file after transfer.
+            </summary>
+        </member>
+        <member name="F:Frends.FTP.DownloadFiles.Enums.SourceOperation.Delete">
+            <summary>
+            Will delete files after downloading.
+            </summary>
+        </member>
+        <member name="F:Frends.FTP.DownloadFiles.Enums.SourceOperation.Rename">
+            <summary>
+            Will rename the files after downloading.
+            </summary>
+        </member>
+        <member name="F:Frends.FTP.DownloadFiles.Enums.SourceOperation.Move">
+            <summary>
+            Will move the files after downloading.
+            </summary>
+        </member>
+        <member name="F:Frends.FTP.DownloadFiles.Enums.SourceOperation.Nothing">
+            <summary>
+            Will do nothing to source files after downloading.
+            </summary>
+        </member>
+        <member name="T:Frends.FTP.DownloadFiles.FTP">
+            <summary>
+            Class containing the FTP.DownloadFiles task
+            </summary>
+        </member>
+        <member name="M:Frends.FTP.DownloadFiles.FTP.DownloadFiles(Frends.FTP.DownloadFiles.TaskConfiguration.Source,Frends.FTP.DownloadFiles.TaskConfiguration.Destination,Frends.FTP.DownloadFiles.TaskConfiguration.Connection,Frends.FTP.DownloadFiles.TaskConfiguration.Options,Frends.FTP.DownloadFiles.TaskConfiguration.Info,System.Threading.CancellationToken)">
+             <summary>
+             Download files from an FTP server.
+             [Documentation](https://tasks.frends.com/tasks/frends-tasks/Frends.FTP.DownloadFiles)
+             </summary>
+             <frendsdocs>
+             # Transfer overview
+             The file transfer progress has the following steps:
+            
+             1. Initialize
+                 
+                 Initializes the transfer and opens the source connection.
+            
+             1. ListFiles
+                 
+                 Get a list of files from the source endpoint according to the filename/mask. If there are no files to transfer, the source connections are closed, and the transfer finishes. The result of the task will then depend on what the option `NoSourceAction` was set to. If it was set to Error, either the #result.Success property will be set to false, or if the `ThrowErrorOnFail` option was also set, an exception is thrown. If the `NoSourceAction` was set to `Info` or `Ignore`, the `#result.Success` will be set to true and `#result.ActionSkipped` also set to true.
+            
+             1. Transfer files
+            
+                 If there are files to transfer, they are then transferred individually. For every file in the list returned from the source endpoint, the following process is repeated:
+            
+                 1. GetFile
+                 
+                     Get a file from the source endpoint to the local work directory. If the parameter `RenameSourceFileBeforeTransfer` is set to `true`, the file is first renamed with a temporary filename before transfer.
+            
+                 1. Rename or move the source file.
+                     
+                     This is done before transferring the file to the destination, this means that possible errors in the renaming or moving that would cause the transfer to fail will happen as early as possible - before we actually try to transfer files onward.
+            
+                 1. Download the file.
+            
+                     If destination file already exists, depending on the parameter `DestinationFileExistsAction` either an exception is thrown, the destination file is overwritten or the source file is appended to the destination file.
+            
+                     If the parameter `RenameDestinationFileDuringTransfer` is `true`, the file is first transferred with a temporary file name and afterwards renamed to intended filename, otherwise the file is transferred with the intended filename. The intended filename has its possible file masks expanded.
+            
+                 1. Do the source file operation.
+                     
+                     Perform the operation defined by the `SourceOperation`.
+            
+             1. Finish
+            
+                 Close the source and destination endpoint connections.
+            
+                 If the transfer is cancelled (e.g. by calling Terminate on the process instance), the files that are currently being transferred will be processed until finished, but no new files will be transferred. The cancelled transfer end result will be Failed.
+            
+             # Macro reference
+            
+             Macros can be used to dynamically configure source directory, destination directory or destination file name for a file transfer.
+            
+             Generally the following rules apply for macros:
+            
+             - Macros are case insensitive.
+             - You can use any number of macros in all of the cases.
+             - Dates and times are formatted with leading zeros.
+            
+             The following macros can be used with all of dynamically configurable locations for file transfer:
+            
+             - %Ticks% = will be replace with the current time as Ticks.
+             - %DateTime% = will be replaced with date and time in format: "yyyy-MM-dd-HH-mm-ss".
+             - %DateTimeMs% = will be replace with date and time in format: "yyyy-MM-dd-HH-mm-ss-fff".
+             - %Date% = will be replaced with date in format: "yyyy-MM-dd".
+             - %Time% = will be replaced with time in format: "HH-mm-ss".
+             - %Year% = will be replaced with current year.
+             - %Month% = will be replaced with current month.
+             - %Day% = will be replaced with current day.
+             - %Hour% = will be replaced with current hour.
+             - %Minute% = will be replaced with current minute.
+             - %Second% = will be replaced with current second.
+             - %Millisecond% = will be replaced with current millisecond.
+             - %WeekDay% = will be replaced with a number of weekday, ranging from 1 (monday) to 7 (sunday).
+             - %Guid% = will be replaced with a new unique identifier.
+             - %TransferId% = will be replaced with the transfer id.
+             - %TransferName% = will be replaced with TransferName parameter specified in Connection point schema.
+             - %TransferGroupName% = will be replaced with TransferGroupName parameter specified in routine's task arguments.
+            
+             Destination file name has two additional macros that can be used for dynamically creating destination file name.
+            
+             - %SourceFileName% = will be replaced with source file name without extension.
+             - %SourceFileExtension% = will be replaced with source file's extension, with the dot '.' included, i.e. if the source file is named 'foo.txt', the %SourceFileExtension% will be expanded as '.txt'. If the source file name does not have an extension, the macro result will be empty, i.e. for original file name "foo", "bar%SourceFileExtension%" will result in "bar"
+             </frendsdocs>
+             <param name="info">Transfer info parameters</param>
+             <param name="connection">Transfer connection parameters</param>
+             <param name="source">Source file location</param>
+             <param name="destination">Destination directory location</param>
+             <param name="options">Transfer options</param>
+             <param name="cancellationToken">CancellationToken is given by Frends</param>
+             <returns>Result object {bool ActionSkipped, bool Success, string UserResultMessage, int SuccessfulTransferCount, int FailedTransferCount, string FileName, string SourcePath, string DestinationPath, bool Success} </returns>
+        </member>
+        <member name="T:Frends.FTP.DownloadFiles.Logging.CircularBuffer`1">
+            <summary>
+            Circular buffer impl, original from https://codereview.stackexchange.com/a/134147
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="T:Frends.FTP.DownloadFiles.Logging.TransferLogSink">
+            <summary>
+            Sink that is used to store messages and events from seriolog Logger
+            </summary>
+        </member>
+        <member name="T:Frends.FTP.DownloadFiles.TaskConfiguration.Connection">
+            <summary>Parameters class usually contains parameters that are required.</summary>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Connection.Address">
+            <summary>
+            FTP(S) host address
+            </summary>
+            <example>my.ftp.server.com</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Connection.Port">
+            <summary>
+            Port number to use in the connection to the server.
+            </summary>
+            <example>21</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Connection.UserName">
+            <summary>
+            Username to use for authentication to the server. Note that the file endpoint only supports
+            username for remote shares and the username must be in the format DOMAIN\Username.
+            </summary>
+            <example>myUsername</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Connection.Password">
+            <summary>
+            Password to use in the authentication to the server.
+            </summary>
+            <example>myPassword</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Connection.TransportType">
+            <summary>
+            Type of transfer: 'Ascii' sends files as text and must only be used for sending ASCII text files. 'Binary' (default) sends files as raw data and should be used for sending e.g. UTF-encoded text files
+            </summary>
+            <example>FtpTransportType.Binary</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Connection.Mode">
+            <summary>
+            Connection mode to use to connect to the FTP server
+            </summary>
+            <example>FtpMode.Passive</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Connection.KeepConnectionAliveInterval">
+            <summary>
+            Sends NOOP command to keep connection alive at specified time-interval in seconds. If set to 0 the connection is not kept alive. Default value is 0
+            </summary>
+            <example>60</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Connection.ConnectionTimeout">
+            <summary>
+            The length of time, in seconds, until the connection times out. You can use value 0 to indicate that the connection does not time out. Default value is 60 seconds
+            </summary>
+            <example>60</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Connection.Encoding">
+            <summary>
+            If set, this encoding will be used to encode and decode command parameters and server responses, such as file names. Example values: utf-8, utf-16, windows-1252
+            </summary>
+            <example>utf-8</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Connection.BufferSize">
+            <summary>
+            Integer value of used buffer size as KB.
+            Default value is 32 KB.
+            </summary>
+            <example>32</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Connection.UseFTPS">
+            <summary>
+            Whether to use FTPS or not.
+            </summary>
+            <example>false</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Connection.SecureDataChannel">
+            <summary>
+            Whether the data channel is secured or not.
+            </summary>
+            <example>false</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Connection.SslMode">
+            <summary>
+            Specifies whether to use Explicit or Implicit SSL
+            </summary>
+            <example>FtpsSslMode.None</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Connection.EnableClientAuth">
+            <summary>
+            If enabled the client certificate is searched from user's certificate store
+            </summary>
+            <example>false</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Connection.ValidateAnyCertificate">
+            <summary>
+            If enabled the any certificate will be considered valid.
+            </summary>
+            <example>false</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Connection.ClientCertificatePath">
+            <summary>
+            Path to client certificate (X509).
+            </summary>
+            <example>c:\example.cer</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Connection.CertificateHashStringSHA1">
+            <summary>
+            Certificate SHA1 hash string to validate against.
+            </summary>
+            <example>BA7816BF8F01CFEA414140DE5DAE2223B00361A3</example>
+        </member>
+        <member name="T:Frends.FTP.DownloadFiles.TaskConfiguration.Destination">
+            <summary>
+            Destination transfer options
+            </summary>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Destination.Directory">
+            <summary>
+            Directory on the server.
+            </summary>
+            <example>/somedir</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Destination.FileName">
+            <summary>
+            File name of the destination file with possible macros.
+            </summary>
+            <example>myFile%Year%.txt</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Destination.Action">
+            <summary>
+            Operation to determine what to do if destination file exists.
+            </summary>
+            <example>DestinationAction.Error</example>
+        </member>
+        <member name="T:Frends.FTP.DownloadFiles.TaskConfiguration.Info">
+            <summary>
+            Info class including optional info of the file transfer.
+            </summary>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Info.TransferName">
+            <summary>
+            Optional descriptive name for the transfer. 
+            Will be included in the file transfer log 
+            entries and also in all error messages in the event log.
+            </summary>
+            <example>FTP Download</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Info.WorkDir">
+            <summary>
+            Directory where temporary files are stored during transfer.
+            </summary>
+            <example>c:\workDir</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Info.ProcessUri">
+            <summary>
+            The process URI, use #process.uri
+            </summary>
+            <example>#process.uri</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Info.TaskExecutionID">
+            <summary>
+            Reference to the Task execution id, use #process.executionid
+            </summary>
+            <example>#process.executionid</example>
+        </member>
+        <member name="T:Frends.FTP.DownloadFiles.TaskConfiguration.Options">
+            <summary>
+            Options for file transfer
+            </summary>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Options.ThrowErrorOnFail">
+            <summary>
+            Should an exception be thrown when file transfer fails.
+            </summary>
+            <example>true</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Options.RenameSourceFileBeforeTransfer">
+            <summary>
+            Should the destination file be renamed with temporary file name during file transfer as a locking mechanism.
+            </summary>
+            <example>true</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Options.RenameDestinationFileDuringTransfer">
+            <summary>
+            Should the destination file be renamed with temporary file name during file transfer as a locking mechanism.
+            </summary>
+            <example>true</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Options.CreateDestinationDirectories">
+            <summary>
+            Should the destination directories be created if they do not exist. May not work on all servers. 
+            </summary>
+            <example>true</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Options.PreserveLastModified">
+            <summary>
+            Should the Last Modified timestamp be preserved from the source.
+            </summary>
+            <example>true</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Options.OperationLog">
+            <summary>
+            While enabled all operations logs of executions will be returned with the result.
+            </summary>
+            <example>true</example>
+        </member>
+        <member name="T:Frends.FTP.DownloadFiles.TaskConfiguration.Source">
+            <summary>
+            Source transfer options
+            </summary>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Source.Directory">
+            <summary>
+            Directory on the server.
+            </summary>
+            <example>/directory</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Source.FileName">
+            <summary>
+            File name or file mask of the files to be fetched.
+            </summary>
+            <example>example*.csv</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Source.NotFoundAction">
+            <summary>
+            What to do if source file is not found. Error = alarm and fail,
+            Info = alarm info and quit with success status, Ignore = quit
+            with success status.
+            </summary>
+            <example>SourceNotFoundAction.Error</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Source.Operation">
+            <summary>
+            What to do with the source file after transfer.
+            </summary>
+            <example>SourceOperation.Delete</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Source.FileNameAfterTransfer">
+            <summary>
+            Parameter for Rename operation. Set the file name for the source file.
+            </summary>
+            <example>%SourceFileName%%SourceFileExtension%</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskConfiguration.Source.DirectoryToMoveAfterTransfer">
+            <summary>
+            Parameter for Move operation. Sets the directory to which source files will be moved after transfer.
+            </summary>
+            <example>/movedFiles</example>
+        </member>
+        <member name="T:Frends.FTP.DownloadFiles.TaskResult.Result">
+            <summary>
+            Frends.FTP.DownloadFiles result.
+            </summary>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskResult.Result.ActionSkipped">
+            <summary>
+            True if action was skipped, otherwise false.
+            </summary>
+            <example>false</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskResult.Result.Success">
+            <summary>
+            True if the transfer was successful, otherwise false.
+            </summary>
+            <example>false</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskResult.Result.UserResultMessage">
+            <summary>
+            Message of the transfer operations containing a simple representation of what happened in the task.
+            </summary>
+            <example>1 files transferred: file1.txt</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskResult.Result.SuccessfulTransferCount">
+            <summary>
+            Count of files that has been successfully transferred.
+            </summary>
+            <example>16</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskResult.Result.FailedTransferCount">
+            <summary>
+            Count of files that have not been transferred.
+            </summary>
+            <example>2</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskResult.Result.TransferredFileNames">
+            <summary>
+            List of transferred file names.
+            </summary>
+            <example>[ "file1.txt", "file2.txt" ]</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskResult.Result.TransferErrors">
+            <summary>
+            Dictionary of file names and errors messages of the failed transfers.
+            </summary>
+            <example>
+            {
+                { "file1.txt", [ "error1", "error2" ] },
+                { "file2.txt", [ "error1", "error2" ] }
+            }</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskResult.Result.TransferredFilePaths">
+            <summary>
+            List of transferred file paths.
+            </summary>
+            <example>[ "C:\dir\file1.txt", "C:\dir\file2.txt" ]</example>
+        </member>
+        <member name="P:Frends.FTP.DownloadFiles.TaskResult.Result.OperationsLog">
+            <summary>
+            Operations logs for the transfer.
+            </summary>
+            <example>
+            {
+                { "2022-05-31 16.21.39.00Z", "operation1" },
+                { "2022-05-31 16.22.39.00Z", "operation2" },
+                { "2022-05-31 16.23.39.00Z", "operation3" }
+            }</example>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Frends.FTP.DownloadFiles</id>
+    <version>1.0.1</version>
+    <authors>Jefim Borissov</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <projectUrl>https://github.com/FrendsPlatform/Frends.FTP</projectUrl>
+    <description>Task for downloading files from FTP(S) servers.</description>
+    <copyright>Frends</copyright>
+    <tags>Frends</tags>
+    <dependencies>
+      <group targetFramework=".NETFramework4.7.1">
+        <dependency id="FluentFTP" version="37.0.2" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.CSharp" version="4.7.0" exclude="Build,Analyzers" />
+        <dependency id="Serilog" version="2.11.0" exclude="Build,Analyzers" />
+        <dependency id="System.ComponentModel.Annotations" version="4.7.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net6.0">
+        <dependency id="FluentFTP" version="37.0.2" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.CSharp" version="4.7.0" exclude="Build,Analyzers" />
+        <dependency id="Serilog" version="2.11.0" exclude="Build,Analyzers" />
+        <dependency id="System.ComponentModel.Annotations" version="4.7.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="FluentFTP" version="37.0.2" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.CSharp" version="4.7.0" exclude="Build,Analyzers" />
+        <dependency id="Serilog" version="2.11.0" exclude="Build,Analyzers" />
+        <dependency id="System.ComponentModel.Annotations" version="4.7.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\bin\Debug\net471\Frends.FTP.DownloadFiles.dll" target="lib\net471\Frends.FTP.DownloadFiles.dll" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\bin\Debug\net471\Frends.FTP.DownloadFiles.xml" target="lib\net471\Frends.FTP.DownloadFiles.xml" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\bin\Debug\net6.0\Frends.FTP.DownloadFiles.dll" target="lib\net6.0\Frends.FTP.DownloadFiles.dll" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\bin\Debug\net6.0\Frends.FTP.DownloadFiles.xml" target="lib\net6.0\Frends.FTP.DownloadFiles.xml" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\bin\Debug\netstandard2.0\Frends.FTP.DownloadFiles.dll" target="lib\netstandard2.0\Frends.FTP.DownloadFiles.dll" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\bin\Debug\netstandard2.0\Frends.FTP.DownloadFiles.xml" target="lib\netstandard2.0\Frends.FTP.DownloadFiles.xml" />
+    <file src="C:\Users\virtari\repos\Frends.FTP\Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles\FrendsTaskMetadata.json" target="\FrendsTaskMetadata.json" />
+  </files>
+</package>

@@ -2,6 +2,7 @@
 
   <PropertyGroup>
 	<TargetFrameworks>net6.0;netstandard2.0;net471</TargetFrameworks>
+	<LangVersion>latest</LangVersion>
     <authors>Jefim Borissov</authors>
     <copyright>Frends</copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
