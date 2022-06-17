@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Serilog.Core;
+﻿using Serilog.Core;
 using Serilog.Events;
 
 namespace Frends.FTP.DownloadFiles.Logging;

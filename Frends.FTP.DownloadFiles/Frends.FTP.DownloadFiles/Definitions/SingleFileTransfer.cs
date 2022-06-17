@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Net;
-using FluentFTP;
+﻿using FluentFTP;
 using Frends.FTP.DownloadFiles.Enums;
 using Frends.FTP.DownloadFiles.Logging;
 

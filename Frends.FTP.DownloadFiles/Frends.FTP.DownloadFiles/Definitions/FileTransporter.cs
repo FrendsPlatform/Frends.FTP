@@ -1,13 +1,8 @@
 ﻿using FluentFTP;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading;
 using Frends.FTP.DownloadFiles.Enums;
 using Frends.FTP.DownloadFiles.Logging;
 using Frends.FTP.DownloadFiles.TaskConfiguration;
@@ -237,7 +232,7 @@ internal class FileTransporter
         return new Tuple<List<FileItem>, bool>(list, true);
     }
 
-    private FileTransferResult FormFailedFileTransferResult(string userResultMessage)
+    private static FileTransferResult FormFailedFileTransferResult(string userResultMessage)
     {
         return new FileTransferResult
         {
@@ -278,7 +273,7 @@ internal class FileTransporter
         };
     }
 
-    private string GetUserResultMessage(IList<SingleFileTransferResult> results)
+    private static string GetUserResultMessage(IList<SingleFileTransferResult> results)
     {
         var userResultMessage = string.Empty;
 

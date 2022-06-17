@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace Frends.FTP.DownloadFiles.Definitions;
 
@@ -202,8 +199,8 @@ internal class RenamingPolicy
     {
         var isFileMask = false;
         if (string.IsNullOrEmpty(input)) return false;
-        if (input.Contains("*")) isFileMask = true;
-        if (input.Contains("?")) isFileMask = true;
+        if (input.Contains('*')) isFileMask = true;
+        if (input.Contains('?')) isFileMask = true;
         return isFileMask;
     }
 

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.IO;
+﻿using System.Collections.Concurrent;
 using Frends.FTP.DownloadFiles.Definitions;
 using Frends.FTP.DownloadFiles.Enums;
 using Serilog;
