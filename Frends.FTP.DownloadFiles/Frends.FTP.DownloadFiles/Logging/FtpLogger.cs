@@ -42,10 +42,7 @@ internal class FtpLogger : IFtpLogger
     {
         try
         {
-            if (context == null)
-            {
-                context = new BatchContext();
-            }
+            if (context == null) context = new BatchContext();
 
             var sourceEndPointName = GetSourceEndPointName(context);
             var destinationEndPointName = GetDestinationEndPointName(context);
@@ -108,12 +105,12 @@ internal class FtpLogger : IFtpLogger
         _log.Debug(message);
     }
 
-    private string GetSourceEndPointName(BatchContext context)
+    private static string GetSourceEndPointName(BatchContext context)
     {
         return "File: " + context.Source.Directory + context.Source.FileName;
     }
 
-    private string GetDestinationEndPointName(BatchContext context)
+    private static string GetDestinationEndPointName(BatchContext context)
     {
         return $"FTP://{context.Connection.Address}/{context.Destination.Directory}/{context.Destination.FileName}";
     }

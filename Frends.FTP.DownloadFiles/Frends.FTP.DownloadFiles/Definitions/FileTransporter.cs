@@ -77,6 +77,7 @@ internal class FileTransporter
 
                     foreach (var file in files)
                     {
+                        cancellationToken.ThrowIfCancellationRequested();
                         var singleTransfer =
                             new SingleFileTransfer(file, _batchContext, client, _renamingPolicy, _logger);
                         var result = singleTransfer.TransferSingleFile();
@@ -151,15 +152,13 @@ internal class FileTransporter
                 client.EncryptionMode = FtpEncryptionMode.Auto;
                 break;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException($"Unknown Encoding type: '{connect.SslMode}'.");
         }
 
         if (connect.UseFTPS)
         {
             if (connect.EnableClientAuth)
-            {
                 client.ClientCertificates.Add(new X509Certificate2(connect.ClientCertificatePath));
-            }
 
             client.ValidateCertificate += (control, e) =>
             {
@@ -299,7 +298,7 @@ internal class FileTransporter
         return userResultMessage;
     }
 
-    private string MessageJoin(params string[] args)
+    private static string MessageJoin(params string[] args)
     {
         return string.Join(" ", args.Where(s => !string.IsNullOrWhiteSpace(s)));
     }

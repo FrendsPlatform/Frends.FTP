@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0.0] - 2022-06-15
+## [1.0.1] - 2022-06-15
 ### Fixed
 - Added DisplayFormat annotation to the Connection ClientCertificatePath input field.
 

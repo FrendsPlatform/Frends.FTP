@@ -3,6 +3,7 @@
   <PropertyGroup>
 	<TargetFrameworks>net6.0;netstandard2.0;net471</TargetFrameworks>
 	<LangVersion>latest</LangVersion>
+	<ImplicitUsings>enable</ImplicitUsings>
     <authors>Jefim Borissov</authors>
     <copyright>Frends</copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -18,11 +19,19 @@
     <None Include="FrendsTaskMetadata.json" Pack="true" PackagePath="/">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+	<None Include="../../ApacheLicense.txt" Pack="true" PackagePath="/">
+		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</None>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentFTP" Version="37.0.2" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+	<PackageReference Include="System.Net.Http" Version="4.3.4" />
+	<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+	<PackageReference Include="Newtonsoft.Json" Version="11.0.2">
+		<NoWarn>NU1605</NoWarn>
+	</PackageReference>
     <PackageReference Include="Serilog" Version="2.11.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
   </ItemGroup>

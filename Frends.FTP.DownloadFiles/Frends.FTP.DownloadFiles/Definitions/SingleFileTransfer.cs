@@ -65,9 +65,7 @@ internal class SingleFileTransfer
                 }
             }
             else
-            {
                 PutDestinationFile();
-            }
 
             if (_batchContext.Options.PreserveLastModified)
                 RestoreModified();
@@ -217,10 +215,8 @@ internal class SingleFileTransfer
                 Trace(TransferState.SourceOperationMove, "Moving source file {0} to {1}", SourceFile.FullPath, moveToPath);
                 _client.MoveFile(filePath, moveToPath);
 
-                if (SourceFile.FullPath == null)
-                {
+                if (string.IsNullOrEmpty(SourceFile.FullPath))
                     _logger.NotifyInformation(_batchContext, "Source end point returned null as the moved file. It should return the name of the moved file.");
-                }
                 break;
 
             case SourceOperation.Rename:
@@ -229,10 +225,8 @@ internal class SingleFileTransfer
                     
                 _client.MoveFile(filePath, renameToPath);
 
-                if (SourceFile.FullPath == null)
-                {
+                if (string.IsNullOrEmpty(SourceFile.FullPath))
                     _logger.NotifyInformation(_batchContext, "Source end point returned null as the renamed file. It should return the name of the renamed file.");
-                }
                 break;
 
             case SourceOperation.Delete:
@@ -276,9 +270,7 @@ internal class SingleFileTransfer
         var errorMessage =
             $"Failure in {_state}: File '{SourceFile.Name}' could not be transferred to '{_destinationDirectoryWithMacrosExpanded}'. Error: {exception.Message}";
         if (!string.IsNullOrEmpty(sourceFileRestoreMessage))
-        {
             errorMessage += " " + sourceFileRestoreMessage;
-        }
 
         _result.ErrorMessages.Add(errorMessage);
 
@@ -290,15 +282,11 @@ internal class SingleFileTransfer
         // If DestinationFileNameDuringTransfer is not set,
         // the destination file already exists and DestinationFileExistAction=Error
         if (string.IsNullOrEmpty(_destinationFileDuringTransfer))
-        {
             return;
-        }
 
         // If RenameDestinationFileDuringTransfer=False, there is no temporary file that could be deleted
         if (!_batchContext.Options.RenameDestinationFileDuringTransfer)
-        {
             return;
-        }
 
         try
         {
@@ -322,9 +310,7 @@ internal class SingleFileTransfer
             if (FileDefinedAndExists(fileName))
             {
                 if ((File.GetAttributes(fileName) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-                {
                     File.SetAttributes(fileName, FileAttributes.Normal); // Clear flags so readonly doesn't cause any problems CO-469
-                }
                 File.Delete(fileName);
             }
         }
@@ -334,7 +320,7 @@ internal class SingleFileTransfer
         }
     }
 
-    private bool FileDefinedAndExists(string filename)
+    private static bool FileDefinedAndExists(string filename)
     {
         return !string.IsNullOrEmpty(filename) && File.Exists(filename);
     }

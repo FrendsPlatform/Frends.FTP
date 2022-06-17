@@ -27,22 +27,16 @@ internal class RenamingPolicy
     /// <returns>Remote file name with expanded macros.</returns>
     public string CreateRemoteFileName(string originalFileName, string remoteFileDefinition)
     {
-        if (!string.IsNullOrEmpty(remoteFileDefinition) && remoteFileDefinition.Contains("?"))
-        {
+        if (!string.IsNullOrEmpty(remoteFileDefinition) && remoteFileDefinition.Contains('?'))
             throw new ArgumentException("Character '?' not allowed in remote filename.", nameof(remoteFileDefinition));
-        }
 
         if (string.IsNullOrEmpty(originalFileName))
-        {
             throw new ArgumentException("Original filename must be set.", nameof(originalFileName));
-        }
 
         var originalFileNameWithoutPath = Path.GetFileName(originalFileName);
 
         if (string.IsNullOrEmpty(remoteFileDefinition))
-        {
             return originalFileNameWithoutPath;
-        }
 
         if (!IsFileMask(remoteFileDefinition) &&
             !IsFileMacro(remoteFileDefinition, _macroHandlers) &&
@@ -52,19 +46,15 @@ internal class RenamingPolicy
             var remoteFileName = Path.GetFileName(remoteFileDefinition);
 
             if (string.IsNullOrEmpty(remoteFileName))
-            {
                 remoteFileDefinition = Path.Combine(remoteFileDefinition, originalFileNameWithoutPath);
-            }
 
             return remoteFileDefinition;
         }
 
-        var result = this.ExpandMacrosAndMasks(originalFileName, remoteFileDefinition);
+        var result = ExpandMacrosAndMasks(originalFileName, remoteFileDefinition);
 
         if (result.EndsWith("\\"))
-        {
             result = Path.Combine(result, originalFileNameWithoutPath);
-        }
 
         return result;
     }
@@ -101,10 +91,8 @@ internal class RenamingPolicy
         directoryName = CanonizeAndCheckPath(directoryName);
 
         // this should always be a directory
-        if (!directoryName.EndsWith("/"))
-        {
-            directoryName += "/";
-        }
+        if (!directoryName.EndsWith("/")) directoryName += "/";
+
         var sourceFileName = Path.GetFileName(sourceFilePath);
         return Path.Combine(directoryName, sourceFileName);
     }
@@ -171,7 +159,7 @@ internal class RenamingPolicy
         return filename;
     }
 
-    private string ExpandFileMasks(string filePath, string originalFileName)
+    private static string ExpandFileMasks(string filePath, string originalFileName)
     {
         string filename = filePath;
         if (IsFileMask(filename))
@@ -184,9 +172,7 @@ internal class RenamingPolicy
     {
         //remove extension if it is wanted to be changed, new extension is added later on to new filename
         if (mask.Contains("*.") && Path.HasExtension(filename))
-        {
             filename = Path.GetFileNameWithoutExtension(filename);
-        }
 
         int i = mask.IndexOf("*", StringComparison.InvariantCulture);
         if (i >= 0)
@@ -199,12 +185,9 @@ internal class RenamingPolicy
         return mask;
     }
 
-    private bool IsFileMacro(string s, IDictionary<string, Func<string, string>> macroDictionary)
+    private static bool IsFileMacro(string s, IDictionary<string, Func<string, string>> macroDictionary)
     {
-        if (s == null)
-        {
-            return false;
-        }
+        if (s == null) return false;
 
         foreach (var key in macroDictionary.Keys)
         {
@@ -218,13 +201,13 @@ internal class RenamingPolicy
     private static bool IsFileMask(string input)
     {
         var isFileMask = false;
-        if (input == null) return false;
+        if (string.IsNullOrEmpty(input)) return false;
         if (input.Contains("*")) isFileMask = true;
         if (input.Contains("?")) isFileMask = true;
         return isFileMask;
     }
 
-    private IDictionary<string, Func<string, string>> InitializeSourceFileNameMacroHandlers()
+    private static IDictionary<string, Func<string, string>> InitializeSourceFileNameMacroHandlers()
     {
         return new Dictionary<string, Func<string, string>>
             {
@@ -233,7 +216,7 @@ internal class RenamingPolicy
             };
     }
 
-    private IDictionary<string, Func<string, string>> InitializeMacroHandlers(string transferName, Guid transferId)
+    private static IDictionary<string, Func<string, string>> InitializeMacroHandlers(string transferName, Guid transferId)
     {
         return new Dictionary<string, Func<string, string>>
             {
@@ -266,7 +249,7 @@ internal class RenamingPolicy
         return ExpandMacrosFromDictionary(fileDefinition, _macroHandlers, "");
     }
 
-    private string ExpandMacrosFromDictionary(string fileDefinition, IDictionary<string, Func<string, string>> macroHandlers, string originalFile)
+    private static string ExpandMacrosFromDictionary(string fileDefinition, IDictionary<string, Func<string, string>> macroHandlers, string originalFile)
     {
         foreach (var macroHandler in macroHandlers)
         {

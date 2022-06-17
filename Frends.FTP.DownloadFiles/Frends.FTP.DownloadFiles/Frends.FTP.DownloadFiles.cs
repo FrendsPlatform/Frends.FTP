@@ -121,9 +121,7 @@ public static class FTP
         using (var logger = InitializeFtpLogger(operationsLogger))
         {
             if (string.IsNullOrEmpty(info.ProcessUri))
-            {
                 fileTransferLog.Warning("ProcessUri is empty. This means the transfer view cannot link to the correct page");
-            }
 
             if (!Guid.TryParse(info.TaskExecutionID, out var executionId))
             {
