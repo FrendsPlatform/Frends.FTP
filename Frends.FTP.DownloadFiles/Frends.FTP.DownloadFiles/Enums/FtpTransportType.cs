@@ -1,12 +1,11 @@
-namespace Frends.FTP.DownloadFiles.Enums
-{
-    /// <summary>FTP transport types.</summary>
-    public enum FtpTransportType
-    {
-        /// <summary>Binary transport.</summary>
-        Binary,
+namespace Frends.FTP.DownloadFiles.Enums;
 
-        /// <summary>ASCII transport.</summary>
-        Ascii,
-    }
+/// <summary>FTP transport types.</summary>
+public enum FtpTransportType
+{
+    /// <summary>Binary transport.</summary>
+    Binary,
+
+    /// <summary>ASCII transport.</summary>
+    Ascii,
 }

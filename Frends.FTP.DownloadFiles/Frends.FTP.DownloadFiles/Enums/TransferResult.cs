@@ -1,8 +1,8 @@
-﻿namespace Frends.FTP.DownloadFiles.Enums
+﻿namespace Frends.FTP.DownloadFiles.Enums;
+
+internal enum TransferResult
 {
-    internal enum TransferResult
-    {
-        Success,
-        Fail
-    }
+    Success,
+    Fail
 }
+
