@@ -199,7 +199,7 @@ internal class SingleFileTransfer
     /// </summary>
     private void RestoreModified()
     {
-        File.SetLastWriteTime(DestinationFileNameWithMacrosExpanded, SourceFile.Modified);
+        File.SetLastWriteTime(GetDestinationFilePath(DestinationFileNameWithMacrosExpanded), SourceFile.Modified);
     }
 
     private void ExecuteSourceOperation()
@@ -364,8 +364,6 @@ internal class SingleFileTransfer
             case SourceOperation.Move:
             case SourceOperation.Rename:
                 return true;
-            case SourceOperation.Delete:
-            case SourceOperation.Nothing:
             default:
                 return false;
         }
