@@ -364,8 +364,6 @@ internal class SingleFileTransfer
             case SourceOperation.Move:
             case SourceOperation.Rename:
                 return true;
-            case SourceOperation.Delete:
-            case SourceOperation.Nothing:
             default:
                 return false;
         }
