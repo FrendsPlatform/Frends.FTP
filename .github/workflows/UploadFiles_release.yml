@@ -1,4 +1,4 @@
-name: Frends.FTP.UploadFiles Release
+name: UploadFiles Release
 
 on:
   workflow_dispatch:
@@ -8,6 +8,5 @@ jobs:
     uses: FrendsPlatform/FrendsTasks/.github/workflows/release.yml@main
     with:
       workdir: Frends.FTP.UploadFiles
-
     secrets:
       feed_api_key: ${{ secrets.TASKS_FEED_API_KEY }}

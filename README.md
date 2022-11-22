@@ -4,8 +4,9 @@ Frends tasks for FTP/FTPS operations.
 
 # Tasks
 
-- [Frends.FTP.UploadFiles](Frends.FTP.UploadFiles/README.md)
+- [Frends.FTP.ListFiles](Frends.FTP.ListFiles/README.md)
 - [Frends.FTP.DownloadFiles](Frends.FTP.DownloadFiles/README.md)
+- [Frends.FTP.UploadFiles](Frends.FTP.UploadFiles/README.md)
 
 # Contributing
 When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.

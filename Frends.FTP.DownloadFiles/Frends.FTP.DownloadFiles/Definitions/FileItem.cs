@@ -1,5 +1,4 @@
-﻿using System;
-using FluentFTP;
+﻿using FluentFTP;
 
 namespace Frends.FTP.DownloadFiles.Definitions;
 
@@ -10,11 +9,8 @@ internal class FileItem
     /// If not available, set to the default value, i.e. <see cref="DateTime.MinValue"/>.
     /// </summary>
     public DateTime Modified { get; }
-
     public string Name { get; set; }
-
     public string FullPath { get; }
-
     public FileItem(FtpListItem ftpListItem)
     {
         Modified = ftpListItem.Modified;
@@ -22,4 +18,3 @@ internal class FileItem
         FullPath = ftpListItem.FullName;
     }
 }
-

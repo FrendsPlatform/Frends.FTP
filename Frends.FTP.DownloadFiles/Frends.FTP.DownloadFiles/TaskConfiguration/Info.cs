@@ -36,6 +36,4 @@ public class Info
     /// <example>#process.executionid</example>
     [DefaultValue("#process.executionid")]
     public string TaskExecutionID { get; set; }
-
 }
-

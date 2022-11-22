@@ -75,7 +75,7 @@ internal class RenamingPolicy
     /// The current file name should always be appended to the directory name
     /// The directory name cannot use file macros or file masks        
     /// </summary>        
-    public string CreateRemoteFileNameForMove(string sourceOperationTo, string sourceFilePath)
+    public static string CreateRemoteFileNameForMove(string sourceOperationTo, string sourceFilePath)
     {
         var directoryName = sourceOperationTo;
         if (string.IsNullOrEmpty(directoryName))
@@ -106,7 +106,7 @@ internal class RenamingPolicy
 
     private static char[] GetInvalidChars()
     {
-        List<char> invalidCharacters = new List<char>(Path.GetInvalidFileNameChars());
+        List<char> invalidCharacters = new(Path.GetInvalidFileNameChars());
         invalidCharacters.Remove('/'); // remove the forward slash, as it is supported
         invalidCharacters.Remove(':'); // also the colon is supported
         return invalidCharacters.ToArray();

@@ -208,7 +208,7 @@ internal class SingleFileTransfer
         switch (_batchContext.Source.Operation)
         {
             case SourceOperation.Move:
-                var moveToPath = _renamingPolicy.CreateRemoteFileNameForMove(_batchContext.Source.DirectoryToMoveAfterTransfer, SourceFile.FullPath);
+                var moveToPath = RenamingPolicy.CreateRemoteFileNameForMove(_batchContext.Source.DirectoryToMoveAfterTransfer, SourceFile.FullPath);
                 Trace(TransferState.SourceOperationMove, "Moving source file {0} to {1}", SourceFile.FullPath, moveToPath);
                 _client.MoveFile(filePath, moveToPath);
 

@@ -1,4 +1,4 @@
-name: ListFiles_build_main
+name: ListFiles build main
 
 on:
   push:

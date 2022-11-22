@@ -68,15 +68,14 @@ public class Connection
     /// If set, this encoding will be used to encode and decode command parameters and server responses, such as file names. Example values: utf-8, utf-16, windows-1252
     /// </summary>
     /// <example>utf-8</example>
-    [DefaultValue("")]
     public string Encoding { get; set; }
 
     /// <summary>
-    /// Integer value of used buffer size as KB.
-    /// Default value is 32 KB.
+    /// Integer value of used buffer size as bytes.
+    /// Default value is 4 KB.
     /// </summary>
-    /// <example>32</example>
-    [DefaultValue(32)]
+    /// <example>4096</example>
+    [DefaultValue(4096)]
     public int BufferSize { get; set; }
 
     #region FTPS settings
@@ -124,7 +123,6 @@ public class Connection
     /// Path to client certificate (X509).
     /// </summary>
     /// <example>c:\example.cer</example>
-    [DefaultValue("c:\\example.cer")]
     [UIHint(nameof(UseFTPS),"", true)]
     [DisplayFormat(DataFormatString = "Text")]
     public string ClientCertificatePath { get; set; }
@@ -139,4 +137,3 @@ public class Connection
 
     #endregion
 }
-

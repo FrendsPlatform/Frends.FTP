@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Threading;
+﻿using System.Collections.Concurrent;
 
 namespace Frends.FTP.DownloadFiles.Logging;
 
@@ -12,7 +9,7 @@ namespace Frends.FTP.DownloadFiles.Logging;
 internal class CircularBuffer<T>
 {
     private readonly ConcurrentQueue<T> _data;
-    private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
+    private readonly ReaderWriterLockSlim _lock = new();
     private readonly int _size;
 
     public CircularBuffer(int size)

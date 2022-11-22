@@ -49,4 +49,3 @@ public class Options
     [DefaultValue(true)]
     public bool OperationLog { get; set; } = true;
 }
-

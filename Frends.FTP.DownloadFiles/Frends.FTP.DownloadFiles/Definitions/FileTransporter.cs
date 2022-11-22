@@ -89,7 +89,7 @@ internal class FileTransporter
             return FormFailedFileTransferResult(userResultMessage);
         }
 
-        return FormResultFromSingleTransferResults(Result);
+        return FileTransporter.FormResultFromSingleTransferResults(Result);
     }
 
     private bool CreateDestinationDirIfNeeded(out FileTransferResult fileTransferResult)
@@ -132,24 +132,14 @@ internal class FileTransporter
     private static FtpClient CreateFtpClient(Connection connect)
     {
         var client = new FtpClient(connect.Address, connect.Port, connect.UserName, connect.Password);
-        switch (connect.SslMode)
+        client.EncryptionMode = connect.SslMode switch
         {
-            case FtpsSslMode.None:
-                client.EncryptionMode = FtpEncryptionMode.None;
-                break;
-            case FtpsSslMode.Implicit:
-                client.EncryptionMode = FtpEncryptionMode.Implicit;
-                break;
-            case FtpsSslMode.Explicit:
-                client.EncryptionMode = FtpEncryptionMode.Explicit;
-                break;
-            case FtpsSslMode.Auto:
-                client.EncryptionMode = FtpEncryptionMode.Auto;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException($"Unknown Encoding type: '{connect.SslMode}'.");
-        }
-
+            FtpsSslMode.None => FtpEncryptionMode.None,
+            FtpsSslMode.Implicit => FtpEncryptionMode.Implicit,
+            FtpsSslMode.Explicit => FtpEncryptionMode.Explicit,
+            FtpsSslMode.Auto => FtpEncryptionMode.Auto,
+            _ => throw new ArgumentOutOfRangeException($"Unknown Encoding type: '{connect.SslMode}'."),
+        };
         if (connect.UseFTPS)
         {
             if (connect.EnableClientAuth)
@@ -196,18 +186,12 @@ internal class FileTransporter
         }
 
         // Active/passive
-        switch (connect.Mode)
+        client.DataConnectionType = connect.Mode switch
         {
-            case FtpMode.Active:
-                client.DataConnectionType = FtpDataConnectionType.AutoActive;
-                break;
-            case FtpMode.Passive:
-                client.DataConnectionType = FtpDataConnectionType.AutoPassive;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException($"Unknown FTP mode {connect.Mode}");
-        }
-
+            FtpMode.Active => FtpDataConnectionType.AutoActive,
+            FtpMode.Passive => FtpDataConnectionType.AutoPassive,
+            _ => throw new ArgumentOutOfRangeException($"Unknown FTP mode {connect.Mode}"),
+        };
         return client;
     }
 
@@ -248,7 +232,7 @@ internal class FileTransporter
         };
     }
 
-    private FileTransferResult FormResultFromSingleTransferResults(List<SingleFileTransferResult> singleResults)
+    private static FileTransferResult FormResultFromSingleTransferResults(List<SingleFileTransferResult> singleResults)
     {
         var success = singleResults.All(x => x.Success);
         var actionSkipped = success && singleResults.All(x => x.ActionSkipped);

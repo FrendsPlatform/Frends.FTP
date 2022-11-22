@@ -1,5 +1,4 @@
-﻿using System;
-using Frends.FTP.DownloadFiles.TaskConfiguration;
+﻿using Frends.FTP.DownloadFiles.TaskConfiguration;
 
 namespace Frends.FTP.DownloadFiles.Definitions;
 
@@ -19,4 +18,3 @@ internal class BatchContext
 
     public Connection Connection  { get; set; }
 }
-

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Threading;
 using Frends.FTP.DownloadFiles.Enums;
 using Frends.FTP.DownloadFiles.TaskConfiguration;
