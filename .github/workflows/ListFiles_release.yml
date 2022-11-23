@@ -1,4 +1,4 @@
-name: ListFiles_release
+name: ListFiles release
 
 on:
   workflow_dispatch:

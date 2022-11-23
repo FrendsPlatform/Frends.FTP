@@ -13,7 +13,6 @@ public class Source
     /// Directory on the server.
     /// </summary>
     /// <example>/directory</example>
-    [DefaultValue("/")]
     [DisplayFormat(DataFormatString = "Text")]
     public string Directory { get; set; } = "/";
 
@@ -21,7 +20,6 @@ public class Source
     /// File name or file mask of the files to be fetched.
     /// </summary>
     /// <example>example*.csv</example>
-    [DefaultValue("\"\"")]
     public string FileName { get; set; }
 
     /// <summary>
@@ -54,4 +52,3 @@ public class Source
     [UIHint(nameof(Operation), "", SourceOperation.Move)]
     public string DirectoryToMoveAfterTransfer { get; set; }
 }
-

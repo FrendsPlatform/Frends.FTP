@@ -1,4 +1,4 @@
-name: ListFiles_build_test
+name: ListFiles build test
 
 on:
   push:

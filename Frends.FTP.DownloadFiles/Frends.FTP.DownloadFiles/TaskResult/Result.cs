@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Frends.FTP.DownloadFiles.TaskResult;
+﻿namespace Frends.FTP.DownloadFiles.TaskResult;
 
 /// <summary>
 /// Frends.FTP.DownloadFiles result.
@@ -83,4 +81,3 @@ public class Result
         OperationsLog = result.OperationsLog;
     }
 }
-

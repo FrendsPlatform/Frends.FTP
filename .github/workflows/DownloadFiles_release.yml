@@ -1,4 +1,4 @@
-name: Frends.FTP.DownloadFiles Release
+name: DownloadFiles Release
 
 on:
   workflow_dispatch:

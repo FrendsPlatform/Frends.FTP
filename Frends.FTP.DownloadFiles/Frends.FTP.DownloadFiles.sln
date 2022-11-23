@@ -5,13 +5,16 @@ VisualStudioVersion = 16.0.31402.337
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Frends.FTP.DownloadFiles", "Frends.FTP.DownloadFiles\Frends.FTP.DownloadFiles.csproj", "{6EFA4927-7EE0-4B47-9497-44DEE7ED5B47}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Frends.FTP.DownloadFiles.Tests", "Frends.FTP.DownloadFiles.Tests\Frends.FTP.DownloadFiles.Tests.csproj", "{4EEAFD8B-9BE7-4191-908B-C65E3472DD79}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6D984AAA-F3D3-4D0B-BB3F-B1D621C89B30}"
 	ProjectSection(SolutionItems) = preProject
 		CHANGELOG.md = CHANGELOG.md
+		..\.github\workflows\DownloadFiles_build_and_test_on_main.yml = ..\.github\workflows\DownloadFiles_build_and_test_on_main.yml
+		..\.github\workflows\DownloadFiles_build_and_test_on_push.yml = ..\.github\workflows\DownloadFiles_build_and_test_on_push.yml
+		..\.github\workflows\DownloadFiles_release.yml = ..\.github\workflows\DownloadFiles_release.yml
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Frends.FTP.DownloadFiles.Tests", "Frends.FTP.DownloadFiles.Tests\Frends.FTP.DownloadFiles.Tests.csproj", "{4EEAFD8B-9BE7-4191-908B-C65E3472DD79}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

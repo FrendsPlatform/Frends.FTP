@@ -1,9 +1,5 @@
 ﻿using Serilog;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Threading;
 using Frends.FTP.DownloadFiles.Definitions;
 using Frends.FTP.DownloadFiles.Logging;
 using Frends.FTP.DownloadFiles.TaskConfiguration;
@@ -159,7 +155,6 @@ public static class FTP
         try
         {
             return string.Join("\n", buffer.Select(x => x.Item1 == DateTimeOffset.MinValue ? "..." : $"{x.Item1:HH:mm:ssZ}: {x.Item2}"));
-
         }
         catch (Exception e)
         {

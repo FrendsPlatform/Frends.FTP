@@ -1,4 +1,4 @@
-name: Frends.FTP.UploadFiles Main
+name: UploadFiles Main
 
 on:
   push:
@@ -8,12 +8,11 @@ on:
       - 'Frends.FTP.UploadFiles/**'
   workflow_dispatch:
 
-
 jobs:
   build:
     uses: FrendsPlatform/FrendsTasks/.github/workflows/linux_build_main.yml@main
     with:
       workdir: Frends.FTP.UploadFiles
-      prebuild_command: "docker-compose -f Frends.FTP.UploadFiles.Tests/docker-compose.yml up -d"
+      prebuild_command: docker-compose -f Frends.FTP.UploadFiles.Tests/docker-compose.yml up -d
     secrets:
       badge_service_api_key: ${{ secrets.BADGE_SERVICE_API_KEY }}

@@ -1,7 +1,6 @@
 using Frends.FTP.DownloadFiles.TaskConfiguration;
 using NUnit.Framework;
 using System;
-using System.IO;
 using System.Security.Authentication;
 using System.Threading;
 using Frends.FTP.DownloadFiles.Enums;

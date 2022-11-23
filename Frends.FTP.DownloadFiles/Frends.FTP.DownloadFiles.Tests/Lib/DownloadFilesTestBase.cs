@@ -28,7 +28,7 @@ public class DownloadFilesTestBase
         return File.Exists(Path.Combine(path, fileName));
     }
 
-    protected string CreateLocalDir(string name)
+    protected static string CreateLocalDir(string name)
     {
         var dir = Path.Combine(Path.GetTempPath(), name);
         Directory.CreateDirectory(dir);
