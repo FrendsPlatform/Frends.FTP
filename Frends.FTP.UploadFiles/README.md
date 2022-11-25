@@ -1,9 +1,11 @@
 # Frends.FTP.UploadFiles
 
-[![Frends.FTP.UploadFiles Main](https://github.com/FrendsPlatform/Frends.FTP/actions/workflows/UploadFiles_build_and_test_on_main.yml/badge.svg)](https://github.com/FrendsPlatform/Frends.Regex/actions/workflows/IsMatch_build_and_test_on_main.yml)
-![MyGet](https://img.shields.io/myget/frends-tasks/v/Frends.FTP.UploadFiles?label=NuGet)
- ![GitHub](https://img.shields.io/github/license/FrendsPlatform/Frends.FTP?label=License)
- ![Coverage](https://app-github-custom-badges.azurewebsites.net/Badge?key=FrendsPlatform/Frends.FTP/Frends.FTP.UploadFiles|main)
+Upload files to FTP(S) server.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Build](https://github.com/FrendsPlatform/Frends.FTP/actions/workflows/UploadFiles_build_and_test_on_main.yml/badge.svg)](https://github.com/FrendsPlatform/Frends.FTP/actions)
+![MyGet](https://img.shields.io/myget/frends-tasks/v/Frends.FTP.UploadFiles)
+![Coverage](https://app-github-custom-badges.azurewebsites.net/Badge?key=FrendsPlatform/Frends.FTP/Frends.FTP.UploadFiles|main)
 
 ## Installing
 

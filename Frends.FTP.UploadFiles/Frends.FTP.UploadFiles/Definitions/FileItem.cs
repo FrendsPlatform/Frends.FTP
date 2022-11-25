@@ -10,9 +10,7 @@ namespace Frends.FTP.UploadFiles.Definitions
         /// If not available, set to the default value, i.e. <see cref="DateTime.MinValue"/>.
         /// </summary>
         public DateTime Modified { get; }
-
         public string Name { get; set; }
-
         public string FullPath { get; }
 
         public FileItem(string fullPath)

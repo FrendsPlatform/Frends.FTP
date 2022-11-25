@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Threading;
+﻿using System.Threading;
 using Frends.FTP.UploadFiles.Enums;
 using Frends.FTP.UploadFiles.TaskConfiguration;
 using Frends.FTP.UploadFiles.TaskResult;

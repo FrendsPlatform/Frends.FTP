@@ -10,6 +10,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6D984AAA-F3D3-4D0B-BB3F-B1D621C89B30}"
 	ProjectSection(SolutionItems) = preProject
 		CHANGELOG.md = CHANGELOG.md
+		..\.github\workflows\UploadFiles_build_and_test_on_main.yml = ..\.github\workflows\UploadFiles_build_and_test_on_main.yml
+		..\.github\workflows\UploadFiles_build_and_test_on_push.yml = ..\.github\workflows\UploadFiles_build_and_test_on_push.yml
+		..\.github\workflows\UploadFiles_release.yml = ..\.github\workflows\UploadFiles_release.yml
 		README.md = README.md
 	EndProjectSection
 EndProject

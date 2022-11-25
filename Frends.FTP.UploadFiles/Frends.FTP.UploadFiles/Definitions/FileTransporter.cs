@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
@@ -57,7 +56,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                 if (!success)
                 {
                     userResultMessage = $"Directory '{_sourceDirectoryWithMacrosExpanded}' doesn't exist.";
-                    return FormFailedFileTransferResult(userResultMessage);
+                    return FileTransporter.FormFailedFileTransferResult(userResultMessage);
                 }
 
                 if (files == null || !files.Any())
@@ -78,7 +77,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                         if (!client.IsConnected)
                         {
                             _logger.NotifyError(null, "Error while connecting to destination: ", new Exception(userResultMessage));
-                            return FormFailedFileTransferResult(userResultMessage);
+                            return FileTransporter.FormFailedFileTransferResult(userResultMessage);
                         }
 
                         // Check does the destination directory exists.
@@ -93,13 +92,13 @@ namespace Frends.FTP.UploadFiles.Definitions
                                 catch (Exception ex)
                                 {
                                     userResultMessage = $"Error while creating destination directory '{_destinationDirectoryWithMacrosExpanded}': {ex.Message}";
-                                    return FormFailedFileTransferResult(userResultMessage);
+                                    return FileTransporter.FormFailedFileTransferResult(userResultMessage);
                                 }
                             }
                             else
                             {
                                 userResultMessage = $"Destination directory '{_destinationDirectoryWithMacrosExpanded}' was not found.";
-                                return FormFailedFileTransferResult(userResultMessage);
+                                return FileTransporter.FormFailedFileTransferResult(userResultMessage);
                             }
                         }
 
@@ -109,6 +108,7 @@ namespace Frends.FTP.UploadFiles.Definitions
 
                         foreach (var file in files)
                         {
+                            cancellationToken.ThrowIfCancellationRequested();
                             var singleTransfer = new SingleFileTransfer(file, _batchContext, client, _renamingPolicy, _logger);
                             var result = singleTransfer.TransferSingleFile();
                             Result.Add(result);
@@ -120,7 +120,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             catch (SocketException)
             {
                 userResultMessage = $"Unable to establish the socket: No such host is known.";
-                return FormFailedFileTransferResult(userResultMessage);
+                return FileTransporter.FormFailedFileTransferResult(userResultMessage);
             }
 
             return FormResultFromSingleTransferResults(Result);
@@ -151,9 +151,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             if (connect.UseFTPS)
             {
                 if (connect.EnableClientAuth)
-                {
                     client.ClientCertificates.Add(new X509Certificate2(connect.ClientCertificatePath));
-                }
 
                 client.ValidateCertificate += (control, e) =>
                 {
@@ -243,7 +241,6 @@ namespace Frends.FTP.UploadFiles.Definitions
                     _logger.NotifyInformation(_batchContext, $"FILE LIST {item.FullPath}");
                     fileItems.Add(item);
                 }
-
             }
 
             return new Tuple<List<FileItem>, bool>(fileItems, true);
@@ -259,9 +256,8 @@ namespace Frends.FTP.UploadFiles.Definitions
                 if (!string.IsNullOrWhiteSpace(dir))
                 {
                     if (!client.DirectoryExists(dir))
-                    {
                         client.CreateDirectory(dir);
-                    }
+
                     client.SetWorkingDirectory(dir);
                 }
             }
@@ -275,7 +271,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             return res?.OfType<string>().ToArray();
         }
 
-        private FileTransferResult FormFailedFileTransferResult(string userResultMessage)
+        private static FileTransferResult FormFailedFileTransferResult(string userResultMessage)
         {
             return new FileTransferResult
             {
@@ -322,21 +318,21 @@ namespace Frends.FTP.UploadFiles.Definitions
 
             var errorMessages = results.SelectMany(x => x.ErrorMessages).ToList();
             if (errorMessages.Any())
-                userResultMessage = MessageJoin(userResultMessage,
+                userResultMessage = FileTransporter.MessageJoin(userResultMessage,
                     $"{errorMessages.Count} Errors: {string.Join(", ", errorMessages)}");
 
             var transferredFiles = results.Select(x => x.TransferredFile).Where(x => x != null).ToList();
             if (transferredFiles.Any())
-                userResultMessage = MessageJoin(userResultMessage,
+                userResultMessage = FileTransporter.MessageJoin(userResultMessage,
                     string.Format("{0} files transferred: {1}", transferredFiles.Count,
                         string.Join(", ", transferredFiles)));
             else
-                userResultMessage = MessageJoin(userResultMessage, "No files transferred.");
+                userResultMessage = FileTransporter.MessageJoin(userResultMessage, "No files transferred.");
 
             return userResultMessage;
         }
 
-        private string MessageJoin(params string[] args)
+        private static string MessageJoin(params string[] args)
         {
             return string.Join(" ", args.Where(s => !string.IsNullOrWhiteSpace(s)));
         }
@@ -363,8 +359,6 @@ namespace Frends.FTP.UploadFiles.Definitions
                     throw new Exception("Unknown operation in NoSourceOperation");
             }
         }
-
         #endregion
-
     }
 }
