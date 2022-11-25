@@ -12,7 +12,7 @@ using Frends.FTP.UploadFiles.TaskResult;
 namespace Frends.FTP.UploadFiles
 {
     /// <summary>
-    /// Class containing the FTP.UploadFiles task
+    /// Class containing the FTP.UploadFiles Task
     /// </summary>
     public static class FTP
     {
@@ -95,7 +95,7 @@ namespace Frends.FTP.UploadFiles
         /// <param name="destination">Destination directory location</param>
         /// <param name="options">Transfer options</param>
         /// <param name="cancellationToken">CancellationToken is given by Frends</param>
-        /// <returns>Result object {bool ActionSkipped, bool Success, string UserResultMessage, int SuccessfulTransferCount, int FailedTransferCount, string FileName, string SourcePath, string DestinationPath, bool Success} </returns>
+        /// <returns>Result object {bool ActionSkipped, bool Success, string UserResultMessage, int SuccessfulTransferCount, int FailedTransferCount, IEnumerable&lt;string&gt; TransferredFileNames, Dictionary&lt;string, IList&lt;string&gt;&gt; TransferErrors, IEnumerable&lt;string&gt; TransferredFilePaths, IDictionary&lt;string, string&gt; OperationsLog} </returns>
         public static Result UploadFiles(
             [PropertyTab] Source source,
             [PropertyTab] Destination destination,
@@ -155,7 +155,6 @@ namespace Frends.FTP.UploadFiles
             try
             {
                 return string.Join("\n", buffer.Select(x => x.Item1 == DateTimeOffset.MinValue ? "..." : $"{x.Item1:HH:mm:ssZ}: {x.Item2}"));
-
             }
             catch (Exception e)
             {

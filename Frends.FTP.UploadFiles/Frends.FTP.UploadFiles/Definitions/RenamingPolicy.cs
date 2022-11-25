@@ -197,10 +197,8 @@ namespace Frends.FTP.UploadFiles.Definitions
                 return false;
 
             foreach (var key in macroDictionary.Keys)
-            {
                 if (input.ToUpperInvariant().Contains(key.ToUpperInvariant()))
                     return true;
-            }
 
             return false;
         }

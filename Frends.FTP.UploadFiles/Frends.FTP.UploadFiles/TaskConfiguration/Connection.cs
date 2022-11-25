@@ -106,11 +106,11 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         public string Encoding { get; set; }
 
         /// <summary>
-        /// Integer value of used buffer size as KB.
-        /// Default value is 32 KB.
+        /// Integer value of used buffer size as bytes.
+        /// Default value is 4 KB.
         /// </summary>
-        /// <example>32</example>
-        [DefaultValue(32)]
+        /// <example>4096</example>
+        [DefaultValue(4096)]
         public int BufferSize { get; set; }
 
         #region FTPS settings
@@ -158,7 +158,6 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         /// Path to client certificate (X509).
         /// </summary>
         /// <example>c:\example.cer</example>
-        [DefaultValue("c:\\example.cer")]
         [DisplayFormat(DataFormatString = "Text")]
         [UIHint(nameof(UseFTPS),"", true)]
         public string ClientCertificatePath { get; set; }

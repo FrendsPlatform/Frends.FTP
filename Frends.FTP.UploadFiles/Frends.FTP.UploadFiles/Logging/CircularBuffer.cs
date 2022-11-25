@@ -6,7 +6,7 @@ using System.Threading;
 namespace Frends.FTP.UploadFiles.Logging
 {
     /// <summary>
-    ///     Circular buffer impl, original from https://codereview.stackexchange.com/a/134147
+    /// Circular buffer impl, original from https://codereview.stackexchange.com/a/134147
     /// </summary>
     /// <typeparam name="T"></typeparam>
     internal class CircularBuffer<T>

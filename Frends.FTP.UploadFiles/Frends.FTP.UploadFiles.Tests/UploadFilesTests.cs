@@ -102,14 +102,12 @@ namespace Frends.FTP.UploadFiles.Tests
                 UseFTPS = true,
                 CertificateHashStringSHA1 = "nope"
             };
-            
 
             // Test and assert
             var ex = Assert.Throws<AggregateException>(() =>
             {
                 var result = FTP.UploadFiles(source, destination, connection, new Options(), new Info(),
                     new CancellationToken());
-                
             });
             
             Assert.AreEqual(1, ex.InnerExceptions.Count);

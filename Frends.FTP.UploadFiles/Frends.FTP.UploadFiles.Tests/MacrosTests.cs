@@ -23,14 +23,14 @@ public class MacrosTests
 {
     private readonly string _dockerDataVolumePath = Path.GetFullPath("../../../DockerVolumes/data");
 
-    private string CreateLocalDir(string name)
+    private static string CreateLocalDir(string name)
     {
         var path = Path.Combine(Path.GetTempPath(), name);
         Directory.CreateDirectory(path);
         return path;
     }
 
-    private string CreateLocalFile(string dir, string file)
+    private static string CreateLocalFile(string dir, string file)
     {
         var path = Path.Combine(Path.GetTempPath(), dir, file);
         File.WriteAllText(path, "hello");
@@ -51,7 +51,7 @@ public class MacrosTests
 
         var sourceWithMacros = $"dir-%Year%-{guid}";
         var sourceWithMacrosExpanded = $"dir-{year}-{guid}";
-        
+
         CreateLocalDir(sourceWithMacrosExpanded);
         CreateLocalFile(sourceWithMacrosExpanded, "file1.txt");
         
@@ -114,7 +114,7 @@ public class MacrosTests
         Assert.IsTrue(FtpFileExists(destinationFileNameWithMacrosExpanded, nameof(MacrosWorkInDestinationFileName)), result.UserResultMessage);
     }
     
-    private Result CallUploadFiles(
+    private static Result CallUploadFiles(
         string sourceDirectory,
         string sourceFileName,
         string targetDirectory,
