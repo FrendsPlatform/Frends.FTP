@@ -1,6 +1,6 @@
-﻿using System.ComponentModel;
+﻿using Frends.FTP.UploadFiles.Enums;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Frends.FTP.UploadFiles.Enums;
 
 namespace Frends.FTP.UploadFiles.TaskConfiguration
 {

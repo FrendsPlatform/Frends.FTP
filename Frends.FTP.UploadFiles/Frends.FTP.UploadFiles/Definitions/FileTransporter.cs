@@ -1,4 +1,5 @@
 ﻿using FluentFTP;
+using Frends.FTP.UploadFiles.Enums;
 using Frends.FTP.UploadFiles.Logging;
 using Frends.FTP.UploadFiles.TaskConfiguration;
 using Frends.FTP.UploadFiles.TaskResult;
@@ -11,7 +12,6 @@ using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
-using Frends.FTP.UploadFiles.Enums;
 
 namespace Frends.FTP.UploadFiles.Definitions
 {
@@ -37,7 +37,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                 _renamingPolicy.ExpandDirectoryForMacros(_batchContext.Source.Directory);
             _destinationDirectoryWithMacrosExpanded =
                 _renamingPolicy.ExpandDirectoryForMacros(_batchContext.Destination.Directory);
-            
+
             Result = new List<SingleFileTransferResult>();
             _filePaths = ConvertObjectToStringArray(context.Source.FilePaths);
         }
@@ -56,6 +56,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                 if (!success)
                 {
                     userResultMessage = $"Directory '{_sourceDirectoryWithMacrosExpanded}' doesn't exist.";
+                    _logger.NotifyError(_batchContext, userResultMessage, new Exception(userResultMessage));
                     return FileTransporter.FormFailedFileTransferResult(userResultMessage);
                 }
 
@@ -76,7 +77,7 @@ namespace Frends.FTP.UploadFiles.Definitions
 
                         if (!client.IsConnected)
                         {
-                            _logger.NotifyError(null, "Error while connecting to destination: ", new Exception(userResultMessage));
+                            _logger.NotifyError(_batchContext, "Error while connecting to destination: ", new Exception(userResultMessage));
                             return FileTransporter.FormFailedFileTransferResult(userResultMessage);
                         }
 
@@ -92,12 +93,14 @@ namespace Frends.FTP.UploadFiles.Definitions
                                 catch (Exception ex)
                                 {
                                     userResultMessage = $"Error while creating destination directory '{_destinationDirectoryWithMacrosExpanded}': {ex.Message}";
+                                    _logger.NotifyError(_batchContext, userResultMessage, new Exception(userResultMessage));
                                     return FileTransporter.FormFailedFileTransferResult(userResultMessage);
                                 }
                             }
                             else
                             {
                                 userResultMessage = $"Destination directory '{_destinationDirectoryWithMacrosExpanded}' was not found.";
+                                _logger.NotifyError(_batchContext, userResultMessage, new Exception(userResultMessage));
                                 return FileTransporter.FormFailedFileTransferResult(userResultMessage);
                             }
                         }
@@ -108,6 +111,13 @@ namespace Frends.FTP.UploadFiles.Definitions
 
                         foreach (var file in files)
                         {
+                            // Check that the connection is alive and if not try to connect again
+                            if (!client.IsConnected)
+                            {
+                                client.Connect();
+                                _logger.NotifyInformation(_batchContext, "Reconnected.");
+                            }
+
                             cancellationToken.ThrowIfCancellationRequested();
                             var singleTransfer = new SingleFileTransfer(file, _batchContext, client, _renamingPolicy, _logger);
                             var result = singleTransfer.TransferSingleFile();
@@ -120,6 +130,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             catch (SocketException)
             {
                 userResultMessage = $"Unable to establish the socket: No such host is known.";
+                _logger.NotifyError(_batchContext, userResultMessage, new Exception(userResultMessage));
                 return FileTransporter.FormFailedFileTransferResult(userResultMessage);
             }
 
@@ -161,25 +172,25 @@ namespace Frends.FTP.UploadFiles.Definitions
                         e.Accept = true;
                         return;
                     }
-                    
+
                     // Accept if we want to accept a certain hash
                     e.Accept = e.Certificate.GetCertHashString() == connect.CertificateHashStringSHA1;
                 };
-                
+
                 client.ValidateAnyCertificate = connect.ValidateAnyCertificate;
                 client.DataConnectionEncryption = connect.SecureDataChannel;
             }
 
             client.NoopInterval = connect.KeepConnectionAliveInterval;
-            
+
             if (!string.IsNullOrWhiteSpace(connect.Encoding)) client.Encoding = Encoding.GetEncoding(connect.Encoding);
-            
+
             // Client lib timeout is in milliseconds, ours is in seconds, thus *1000 conversion
             client.ConnectTimeout = connect.ConnectionTimeout * 1000;
             client.LocalFileBufferSize = connect.BufferSize;
 
             // Transport type Binary / ASCII
-            switch(connect.TransportType)
+            switch (connect.TransportType)
             {
                 case FtpTransportType.Binary:
                     client.UploadDataType = FtpDataType.Binary;
@@ -192,7 +203,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                 default:
                     throw new ArgumentOutOfRangeException($"Unknown FTP transport type {connect.TransportType}");
             }
-            
+
             // Active/passive
             switch (connect.Mode)
             {
@@ -341,7 +352,7 @@ namespace Frends.FTP.UploadFiles.Definitions
         {
             var transferName = context.Info.TransferName ?? string.Empty;
 
-            var msg = context.Source.FilePaths == null 
+            var msg = context.Source.FilePaths == null
                 ? $"No source files found from directory '{_sourceDirectoryWithMacrosExpanded}' with file mask '{source.FileName}' for transfer '{transferName}'"
                 : $"No source files found from FilePaths '{string.Join(", ", context.Source.FilePaths)}' for transfer '{transferName}'";
 

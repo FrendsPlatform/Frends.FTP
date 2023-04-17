@@ -13,6 +13,7 @@
         DeleteDestinationFile,
         RenameDestinationFile,
         CleanUpFiles,
-        CheckIfDestinationFileExists
+        CheckIfDestinationFileExists,
+        DestinationFileExists
     }
 }

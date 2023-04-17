@@ -1,8 +1,8 @@
-﻿using System;
-using System.IO;
-using FluentFTP;
+﻿using FluentFTP;
 using Frends.FTP.UploadFiles.Enums;
 using Frends.FTP.UploadFiles.Logging;
+using System;
+using System.IO;
 
 namespace Frends.FTP.UploadFiles.Definitions
 {
@@ -41,7 +41,7 @@ namespace Frends.FTP.UploadFiles.Definitions
         public FileItem SourceFile { get; set; }
 
         public string DestinationFileNameWithMacrosExpanded { get; set; }
-        
+
         public SingleFileTransferResult TransferSingleFile()
         {
             try
@@ -50,7 +50,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                 _result.TransferredFilePath = SourceFile.FullPath;
                 if (_batchContext.Options.RenameSourceFileBeforeTransfer)
                     RenameSourceFile();
-                else 
+                else
                     _sourceFileDuringTransfer = SourceFile.FullPath;
 
                 if (DestinationFileExists(DestinationFileNameWithMacrosExpanded))
@@ -64,6 +64,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                             PutDestinationFile(removeExisting: true);
                             break;
                         case DestinationAction.Error:
+                            Trace(TransferState.CheckIfDestinationFileExists, "Checking if destination file {0} exists", SourceFile.Name);
                             throw new DestinationFileExistsException(DestinationFileNameWithMacrosExpanded);
                     }
                 }
@@ -124,13 +125,13 @@ namespace Frends.FTP.UploadFiles.Definitions
         private void AppendDestinationFile()
         {
             var doRename = _batchContext.Options.RenameDestinationFileDuringTransfer;
-            
+
             Trace(
                 TransferState.AppendToDestinationFile,
                 "Appending file {0} to existing file {1}",
                 SourceFile.Name,
                 DestinationFileNameWithMacrosExpanded);
-            
+
             // No renaming needed - just do the native call with client
             if (!doRename)
             {
@@ -139,14 +140,14 @@ namespace Frends.FTP.UploadFiles.Definitions
             else
             {
                 var destinationFileDuringTransfer = Util.CreateUniqueFileName();
-                
+
                 // Move file to temp location if file already exists
                 if (_client.FileExists(DestinationFileNameWithMacrosExpanded))
                     _client.MoveFile(DestinationFileNameWithMacrosExpanded, destinationFileDuringTransfer);
-                
+
                 // Do the upload to temp location
                 _client.UploadFile(_sourceFileDuringTransfer, destinationFileDuringTransfer, FtpRemoteExists.AddToEnd);
-                
+
                 // Move file back to original location
                 _client.MoveFile(destinationFileDuringTransfer, DestinationFileNameWithMacrosExpanded);
             }
@@ -167,7 +168,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                 _sourceFileDuringTransfer, _destinationFileDuringTransfer, FtpRemoteExists.Overwrite);
 
             if (!doRename) return;
-            
+
             if (removeExisting)
             {
                 Trace(
@@ -215,12 +216,12 @@ namespace Frends.FTP.UploadFiles.Definitions
                 case SourceOperation.Rename:
                     var renameToPath = _renamingPolicy.CreateFilePathForRename(SourceFile.FullPath, _batchContext.Source.FileNameAfterTransfer);
                     Trace(TransferState.SourceOperationRename, "Renaming source file {0} to {1}", SourceFile.FullPath, renameToPath);
-                    
+
                     File.Move(filePath, renameToPath);
 
                     if (string.IsNullOrWhiteSpace(SourceFile.FullPath))
                         _logger.NotifyInformation(_batchContext, "Source end point returned null as the renamed file. It should return the name of the renamed file.");
-                    
+
                     break;
 
                 case SourceOperation.Delete:
@@ -304,10 +305,10 @@ namespace Frends.FTP.UploadFiles.Definitions
             try
             {
                 if (!FileDefinedAndExists(fileName)) return;
-                
+
                 if ((File.GetAttributes(fileName) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                     File.SetAttributes(fileName, FileAttributes.Normal); // Clear flags so readonly doesn't cause any problems CO-469
-                
+
                 File.Delete(fileName);
             }
             catch (Exception e)
@@ -326,7 +327,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             // restore the source file so we can retry the operations
             // - but only if the source file has been renamed in the first place
             if (string.IsNullOrWhiteSpace(_sourceFileDuringTransfer)) return string.Empty;
-            
+
             try
             {
                 if (ShouldSourceFileBeRestoredOnError())
@@ -384,7 +385,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             /// Exception message.
             /// </summary>
             /// <param name="fileName"></param>
-            public DestinationFileExistsException(string fileName) 
+            public DestinationFileExistsException(string fileName)
                 : base($"Unable to transfer file. Destination file already exists: {fileName}") { }
         }
     }

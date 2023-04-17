@@ -87,13 +87,13 @@ namespace Frends.FTP.UploadFiles.Definitions
                     "When using move as a source operation, you should always define a directory",
                     nameof(sourceOperationTo));
             }
-            
+
             directoryName = CanonizeAndCheckPath(directoryName);
 
             // this should always be a directory
             if (!directoryName.EndsWith("/"))
                 directoryName += "/";
-            
+
             var sourceFileName = Path.GetFileName(sourceFilePath);
             return Path.Combine(directoryName, sourceFileName);
         }
@@ -128,10 +128,10 @@ namespace Frends.FTP.UploadFiles.Definitions
                 throw new ArgumentException("When using rename as a source operation, you need to define the new name");
 
             var filePath = ExpandMacrosAndMasks(originalFilePath, sourceOperationTo);
-            
+
             var result = CanonizeAndCheckPath(filePath);
             var originalFileDirectory = Path.GetDirectoryName(originalFilePath);
-            
+
             // Path Combine will ignore originalFileDirectory is result already
             // contains absolute path. Thus we either get the whole path in result or, if
             // it is not an absolute path - then we get a path with original file dir as base.
@@ -214,13 +214,13 @@ namespace Frends.FTP.UploadFiles.Definitions
             var b = false;
             if (input == null)
                 return false;
-            
+
             if (input.IndexOf("*", StringComparison.InvariantCulture) >= 0)
                 b = true;
-            
+
             if (input.IndexOf("?", StringComparison.InvariantCulture) >= 0)
                 b = true;
-            
+
             return b;
         }
 

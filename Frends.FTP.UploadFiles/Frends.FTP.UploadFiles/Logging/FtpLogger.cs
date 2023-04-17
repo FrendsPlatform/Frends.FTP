@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.IO;
-using Frends.FTP.UploadFiles.Definitions;
+﻿using Frends.FTP.UploadFiles.Definitions;
 using Frends.FTP.UploadFiles.Enums;
 using Serilog;
+using System;
+using System.Collections.Concurrent;
+using System.IO;
 
 namespace Frends.FTP.UploadFiles.Logging
 {

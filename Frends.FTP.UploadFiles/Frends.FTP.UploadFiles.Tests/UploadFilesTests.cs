@@ -1,10 +1,10 @@
+using Frends.FTP.UploadFiles.Enums;
 using Frends.FTP.UploadFiles.TaskConfiguration;
 using NUnit.Framework;
 using System;
 using System.IO;
 using System.Security.Authentication;
 using System.Threading;
-using Frends.FTP.UploadFiles.Enums;
 
 namespace Frends.FTP.UploadFiles.Tests
 {
@@ -59,7 +59,7 @@ namespace Frends.FTP.UploadFiles.Tests
             CreateDummyFileInDummyDir("file1.txt");
             var source = new Source { Directory = _dir, FileName = "file1.txt" };
             var destination = new Destination { Directory = "/", Action = DestinationAction.Overwrite };
-            
+
             // Our test certificate hashes:
             // SHA-256: 90:bc:7f:71:14:f5:c2:ad:03:46:d6:ff:75:d5:fe:12:ba:74:23:73:54:31:70:60:b4:8b:bd:8e:87:21:9c:16
             // SHA-1: d9:11:26:29:84:de:9c:c3:2a:35:18:a1:09:4c:d2:42:49:ea:5c:49
@@ -73,7 +73,7 @@ namespace Frends.FTP.UploadFiles.Tests
                 UseFTPS = true,
                 CertificateHashStringSHA1 = "D911262984DE9CC32A3518A1094CD24249EA5C49"
             };
-            
+
 
             // Test and assert
             var result = FTP.UploadFiles(source, destination, connection, new Options(), new Info(), new CancellationToken());
@@ -88,7 +88,7 @@ namespace Frends.FTP.UploadFiles.Tests
             CreateDummyFileInDummyDir("file1.txt");
             var source = new Source { Directory = _dir, FileName = "file1.txt" };
             var destination = new Destination { Directory = "/", Action = DestinationAction.Overwrite };
-            
+
             // Our test certificate hashes:
             // SHA-256: 90:bc:7f:71:14:f5:c2:ad:03:46:d6:ff:75:d5:fe:12:ba:74:23:73:54:31:70:60:b4:8b:bd:8e:87:21:9c:16
             // SHA-1: d9:11:26:29:84:de:9c:c3:2a:35:18:a1:09:4c:d2:42:49:ea:5c:49
@@ -109,7 +109,7 @@ namespace Frends.FTP.UploadFiles.Tests
                 var result = FTP.UploadFiles(source, destination, connection, new Options(), new Info(),
                     new CancellationToken());
             });
-            
+
             Assert.AreEqual(1, ex.InnerExceptions.Count);
             Assert.AreEqual(typeof(AuthenticationException), ex.InnerExceptions[0].GetType());
         }

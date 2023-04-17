@@ -1,13 +1,13 @@
 ﻿using Frends.FTP.UploadFiles.Definitions;
 using Frends.FTP.UploadFiles.Logging;
 using Frends.FTP.UploadFiles.TaskConfiguration;
+using Frends.FTP.UploadFiles.TaskResult;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
-using Frends.FTP.UploadFiles.TaskResult;
 
 namespace Frends.FTP.UploadFiles
 {

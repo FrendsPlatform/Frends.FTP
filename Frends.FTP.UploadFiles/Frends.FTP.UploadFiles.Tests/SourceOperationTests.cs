@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
-using Frends.FTP.UploadFiles.Enums;
+﻿using Frends.FTP.UploadFiles.Enums;
 using Frends.FTP.UploadFiles.TaskConfiguration;
 using Frends.FTP.UploadFiles.TaskResult;
 using NUnit.Framework;
+using System;
+using System.Threading;
 
 namespace Frends.FTP.UploadFiles.Tests;
 
@@ -17,14 +17,14 @@ public class SourceOperationTests : UploadFilesTestBase
         CreateDummyFileInDummyDir("file1.txt");
         CreateDummyFileInDummyDir("file2.txt");
         CreateDummyFileInDummyDir("file3.txt");
-        
+
         var result = CallUploadFiles(
             SourceOperation.Delete,
             "file*.txt",
             nameof(SourceOperation_Delete));
-        
+
         Assert.IsTrue(result.Success);
-        Assert.AreEqual(3, result.SuccessfulTransferCount);    
+        Assert.AreEqual(3, result.SuccessfulTransferCount);
         Assert.IsFalse(DummyFileExists("file1.txt"));
         Assert.IsFalse(DummyFileExists("file2.txt"));
         Assert.IsFalse(DummyFileExists("file3.txt"));
@@ -37,14 +37,14 @@ public class SourceOperationTests : UploadFilesTestBase
         CreateDummyFileInDummyDir("file1.txt");
         CreateDummyFileInDummyDir("file2.txt");
         CreateDummyFileInDummyDir("file3.txt");
-        
+
         var result = CallUploadFiles(
             SourceOperation.Nothing,
             "file*.txt",
             $"/{nameof(SourceOperation_Nothing)}");
-        
+
         Assert.IsTrue(result.Success);
-        Assert.AreEqual(3, result.SuccessfulTransferCount);    
+        Assert.AreEqual(3, result.SuccessfulTransferCount);
         Assert.IsTrue(DummyFileExists("file1.txt"));
         Assert.IsTrue(DummyFileExists("file2.txt"));
         Assert.IsTrue(DummyFileExists("file3.txt"));
@@ -58,21 +58,21 @@ public class SourceOperationTests : UploadFilesTestBase
         CreateDummyFileInDummyDir("file2.txt");
         CreateDummyFileInDummyDir("file3.txt");
         var moveTo = CreateDummyDir();
-        
+
         var result = CallUploadFiles(
             SourceOperation.Move,
             "file*.txt",
             $"/{nameof(SourceOperation_Move)}",
             moveTo);
-        
+
         Assert.IsTrue(result.Success);
         Assert.AreEqual(3, result.SuccessfulTransferCount);
-        
+
         // Check that original files are gone
         Assert.IsFalse(DummyFileExists("file1.txt"));
         Assert.IsFalse(DummyFileExists("file2.txt"));
         Assert.IsFalse(DummyFileExists("file3.txt"));
-        
+
         // Check that they are moved to new dir
         Assert.IsTrue(DummyFileExists("file1.txt", moveTo));
         Assert.IsTrue(DummyFileExists("file2.txt", moveTo));
@@ -86,13 +86,13 @@ public class SourceOperationTests : UploadFilesTestBase
         CreateDummyFileInDummyDir("file1.txt");
         CreateDummyFileInDummyDir("file2.txt");
         CreateDummyFileInDummyDir("file3.txt");
-        
+
         var result = CallUploadFiles(
             SourceOperation.Rename,
             "file*.txt",
             $"/{nameof(SourceOperation_Rename)}",
             renameTo: "%Year%-%SourceFileName%%SourceFileExtension%");
-        
+
         Assert.IsTrue(result.Success, result.UserResultMessage);
         Assert.AreEqual(3, result.SuccessfulTransferCount);
 
@@ -101,7 +101,7 @@ public class SourceOperationTests : UploadFilesTestBase
         Assert.IsTrue(DummyFileExists($"{year}-file2.txt"));
         Assert.IsTrue(DummyFileExists($"{year}-file3.txt"));
     }
-    
+
     private Result CallUploadFiles(
         SourceOperation sourceOperation, string sourceFileName, string targetDir,
         string moveToDir = null,
@@ -109,12 +109,14 @@ public class SourceOperationTests : UploadFilesTestBase
     {
         var source = new Source
         {
-            Directory = Dir, FileName = sourceFileName, Operation = sourceOperation,
+            Directory = Dir,
+            FileName = sourceFileName,
+            Operation = sourceOperation,
             DirectoryToMoveAfterTransfer = moveToDir,
             FileNameAfterTransfer = renameTo
         };
         var destination = new Destination
-            { Directory = targetDir, Action = DestinationAction.Overwrite };
+        { Directory = targetDir, Action = DestinationAction.Overwrite };
         var options = new Options { CreateDestinationDirectories = true };
         var connection = Helpers.GetFtpsConnection();
 

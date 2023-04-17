@@ -1,10 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using Frends.FTP.UploadFiles.Enums;
+﻿using Frends.FTP.UploadFiles.Enums;
 using Frends.FTP.UploadFiles.TaskConfiguration;
 using Frends.FTP.UploadFiles.TaskResult;
 using NUnit.Framework;
+using System;
+using System.IO;
+using System.Threading;
 
 namespace Frends.FTP.UploadFiles.Tests;
 
@@ -36,7 +36,7 @@ public class MacrosTests
         File.WriteAllText(path, "hello");
         return path;
     }
-    
+
     protected bool FtpFileExists(string fileName, string subDir)
     {
         return File.Exists(Path.Combine(_dockerDataVolumePath, subDir, fileName));
@@ -54,19 +54,19 @@ public class MacrosTests
 
         CreateLocalDir(sourceWithMacrosExpanded);
         CreateLocalFile(sourceWithMacrosExpanded, "file1.txt");
-        
+
         var result = CallUploadFiles(
             Path.Combine(Path.GetTempPath(), sourceWithMacros),
             "file*.txt",
             nameof(MacrosWorkInSourceDirectory));
-        
+
         Assert.IsTrue(result.Success, result.UserResultMessage);
         Assert.AreEqual(1, result.SuccessfulTransferCount);
-        Assert.IsTrue(FtpFileExists("file1.txt", nameof(MacrosWorkInSourceDirectory)), 
+        Assert.IsTrue(FtpFileExists("file1.txt", nameof(MacrosWorkInSourceDirectory)),
             string.Join(",", Directory.EnumerateDirectories(_dockerDataVolumePath)) + "| " +
             string.Join(",", Directory.EnumerateFiles(Path.Combine(_dockerDataVolumePath, nameof(MacrosWorkInSourceDirectory)))));
     }
-    
+
     [Test]
     public void MacrosWorkInDestinationDirectory()
     {
@@ -76,20 +76,20 @@ public class MacrosTests
 
         var destinationWithMacros = $"dir-%Year%-{guid}";
         var destinationWithMacrosExpanded = $"dir-{year}-{guid}";
-        
+
         var source = CreateLocalDir(guid);
         CreateLocalFile(guid, "file1.txt");
-        
+
         var result = CallUploadFiles(
             source,
             "file*.txt",
             destinationWithMacros);
-        
+
         Assert.IsTrue(result.Success, result.UserResultMessage);
         Assert.AreEqual(1, result.SuccessfulTransferCount);
         Assert.IsTrue(FtpFileExists("file1.txt", destinationWithMacrosExpanded), result.UserResultMessage);
     }
-    
+
     [Test]
     public void MacrosWorkInDestinationFileName()
     {
@@ -99,7 +99,7 @@ public class MacrosTests
 
         var destinationFileNameWithMacros = $"f-%Year%-%SourceFileName%-{guid}";
         var destinationFileNameWithMacrosExpanded = $"f-{year}-file1-{guid}";
-        
+
         var source = CreateLocalDir(guid);
         CreateLocalFile(guid, "file1.txt");
 
@@ -108,12 +108,12 @@ public class MacrosTests
             "file1.txt",
             nameof(MacrosWorkInDestinationFileName),
             destinationFileNameWithMacros);
-        
+
         Assert.IsTrue(result.Success, result.UserResultMessage);
         Assert.AreEqual(1, result.SuccessfulTransferCount);
         Assert.IsTrue(FtpFileExists(destinationFileNameWithMacrosExpanded, nameof(MacrosWorkInDestinationFileName)), result.UserResultMessage);
     }
-    
+
     private static Result CallUploadFiles(
         string sourceDirectory,
         string sourceFileName,
@@ -122,15 +122,16 @@ public class MacrosTests
     {
         var source = new Source
         {
-            Directory = sourceDirectory, FileName = sourceFileName,
+            Directory = sourceDirectory,
+            FileName = sourceFileName,
             Operation = SourceOperation.Delete
         };
         var destination = new Destination
-            { 
-                Directory = targetDirectory,
-                Action = DestinationAction.Overwrite,
-                FileName = targetFileName
-            };
+        {
+            Directory = targetDirectory,
+            Action = DestinationAction.Overwrite,
+            FileName = targetFileName
+        };
         var options = new Options { CreateDestinationDirectories = true };
         var connection = Helpers.GetFtpsConnection();
 

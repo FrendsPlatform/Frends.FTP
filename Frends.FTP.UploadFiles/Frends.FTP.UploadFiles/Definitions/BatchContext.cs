@@ -11,6 +11,6 @@ namespace Frends.FTP.UploadFiles.Definitions
         public DateTime BatchTransferStartTime { get; set; }
         public Source Source { get; set; }
         public Destination Destination { get; set; }
-        public Connection Connection  { get; set; }
+        public Connection Connection { get; set; }
     }
 }

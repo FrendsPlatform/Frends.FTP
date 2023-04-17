@@ -1,6 +1,6 @@
-﻿using System;
+﻿using NUnit.Framework;
+using System;
 using System.IO;
-using NUnit.Framework;
 
 namespace Frends.FTP.UploadFiles.Tests;
 
@@ -10,7 +10,7 @@ namespace Frends.FTP.UploadFiles.Tests;
 public class UploadFilesTestBase
 {
     protected string Dir;
-    
+
     protected void CreateDummyFileInDummyDir(string fileName, string contents = "test")
     {
         File.WriteAllText(Path.Combine(Dir, fileName), contents);
@@ -27,7 +27,7 @@ public class UploadFilesTestBase
         Directory.CreateDirectory(dir);
         return dir;
     }
-    
+
     [SetUp]
     public void SetUp()
     {
