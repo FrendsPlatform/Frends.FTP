@@ -6,6 +6,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 
@@ -150,6 +151,7 @@ namespace Frends.FTP.UploadFiles
             }
         }
 
+        [ExcludeFromCodeCoverage]
         private static string GetLogLines(IEnumerable<Tuple<DateTimeOffset, string>> buffer)
         {
             try

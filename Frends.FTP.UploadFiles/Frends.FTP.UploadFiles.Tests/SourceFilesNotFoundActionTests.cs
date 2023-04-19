@@ -59,8 +59,6 @@ public class SourceFilesNotFoundActionTests : UploadFilesTestBase
 
     private Result CallUploadFiles(SourceNotFoundAction sourceNotFoundAction, string sourceFileName, string targetDir)
     {
-        var operations = new[] { SourceOperation.Nothing, SourceOperation.Move, SourceOperation.Delete };
-        
         var source = new Source
         {
             Directory = Dir,

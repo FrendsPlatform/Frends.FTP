@@ -12,7 +12,7 @@ namespace Frends.FTP.UploadFiles.Tests
     public class UploadFilesTests
     {
         private string _dir;
-
+        
         private Source _source = new()
         {
             Directory = default,
@@ -121,36 +121,55 @@ namespace Frends.FTP.UploadFiles.Tests
         {
             var destinationActions = new[] { DestinationAction.Error, DestinationAction.Overwrite, DestinationAction.Append };
             var ftpsSslModes = new[] { FtpsSslMode.None, FtpsSslMode.Explicit, FtpsSslMode.Auto };
+            var ftpTransportTypes = new[] { FtpTransportType.Binary, FtpTransportType.Ascii };
+
             foreach (var destinationAction in destinationActions)
             {
-
-                foreach (var ftpsSslMode in ftpsSslModes)
+                foreach (var ftpTransportType in ftpTransportTypes)
                 {
-                    SetUp();
-                    var fileName = @$"file{Guid.NewGuid()}.txt";
-                    CreateDummyFileInDummyDir(fileName);
+                    foreach (var ftpsSslMode in ftpsSslModes)
+                    {
+                        Random random = new();
+                        var randomBoolean = random.Next(2) == 0;
+                        var randomNumber = random.Next(1, 100);
+                        SetUp();
+                        var fileName = @$"file{Guid.NewGuid()}.txt";
+                        CreateDummyFileInDummyDir(fileName);
 
-                    var source = _source;
-                    source.Directory = _dir;
-                    source.FileName = fileName;
+                        var source = _source;
+                        source.Directory = _dir;
+                        source.FileName = fileName;
 
-                    var destination = _destination;
-                    destination.Directory = "/";
-                    destination.Action = destinationAction;
+                        var destination = _destination;
+                        destination.Directory = "/";
+                        destination.Action = destinationAction;
+                        destination.FileName = fileName+"EDIT";
 
-                    // Our test certificate hashes:
-                    // SHA-256: 90:bc:7f:71:14:f5:c2:ad:03:46:d6:ff:75:d5:fe:12:ba:74:23:73:54:31:70:60:b4:8b:bd:8e:87:21:9c:16
-                    // SHA-1: d9:11:26:29:84:de:9c:c3:2a:35:18:a1:09:4c:d2:42:49:ea:5c:49
-                    var connection = _connection;
-                    connection.SslMode = ftpsSslMode;
-                    connection.UseFTPS = true;
-                    connection.CertificateHashStringSHA1 = "D911262984DE9CC32A3518A1094CD24249EA5C49";
+                        // Our test certificate hashes:
+                        // SHA-256: 90:bc:7f:71:14:f5:c2:ad:03:46:d6:ff:75:d5:fe:12:ba:74:23:73:54:31:70:60:b4:8b:bd:8e:87:21:9c:16
+                        // SHA-1: d9:11:26:29:84:de:9c:c3:2a:35:18:a1:09:4c:d2:42:49:ea:5c:49
+                        var connection = _connection;
+                        connection.SslMode = ftpsSslMode;
+                        connection.UseFTPS = true;
+                        connection.CertificateHashStringSHA1 = "D911262984DE9CC32A3518A1094CD24249EA5C49";
+                        connection.TransportType = ftpTransportType;
+                        connection.ConnectionTimeout = randomNumber;
+                        connection.KeepConnectionAliveInterval = randomNumber;
+                        connection.Encoding = "utf-8";
+                        connection.BufferSize = randomNumber + 1000;
 
-                    // Test and assert
-                    var result = FTP.UploadFiles(source, destination, connection, _options, _info, new CancellationToken());
-                    Assert.IsTrue(result.Success);
-                    Assert.AreEqual(1, result.SuccessfulTransferCount);
-                    TearDown();
+                        var options = _options;
+                        options.ThrowErrorOnFail = randomBoolean;
+                        options.PreserveLastModified = randomBoolean;
+
+
+                        // Test and assert
+                        var result = FTP.UploadFiles(source, destination, connection, _options, _info, new CancellationToken());
+                        Assert.IsTrue(result.Success);
+                        Assert.AreEqual(1, result.SuccessfulTransferCount);
+                        TearDown();
+                    }
+
                 }
             }
         }
