@@ -165,7 +165,7 @@ namespace Frends.FTP.UploadFiles.Tests
                                         connection.KeepConnectionAliveInterval = randomNumber;
                                         connection.Encoding = fileEncoding;
                                         connection.BufferSize = randomNumber + 1000;
-
+                                         
                                         var options = _options;
                                         options.ThrowErrorOnFail = bo;
                                         options.PreserveLastModified = bo;
@@ -310,7 +310,7 @@ namespace Frends.FTP.UploadFiles.Tests
         }
 
         [Test]
-        public void UploadFTPS_IncorrectPort()
+        public void UploadFTPS_IncorrectAuth()
         {
             var fileName = @$"file{Guid.NewGuid()}.txt";
             CreateDummyFileInDummyDir(fileName);
@@ -334,7 +334,6 @@ namespace Frends.FTP.UploadFiles.Tests
             var connectionD = _connection;
             connectionD.UserName = null;
 
-            // Test and assert
             var ex1 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(source, destination, connectionA, new Options(), new Info(), new CancellationToken()));
             Assert.AreEqual(typeof(NullReferenceException), ex1.GetType());
 
