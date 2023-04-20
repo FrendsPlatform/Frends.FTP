@@ -240,6 +240,7 @@ namespace Frends.FTP.UploadFiles.Tests
                                         options.RenameSourceFileBeforeTransfer = bo;
                                         options.RenameDestinationFileDuringTransfer = bo;
                                         options.CreateDestinationDirectories = bo;
+                                        options.OperationLog = bo;
 
                                         var info = _info;
                                         info.TransferName = fileName + "transfername";
@@ -314,6 +315,7 @@ namespace Frends.FTP.UploadFiles.Tests
                                         options.RenameSourceFileBeforeTransfer = bo;
                                         options.RenameDestinationFileDuringTransfer = bo;
                                         options.CreateDestinationDirectories = bo;
+                                        options.OperationLog = bo;
 
                                         var info = _info;
                                         info.TransferName = fileName + "transfername";
