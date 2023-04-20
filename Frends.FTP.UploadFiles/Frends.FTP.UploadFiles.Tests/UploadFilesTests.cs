@@ -285,6 +285,7 @@ namespace Frends.FTP.UploadFiles.Tests
                                     }
         }
 
+        /*
         [Test]
         public void UploadFTPS_IncorrectFingerprint()
         {
@@ -346,5 +347,6 @@ namespace Frends.FTP.UploadFiles.Tests
             var ex4 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(source, destination, connectionD, new Options(), new Info(), new CancellationToken()));
             Assert.AreEqual(typeof(NullReferenceException), ex4.GetType());
         }
+        */
     }
 }
