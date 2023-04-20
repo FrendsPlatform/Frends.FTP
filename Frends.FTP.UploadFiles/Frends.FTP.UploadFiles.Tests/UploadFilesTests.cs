@@ -149,6 +149,7 @@ namespace Frends.FTP.UploadFiles.Tests
                                         source.Operation = sourceOperation;
                                         source.FileNameAfterTransfer = fileName + "AfterTransfer";
                                         source.DirectoryToMoveAfterTransfer = _dir;
+                                        source.FilePaths = _dir;
 
                                         var destination = _destination;
                                         destination.Directory = "/";
