@@ -165,7 +165,7 @@ namespace Frends.FTP.UploadFiles.Tests
                                         connection.KeepConnectionAliveInterval = randomNumber;
                                         connection.Encoding = fileEncoding;
                                         connection.BufferSize = randomNumber + 1000;
-                                        
+                                         
                                         var options = _options;
                                         options.ThrowErrorOnFail = bo;
                                         options.PreserveLastModified = bo;
