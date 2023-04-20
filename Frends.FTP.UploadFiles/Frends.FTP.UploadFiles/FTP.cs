@@ -18,7 +18,7 @@ namespace Frends.FTP.UploadFiles
     public static class FTP
     {
         /// <summary>
-        /// Upload files to an FTP server.
+        /// Upload files to an FTP server. 
         /// [Documentation](https://tasks.frends.com/tasks/frends-tasks/Frends.FTP.UploadFiles)
         /// </summary>
         /// <frendsdocs>
