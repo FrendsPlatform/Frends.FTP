@@ -13,62 +13,11 @@ namespace Frends.FTP.UploadFiles.Tests
     {
         private string _dir;
 
-        private Source _source = new()
-        {
-            Directory = default,
-            FileName = default,
-            DirectoryToMoveAfterTransfer = default,
-            FileNameAfterTransfer = default,
-            NotFoundAction = default,
-            FilePaths = default,
-            Operation = default
-        };
-
-        private Connection _connection = new()
-        {
-            Address = Helpers.FtpHost,
-            UserName = Helpers.FtpUsername,
-            Password = Helpers.FtpPassword,
-            Port = Helpers.FtpPort,
-            TransportType = default,
-            Mode = default,
-            KeepConnectionAliveInterval = default,
-            ConnectionTimeout = 60,
-            Encoding = default,
-            BufferSize = default,
-            UseFTPS = false,
-            SslMode = default,
-            CertificateHashStringSHA1 = default,
-            EnableClientAuth = default,
-            ValidateAnyCertificate = default,
-            ClientCertificatePath = default,
-            SecureDataChannel = false,
-        };
-
-        private Destination _destination = new()
-        {
-            Directory = default,
-            Action = default,
-            FileName = default,
-        };
-
-        private Options _options = new()
-        {
-            CreateDestinationDirectories = default,
-            OperationLog = default,
-            PreserveLastModified = default,
-            RenameDestinationFileDuringTransfer = default,
-            RenameSourceFileBeforeTransfer = default,
-            ThrowErrorOnFail = default
-        };
-
-        private Info _info = new()
-        {
-            ProcessUri = default,
-            TaskExecutionID = default,
-            TransferName = default,
-            WorkDir = default,
-        };
+        private Source _source = new();
+        private Connection _connection = new();
+        private Destination _destination = new();
+        private Options _options = new();
+        private Info _info = new();
 
         private void CreateDummyFileInDummyDir(string fileName)
         {
@@ -79,6 +28,63 @@ namespace Frends.FTP.UploadFiles.Tests
         [SetUp]
         public void SetUp()
         {
+            _source = new()
+            {
+                Directory = default,
+                FileName = default,
+                DirectoryToMoveAfterTransfer = default,
+                FileNameAfterTransfer = default,
+                NotFoundAction = default,
+                FilePaths = default,
+                Operation = default
+            };
+
+            _connection = new()
+            {
+                Address = Helpers.FtpHost,
+                UserName = Helpers.FtpUsername,
+                Password = Helpers.FtpPassword,
+                Port = Helpers.FtpPort,
+                TransportType = default,
+                Mode = default,
+                KeepConnectionAliveInterval = default,
+                ConnectionTimeout = 60,
+                Encoding = default,
+                BufferSize = default,
+                UseFTPS = false,
+                SslMode = default,
+                CertificateHashStringSHA1 = default,
+                EnableClientAuth = default,
+                ValidateAnyCertificate = default,
+                ClientCertificatePath = default,
+                SecureDataChannel = false,
+            };
+
+            _destination = new()
+            {
+                Directory = default,
+                Action = default,
+                FileName = default,
+            };
+
+            _options = new()
+            {
+                CreateDestinationDirectories = default,
+                OperationLog = default,
+                PreserveLastModified = default,
+                RenameDestinationFileDuringTransfer = default,
+                RenameSourceFileBeforeTransfer = default,
+                ThrowErrorOnFail = default
+            };
+
+            _info = new()
+            {
+                ProcessUri = default,
+                TaskExecutionID = default,
+                TransferName = default,
+                WorkDir = default,
+            };
+
             _dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             Directory.CreateDirectory(_dir);
         }
@@ -88,6 +94,68 @@ namespace Frends.FTP.UploadFiles.Tests
         {
             if (Directory.Exists(_dir))
                 Directory.Delete(_dir, true);
+        }
+
+        [Test]
+        public void UploadFTPS_IncorrectFingerprint()
+        {
+            var fileName = @$"file{Guid.NewGuid()}.txt";
+            CreateDummyFileInDummyDir(fileName);
+
+            var source = _source;
+            source.Directory = _dir;
+            source.FileName = fileName;
+
+            var destination = _destination;
+            destination.Directory = "/";
+
+            var connection = _connection;
+            connection.SslMode = FtpsSslMode.Explicit;
+            connection.UseFTPS = true;
+            connection.CertificateHashStringSHA1 = "incorrect";
+
+            // Test and assert
+            var ex = Assert.Throws<AggregateException>(() => FTP.UploadFiles(source, destination, connection, new Options(), new Info(), new CancellationToken()));
+            Assert.AreEqual(1, ex.InnerExceptions.Count);
+            Assert.AreEqual(typeof(AuthenticationException), ex.InnerExceptions[0].GetType());
+        }
+
+        [Test]
+        public void UploadFTPS_IncorrectAuth()
+        {
+            var fileName = @$"file{Guid.NewGuid()}.txt";
+            CreateDummyFileInDummyDir(fileName);
+
+            var source = _source;
+            source.Directory = _dir;
+            source.FileName = fileName;
+
+            var destination = _destination;
+            destination.Directory = "/";
+
+            var connectionA = _connection;
+            connectionA.Address = null;
+
+            var connectionB = _connection;
+            connectionB.Port = 0;
+
+            var connectionC = _connection;
+            connectionC.Password = null;
+
+            var connectionD = _connection;
+            connectionD.UserName = null;
+
+            var ex1 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(source, destination, connectionA, new Options(), new Info(), new CancellationToken()));
+            Assert.AreEqual(typeof(NullReferenceException), ex1.GetType());
+
+            var ex2 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(source, destination, connectionB, new Options(), new Info(), new CancellationToken()));
+            Assert.AreEqual(typeof(NullReferenceException), ex2.GetType());
+
+            var ex3 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(source, destination, connectionC, new Options(), new Info(), new CancellationToken()));
+            Assert.AreEqual(typeof(NullReferenceException), ex3.GetType());
+
+            var ex4 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(source, destination, connectionD, new Options(), new Info(), new CancellationToken()));
+            Assert.AreEqual(typeof(NullReferenceException), ex4.GetType());
         }
 
         [Test]
@@ -283,68 +351,6 @@ namespace Frends.FTP.UploadFiles.Tests
                                         }
                                         TearDown();
                                     }
-        }
-
-        [Test]
-        public void UploadFTPS_IncorrectFingerprint()
-        {
-            var fileName = @$"file{Guid.NewGuid()}.txt";
-            CreateDummyFileInDummyDir(fileName);
-
-            var source = _source;
-            source.Directory = _dir;
-            source.FileName = fileName;
-
-            var destination = _destination;
-            destination.Directory = "/";
-
-            var connection = _connection;
-            connection.SslMode = FtpsSslMode.Explicit;
-            connection.UseFTPS = true;
-            connection.CertificateHashStringSHA1 = "incorrect";
-
-            // Test and assert
-            var ex = Assert.Throws<AggregateException>(() => FTP.UploadFiles(source, destination, connection, new Options(), new Info(), new CancellationToken()));
-            Assert.AreEqual(1, ex.InnerExceptions.Count);
-            Assert.AreEqual(typeof(AuthenticationException), ex.InnerExceptions[0].GetType());
-        }
-
-        [Test]
-        public void UploadFTPS_IncorrectAuth()
-        {
-            var fileName = @$"file{Guid.NewGuid()}.txt";
-            CreateDummyFileInDummyDir(fileName);
-
-            var source = _source;
-            source.Directory = _dir;
-            source.FileName = fileName;
-
-            var destination = _destination;
-            destination.Directory = "/";
-
-            var connectionA = _connection;
-            connectionA.Address = null;
-
-            var connectionB = _connection;
-            connectionB.Port = 0;
-
-            var connectionC = _connection;
-            connectionC.Password = null;
-
-            var connectionD = _connection;
-            connectionD.UserName = null;
-
-            var ex1 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(source, destination, connectionA, new Options(), new Info(), new CancellationToken()));
-            Assert.AreEqual(typeof(NullReferenceException), ex1.GetType());
-
-            var ex2 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(source, destination, connectionB, new Options(), new Info(), new CancellationToken()));
-            Assert.AreEqual(typeof(NullReferenceException), ex2.GetType());
-
-            var ex3 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(source, destination, connectionC, new Options(), new Info(), new CancellationToken()));
-            Assert.AreEqual(typeof(NullReferenceException), ex3.GetType());
-
-            var ex4 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(source, destination, connectionD, new Options(), new Info(), new CancellationToken()));
-            Assert.AreEqual(typeof(NullReferenceException), ex4.GetType());
         }
     }
 }
