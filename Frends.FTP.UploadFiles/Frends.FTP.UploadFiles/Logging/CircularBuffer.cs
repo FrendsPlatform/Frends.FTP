@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 namespace Frends.FTP.UploadFiles.Logging
@@ -10,7 +9,6 @@ namespace Frends.FTP.UploadFiles.Logging
     /// Circular buffer impl, original from https://codereview.stackexchange.com/a/134147
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    [ExcludeFromCodeCoverage]
     internal class CircularBuffer<T>
     {
         private readonly ConcurrentQueue<T> _data;

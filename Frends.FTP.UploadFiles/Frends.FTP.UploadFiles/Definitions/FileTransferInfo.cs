@@ -1,10 +1,8 @@
 ﻿using Frends.FTP.UploadFiles.Enums;
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Frends.FTP.UploadFiles.Definitions
 {
-    [ExcludeFromCodeCoverage]
     internal class FileTransferInfo
     {
         public string TransferName { get; set; } // 0

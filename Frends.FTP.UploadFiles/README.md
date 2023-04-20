@@ -26,7 +26,7 @@ https://www.myget.org/F/frends-tasks/api/v2.
 
 Run the Docker compose from solution root using 
 
-`docker-compose -f Frends.FTP.UploadFiles.Tests/docker-compose.yml up`
+`docker-compose -f Frends.FTP.UploadFiles.Tests/docker-compose.yml up -d`
 
 Run the tests
 

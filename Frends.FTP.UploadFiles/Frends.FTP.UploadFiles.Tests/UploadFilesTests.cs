@@ -308,5 +308,28 @@ namespace Frends.FTP.UploadFiles.Tests
             Assert.AreEqual(1, ex.InnerExceptions.Count);
             Assert.AreEqual(typeof(AuthenticationException), ex.InnerExceptions[0].GetType());
         }
+
+        [Test]
+        public void UploadFTPS_IncorrectPort()
+        {
+            var fileName = @$"file{Guid.NewGuid()}.txt";
+            CreateDummyFileInDummyDir(fileName);
+
+            var source = _source;
+            source.Directory = _dir;
+            source.FileName = fileName;
+
+            var destination = _destination;
+            destination.Directory = "/";
+
+            var connection = _connection;
+            connection.UseFTPS = false;
+            connection.Address = null;
+            connection.Port = 0;
+
+            // Test and assert
+            var ex = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(source, destination, connection, new Options(), new Info(), new CancellationToken()));
+            Assert.AreEqual(typeof(NullReferenceException), ex.GetType());
+        }
     }
 }

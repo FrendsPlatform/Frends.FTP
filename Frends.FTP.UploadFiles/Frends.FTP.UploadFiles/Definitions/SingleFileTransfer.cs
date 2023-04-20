@@ -2,7 +2,6 @@
 using Frends.FTP.UploadFiles.Enums;
 using Frends.FTP.UploadFiles.Logging;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Frends.FTP.UploadFiles.Definitions
@@ -301,7 +300,6 @@ namespace Frends.FTP.UploadFiles.Definitions
             }
         }
 
-        [ExcludeFromCodeCoverage]
         private void TryToRemoveLocalTempFile(string fileName)
         {
             try

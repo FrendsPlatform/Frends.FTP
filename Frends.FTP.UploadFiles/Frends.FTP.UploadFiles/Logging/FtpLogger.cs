@@ -3,6 +3,7 @@ using Frends.FTP.UploadFiles.Enums;
 using Serilog;
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Frends.FTP.UploadFiles.Logging
@@ -20,6 +21,7 @@ namespace Frends.FTP.UploadFiles.Logging
         /// <summary>
         /// Notifies of info-level messages
         /// </summary>
+        [ExcludeFromCodeCoverage]
         void NotifyInformation(BatchContext context, string msg);
 
         /// <summary>
