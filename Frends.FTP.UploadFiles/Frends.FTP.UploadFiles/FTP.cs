@@ -170,6 +170,7 @@ namespace Frends.FTP.UploadFiles
             return logger;
         }
 
+        [ExcludeFromCodeCoverage]
         private static IDictionary<string, string> GetLogDictionary(IList<Tuple<DateTimeOffset, string>> entries)
         {
             const string dateFormat = "yyyy-MM-dd HH:mm:ss.f0Z";
