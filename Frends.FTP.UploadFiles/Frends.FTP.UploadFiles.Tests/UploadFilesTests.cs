@@ -3,6 +3,7 @@ using Frends.FTP.UploadFiles.TaskConfiguration;
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Linq;
 using System.Security.Authentication;
 using System.Threading;
 
@@ -192,7 +193,7 @@ namespace Frends.FTP.UploadFiles.Tests
             var ftpsSslModes = new[] { FtpsSslMode.None, FtpsSslMode.Explicit, FtpsSslMode.Auto };
             var ftpTransportTypes = new[] { FtpTransportType.Binary, FtpTransportType.Ascii };
             var notFoundActions = new[] { SourceNotFoundAction.Error, SourceNotFoundAction.Ignore, SourceNotFoundAction.Info };
-            var bools = new[] { false, true };
+            var bools = new[] { true, false };
             var sourceOperations = new[] { SourceOperation.Move, SourceOperation.Delete, SourceOperation.Rename, SourceOperation.Nothing };
             var fileEncodings = new[] { "UTF-8", "ASCII", "foobar123", string.Empty };
 
@@ -247,6 +248,8 @@ namespace Frends.FTP.UploadFiles.Tests
                                         info.WorkDir = _dir;
                                         info.TaskExecutionID = "123";
 
+                                        var usedparams = @$"fileEncoding: {fileEncoding}, sourceOperation: {sourceOperation}, ftpsSslMode: {ftpsSslMode}, notFoundAction: {notFoundAction}, destinationAction: {destinationAction}, ftpTransportType: {ftpTransportType}, bo: {bo} ";
+
                                         if (connection.Encoding.Equals("foobar123"))
                                         {
                                             var ex = Assert.Throws<ArgumentException>(() => FTP.UploadFiles(source, destination, connection, options, info, new CancellationToken()));
@@ -255,8 +258,25 @@ namespace Frends.FTP.UploadFiles.Tests
                                         else
                                         {
                                             var result = FTP.UploadFiles(source, destination, connection, options, info, new CancellationToken());
-                                            Assert.IsTrue(result.Success);
-                                            Assert.AreEqual(1, result.SuccessfulTransferCount);
+                                            Assert.IsTrue(result.Success, usedparams);
+                                            Assert.IsFalse(result.ActionSkipped, usedparams);
+                                            Assert.AreEqual(1, result.SuccessfulTransferCount, usedparams);
+                                            Assert.AreEqual(0, result.TransferErrors.Count, usedparams);
+                                            Assert.AreEqual(1, result.TransferredFileNames.Count(), usedparams);
+                                            Assert.AreEqual(1, result.TransferredFilePaths.Count(), usedparams);
+                                            Assert.IsTrue(result.UserResultMessage.Contains("files transferred"), usedparams);
+
+                                            if (bo.Equals(false))
+                                            {
+                                                Assert.AreEqual(0, result.OperationsLog.Count, usedparams);
+                                            }
+                                            else
+                                            {
+                                                if (sourceOperation is SourceOperation.Move)
+                                                    Assert.IsTrue(result.OperationsLog.Count < 5, usedparams);
+                                                else
+                                                    Assert.IsTrue(result.OperationsLog.Count < 4, usedparams);
+                                            }
                                         }
                                         TearDown();
                                     }
@@ -322,34 +342,37 @@ namespace Frends.FTP.UploadFiles.Tests
                                         info.WorkDir = _dir;
                                         info.TaskExecutionID = "123";
 
+                                        var usedparams = @$"fileEncoding: {fileEncoding}, sourceOperation: {sourceOperation}, ftpsSslMode: {ftpsSslMode}, notFoundAction: {notFoundAction}, destinationAction: {destinationAction}, ftpTransportType: {ftpTransportType}, bo: {bo} ";
+
                                         if (notFoundAction is SourceNotFoundAction.Error)
                                         {
                                             if (options.ThrowErrorOnFail)
                                             {
                                                 var ex = Assert.Throws<Exception>(() => FTP.UploadFiles(source, destination, connection, options, info, new CancellationToken()));
-                                                Assert.IsTrue(ex.Message.Contains("No source files found from directory"));
+                                                Assert.IsTrue(ex.Message.Contains("No source files found from directory"), usedparams);
                                             }
                                             else
                                             {
                                                 var result = FTP.UploadFiles(source, destination, connection, options, info, new CancellationToken());
-                                                Assert.IsFalse(result.Success);
-                                                Assert.AreEqual(0, result.SuccessfulTransferCount);
-                                                Assert.IsTrue(result.UserResultMessage.Contains("No source files found from"));
+                                                Assert.IsFalse(result.Success, usedparams);
+                                                Assert.IsFalse(result.ActionSkipped, usedparams);
+                                                Assert.AreEqual(0, result.SuccessfulTransferCount, usedparams);
+                                                Assert.AreEqual(1, result.TransferErrors.Count, usedparams);
+                                                Assert.AreEqual(0, result.TransferredFileNames.Count(), usedparams);
+                                                Assert.AreEqual(0, result.TransferredFilePaths.Count(), usedparams);
+                                                Assert.IsTrue(result.UserResultMessage.Contains("No source files found from"), usedparams);
                                             }
                                         }
-                                        else if (notFoundAction is SourceNotFoundAction.Ignore)
+                                        else
                                         {
                                             var result = FTP.UploadFiles(source, destination, connection, options, info, new CancellationToken());
-                                            Assert.IsTrue(result.Success);
-                                            Assert.AreEqual(0, result.SuccessfulTransferCount);
-                                            Assert.IsTrue(result.UserResultMessage.Contains("No source files found from"));
-                                        }
-                                        else if (notFoundAction is SourceNotFoundAction.Info)
-                                        {
-                                            var result = FTP.UploadFiles(source, destination, connection, options, info, new CancellationToken());
-                                            Assert.IsTrue(result.Success);
-                                            Assert.AreEqual(0, result.SuccessfulTransferCount);
-                                            Assert.IsTrue(result.UserResultMessage.Contains("No source files found from"));
+                                            Assert.IsTrue(result.Success, usedparams);
+                                            Assert.IsTrue(result.ActionSkipped, usedparams);
+                                            Assert.AreEqual(0, result.SuccessfulTransferCount, usedparams);
+                                            Assert.AreEqual(0, result.TransferErrors.Count, usedparams);
+                                            Assert.AreEqual(0, result.TransferredFileNames.Count(), usedparams);
+                                            Assert.AreEqual(0, result.TransferredFilePaths.Count(), usedparams);
+                                            Assert.IsTrue(result.UserResultMessage.Contains("No source files found from"), usedparams);
                                         }
                                         TearDown();
                                     }
