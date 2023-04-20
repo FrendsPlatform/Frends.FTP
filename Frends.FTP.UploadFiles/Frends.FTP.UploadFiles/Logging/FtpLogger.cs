@@ -32,6 +32,7 @@ namespace Frends.FTP.UploadFiles.Logging
         /// <summary>
         /// Logs a single successful file transfer
         /// </summary>
+        [ExcludeFromCodeCoverage]
         void LogTransferSuccess(SingleFileTransfer transfer, BatchContext context);
 
         /// <summary>

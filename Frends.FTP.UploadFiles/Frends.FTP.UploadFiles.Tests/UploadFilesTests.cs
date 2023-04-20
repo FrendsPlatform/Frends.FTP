@@ -322,14 +322,30 @@ namespace Frends.FTP.UploadFiles.Tests
             var destination = _destination;
             destination.Directory = "/";
 
-            var connection = _connection;
-            connection.UseFTPS = false;
-            connection.Address = null;
-            connection.Port = 0;
+            var connectionA = _connection;
+            connectionA.Address = null;
+
+            var connectionB = _connection;
+            connectionB.Port = 0;
+
+            var connectionC = _connection;
+            connectionC.Password = null;
+
+            var connectionD = _connection;
+            connectionD.UserName = null;
 
             // Test and assert
-            var ex = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(source, destination, connection, new Options(), new Info(), new CancellationToken()));
-            Assert.AreEqual(typeof(NullReferenceException), ex.GetType());
+            var ex1 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(source, destination, connectionA, new Options(), new Info(), new CancellationToken()));
+            Assert.AreEqual(typeof(NullReferenceException), ex1.GetType());
+
+            var ex2 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(source, destination, connectionB, new Options(), new Info(), new CancellationToken()));
+            Assert.AreEqual(typeof(NullReferenceException), ex2.GetType());
+
+            var ex3 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(source, destination, connectionC, new Options(), new Info(), new CancellationToken()));
+            Assert.AreEqual(typeof(NullReferenceException), ex3.GetType());
+
+            var ex4 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(source, destination, connectionD, new Options(), new Info(), new CancellationToken()));
+            Assert.AreEqual(typeof(NullReferenceException), ex4.GetType());
         }
     }
 }
