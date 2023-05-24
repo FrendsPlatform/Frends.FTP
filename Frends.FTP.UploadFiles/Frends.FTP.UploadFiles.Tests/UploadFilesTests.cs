@@ -12,7 +12,7 @@ namespace Frends.FTP.UploadFiles.Tests
     [TestFixture]
     public class UploadFilesTests
     {
-        private string _dir;
+        private string _dir; 
 
         private Source _source = new();
         private Connection _connection = new();
