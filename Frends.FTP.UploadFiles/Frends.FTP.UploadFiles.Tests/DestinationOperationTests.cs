@@ -12,33 +12,33 @@ public class DestinationActionTests : UploadFilesTestBase
     [Test]
     public void DestinationAction_Append_NoRenameInTransfer()
     {
-        CreateDummyFileInDummyDir("file1.txt", "mycontent");
+        CreateDummyFileInDummyDir("file2.txt", "mycontent");
 
         var result1 = CallUploadFiles(
-            DestinationAction.Overwrite, "file1.txt", nameof(DestinationAction_Append_NoRenameInTransfer), false);
+            DestinationAction.Overwrite, "file2.txt", nameof(DestinationAction_Append_NoRenameInTransfer), false);
         var result2 = CallUploadFiles(
-            DestinationAction.Append, "file1.txt", nameof(DestinationAction_Append_NoRenameInTransfer), false);
+            DestinationAction.Append, "file2.txt", nameof(DestinationAction_Append_NoRenameInTransfer), false);
 
         Assert.IsTrue(result1.Success, result1.UserResultMessage);
         Assert.IsTrue(result2.Success, result2.UserResultMessage);
         Assert.AreEqual(1, result2.SuccessfulTransferCount);
-        Assert.AreEqual("mycontentmycontent", Helpers.GetFileFromFtp(nameof(DestinationAction_Append_NoRenameInTransfer), "file1.txt"));
+        Assert.AreEqual("mycontentmycontent", Helpers.GetFileFromFtp(nameof(DestinationAction_Append_NoRenameInTransfer), "file2.txt"));
     }
 
     [Test]
     public void DestinationAction_Append_WithRenameInTransfer()
     {
-        CreateDummyFileInDummyDir("file1.txt", "mycontent");
+        CreateDummyFileInDummyDir("file2.txt", "mycontent");
 
         var result1 = CallUploadFiles(
-            DestinationAction.Overwrite, "file1.txt", nameof(DestinationAction_Append_WithRenameInTransfer), true);
+            DestinationAction.Overwrite, "file2.txt", nameof(DestinationAction_Append_WithRenameInTransfer), true);
         var result2 = CallUploadFiles(
-            DestinationAction.Append, "file1.txt", nameof(DestinationAction_Append_WithRenameInTransfer), true);
+            DestinationAction.Append, "file2.txt", nameof(DestinationAction_Append_WithRenameInTransfer), true);
 
         Assert.IsTrue(result1.Success, result1.UserResultMessage);
         Assert.IsTrue(result2.Success, result2.UserResultMessage);
         Assert.AreEqual(1, result2.SuccessfulTransferCount);
-        Assert.AreEqual("mycontentmycontent", Helpers.GetFileFromFtp(nameof(DestinationAction_Append_WithRenameInTransfer), "file1.txt"));
+        Assert.AreEqual("mycontentmycontent", Helpers.GetFileFromFtp(nameof(DestinationAction_Append_WithRenameInTransfer), "file2.txt"));
     }
 
     private Result CallUploadFiles(
