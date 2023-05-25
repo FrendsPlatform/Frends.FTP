@@ -21,7 +21,6 @@ namespace Frends.FTP.UploadFiles.Logging
         /// <summary>
         /// Notifies of info-level messages
         /// </summary>
-        [ExcludeFromCodeCoverage]
         void NotifyInformation(BatchContext context, string msg);
 
         /// <summary>
@@ -32,7 +31,6 @@ namespace Frends.FTP.UploadFiles.Logging
         /// <summary>
         /// Logs a single successful file transfer
         /// </summary>
-        [ExcludeFromCodeCoverage]
         void LogTransferSuccess(SingleFileTransfer transfer, BatchContext context);
 
         /// <summary>

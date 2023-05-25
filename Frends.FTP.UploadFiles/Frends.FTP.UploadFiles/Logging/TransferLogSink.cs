@@ -2,7 +2,6 @@
 using Serilog.Events;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Frends.FTP.UploadFiles.Logging
@@ -64,7 +63,6 @@ namespace Frends.FTP.UploadFiles.Logging
         /// Gets the log messages from sink
         /// </summary>
         /// <returns></returns>
-        [ExcludeFromCodeCoverage]
         public IList<Tuple<DateTimeOffset, string>> GetBufferedLogMessages()
         {
             if (_allMsgsBuffer != null) return _allMsgsBuffer;
