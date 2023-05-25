@@ -83,7 +83,9 @@ namespace Frends.FTP.UploadFiles.Tests
                 WorkDir = default,
             };
 
-            CreateDummyFileInDummyDir();
+            _dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(_dir);
+            CreateDummyFileInDummyDir(_file);
         }
 
         [TearDown]
@@ -345,10 +347,9 @@ namespace Frends.FTP.UploadFiles.Tests
                                     }
         }
 
-        private void CreateDummyFileInDummyDir()
+        private void CreateDummyFileInDummyDir(string fileName)
         {
-            Directory.CreateDirectory(_dir);
-            File.WriteAllText(Path.Combine(_dir, _file), "test");
+            File.WriteAllText(Path.Combine(_dir, fileName), "test");
         }
     }
 }
