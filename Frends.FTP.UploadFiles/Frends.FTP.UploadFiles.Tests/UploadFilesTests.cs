@@ -164,6 +164,7 @@ namespace Frends.FTP.UploadFiles.Tests
             }
         }
 
+        // Test all actions, types and modes and their combinations. Might consume a lot of memory.
         [Test]
         public void UploadFTPS_CorrectFingerprint_FileExists()
         {
