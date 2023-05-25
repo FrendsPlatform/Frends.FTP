@@ -24,4 +24,8 @@
     <ProjectReference Include="..\Frends.FTP.UploadFiles\Frends.FTP.UploadFiles.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DockerVolumes\data\" />
+  </ItemGroup>
+
 </Project>
