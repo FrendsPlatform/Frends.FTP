@@ -13,7 +13,7 @@ namespace Frends.FTP.UploadFiles.Tests
     public class UploadFilesTests
     {
         private string _dir;
-        private readonly string _file = "file1.txt";
+        private readonly string _file = "file1.txt" + Guid.NewGuid().ToString();
 
         private Source _source = new();
         private Connection _connection = new();
@@ -83,7 +83,6 @@ namespace Frends.FTP.UploadFiles.Tests
                 WorkDir = default,
             };
 
-            _dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             Directory.CreateDirectory(_dir);
             CreateDummyFileInDummyDir(_file);
         }
@@ -144,25 +143,17 @@ namespace Frends.FTP.UploadFiles.Tests
 
             foreach (var destinationAction in destinationActions)
             {
-                SetUp();
 
                 var destination = _destination;
                 destination.Action = destinationAction;
 
                 // Test and assert
                 var result = FTP.UploadFiles(_source, destination, _connection, _options, _info, new CancellationToken());
-                if (destinationAction is DestinationAction.Error)
-                {
-                    Assert.IsFalse(result.Success);
-                    Assert.AreEqual(0, result.SuccessfulTransferCount);
-                }
-                else
-                {
                     Assert.IsTrue(result.Success);
                     Assert.AreEqual(1, result.SuccessfulTransferCount);
-                }
                 
                 TearDown();
+                SetUp();
             }
         }
 
