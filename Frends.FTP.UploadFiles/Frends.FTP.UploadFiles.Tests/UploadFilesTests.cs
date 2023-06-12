@@ -13,7 +13,7 @@ namespace Frends.FTP.UploadFiles.Tests
     public class UploadFilesTests
     {
         private string _dir;
-        private readonly string _file = "file1" + Guid.NewGuid().ToString() + ".txt";
+        private readonly string _file = "file" + Guid.NewGuid().ToString() + ".txt";
 
         private Source _source = new();
         private Connection _connection = new();
