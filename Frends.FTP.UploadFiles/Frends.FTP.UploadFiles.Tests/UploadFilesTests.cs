@@ -13,7 +13,7 @@ namespace Frends.FTP.UploadFiles.Tests
     public class UploadFilesTests
     {
         private string _dir;
-        private readonly string _file = "file" + Guid.NewGuid().ToString() + ".txt";
+        private readonly string _file = "file1.txt" + Guid.NewGuid().ToString() + ".txt";
 
         private Source _source = new();
         private Connection _connection = new();
@@ -149,16 +149,439 @@ namespace Frends.FTP.UploadFiles.Tests
 
                 // Test and assert
                 var result = FTP.UploadFiles(_source, destination, _connection, _options, _info, new CancellationToken());
-                    Assert.IsTrue(result.Success);
-                    Assert.AreEqual(1, result.SuccessfulTransferCount);
-                
+                Assert.IsTrue(result.Success);
+                Assert.AreEqual(1, result.SuccessfulTransferCount);
+
                 TearDown();
                 SetUp();
             }
         }
 
+        [Test]
+        public void UploadFTPS_CorrectFingerprint_FileExists_DestinationActions()
+        {
+            var destinationActions = new[] { DestinationAction.Error, DestinationAction.Overwrite, DestinationAction.Append };
+
+            foreach (var destinationAction in destinationActions)
+            {
+                Random random = new();
+                var randomNumber = random.Next(1, 100);
+                SetUp();
+                var source = _source;
+                source.NotFoundAction = SourceNotFoundAction.Error;
+                source.Operation = SourceOperation.Move;
+                source.FileNameAfterTransfer = _file + Guid.NewGuid().ToString();
+                source.DirectoryToMoveAfterTransfer = _dir;
+                source.FilePaths = _dir;
+
+                var destination = _destination;
+                destination.Directory = "/temp";
+                destination.Action = destinationAction;
+                destination.FileName = _file + Guid.NewGuid().ToString();
+
+                var connection = _connection;
+                connection.SslMode = FtpsSslMode.None;
+                connection.UseFTPS = true;
+                connection.CertificateHashStringSHA1 = "D911262984DE9CC32A3518A1094CD24249EA5C49";
+                connection.TransportType = FtpTransportType.Binary;
+                connection.ConnectionTimeout = randomNumber;
+                connection.KeepConnectionAliveInterval = randomNumber;
+                connection.Encoding = "UTF-8";
+                connection.BufferSize = randomNumber + 1000;
+
+                var options = _options;
+                options.ThrowErrorOnFail = true;
+                options.PreserveLastModified = true;
+                options.RenameSourceFileBeforeTransfer = true;
+                options.RenameDestinationFileDuringTransfer = true;
+                options.CreateDestinationDirectories = true;
+                options.OperationLog = true;
+
+                var info = _info;
+                info.TransferName = _file + Guid.NewGuid().ToString();
+                info.WorkDir = _dir;
+                info.TaskExecutionID = "123";
+
+                var result = FTP.UploadFiles(source, destination, connection, options, info, new CancellationToken());
+                Assert.IsTrue(result.Success);
+                Assert.IsFalse(result.ActionSkipped);
+                Assert.AreEqual(1, result.SuccessfulTransferCount);
+                Assert.AreEqual(0, result.TransferErrors.Count);
+                Assert.AreEqual(1, result.TransferredFileNames.Count());
+                Assert.AreEqual(1, result.TransferredFilePaths.Count());
+                Assert.IsTrue(result.UserResultMessage.Contains("files transferred"));
+                Assert.IsTrue(result.OperationsLog.Count < 4);
+
+                TearDown();
+            }
+        }
+
+        [Test]
+        public void UploadFTPS_CorrectFingerprint_FileExists_FtpsSslModes()
+        {
+            var ftpsSslModes = new[] { FtpsSslMode.None, FtpsSslMode.Explicit, FtpsSslMode.Auto };
+
+            foreach (var ftpsSslMode in ftpsSslModes)
+            {
+                Random random = new();
+                var randomNumber = random.Next(1, 100);
+                SetUp();
+                var source = _source;
+                source.NotFoundAction = SourceNotFoundAction.Error;
+                source.Operation = SourceOperation.Move;
+                source.FileNameAfterTransfer = _file + Guid.NewGuid().ToString();
+                source.DirectoryToMoveAfterTransfer = _dir;
+                source.FilePaths = _dir;
+
+                var destination = _destination;
+                destination.Directory = "/temp";
+                destination.Action = DestinationAction.Error;
+                destination.FileName = _file + Guid.NewGuid().ToString();
+
+                var connection = _connection;
+                connection.SslMode = ftpsSslMode;
+                connection.UseFTPS = true;
+                connection.CertificateHashStringSHA1 = "D911262984DE9CC32A3518A1094CD24249EA5C49";
+                connection.TransportType = FtpTransportType.Binary;
+                connection.ConnectionTimeout = randomNumber;
+                connection.KeepConnectionAliveInterval = randomNumber;
+                connection.Encoding = "UTF-8";
+                connection.BufferSize = randomNumber + 1000;
+
+                var options = _options;
+                options.ThrowErrorOnFail = true;
+                options.PreserveLastModified = true;
+                options.RenameSourceFileBeforeTransfer = true;
+                options.RenameDestinationFileDuringTransfer = true;
+                options.CreateDestinationDirectories = true;
+                options.OperationLog = true;
+
+                var info = _info;
+                info.TransferName = _file + Guid.NewGuid().ToString();
+                info.WorkDir = _dir;
+                info.TaskExecutionID = "123";
+
+                var result = FTP.UploadFiles(source, destination, connection, options, info, new CancellationToken());
+                Assert.IsTrue(result.Success);
+                Assert.IsFalse(result.ActionSkipped);
+                Assert.AreEqual(1, result.SuccessfulTransferCount);
+                Assert.AreEqual(0, result.TransferErrors.Count);
+                Assert.AreEqual(1, result.TransferredFileNames.Count());
+                Assert.AreEqual(1, result.TransferredFilePaths.Count());
+                Assert.IsTrue(result.UserResultMessage.Contains("files transferred"));
+                Assert.IsTrue(result.OperationsLog.Count < 4);
+
+                TearDown();
+            }
+        }
+
+        [Test]
+        public void UploadFTPS_CorrectFingerprint_FileExists_FtpTransportTypes()
+        {
+            var ftpTransportTypes = new[] { FtpTransportType.Binary, FtpTransportType.Ascii };
+
+            foreach (var ftpTransportType in ftpTransportTypes)
+            {
+                Random random = new();
+                var randomNumber = random.Next(1, 100);
+                SetUp();
+                var source = _source;
+                source.NotFoundAction = SourceNotFoundAction.Error;
+                source.Operation = SourceOperation.Move;
+                source.FileNameAfterTransfer = _file + Guid.NewGuid().ToString();
+                source.DirectoryToMoveAfterTransfer = _dir;
+                source.FilePaths = _dir;
+
+                var destination = _destination;
+                destination.Directory = "/temp";
+                destination.Action = DestinationAction.Error;
+                destination.FileName = _file + Guid.NewGuid().ToString();
+
+                var connection = _connection;
+                connection.SslMode = FtpsSslMode.None;
+                connection.UseFTPS = true;
+                connection.CertificateHashStringSHA1 = "D911262984DE9CC32A3518A1094CD24249EA5C49";
+                connection.TransportType = ftpTransportType;
+                connection.ConnectionTimeout = randomNumber;
+                connection.KeepConnectionAliveInterval = randomNumber;
+                connection.Encoding = "UTF-8";
+                connection.BufferSize = randomNumber + 1000;
+
+                var options = _options;
+                options.ThrowErrorOnFail = true;
+                options.PreserveLastModified = true;
+                options.RenameSourceFileBeforeTransfer = true;
+                options.RenameDestinationFileDuringTransfer = true;
+                options.CreateDestinationDirectories = true;
+                options.OperationLog = true;
+
+                var info = _info;
+                info.TransferName = _file + Guid.NewGuid().ToString();
+                info.WorkDir = _dir;
+                info.TaskExecutionID = "123";
+
+                var result = FTP.UploadFiles(source, destination, connection, options, info, new CancellationToken());
+                Assert.IsTrue(result.Success);
+                Assert.IsFalse(result.ActionSkipped);
+                Assert.AreEqual(1, result.SuccessfulTransferCount);
+                Assert.AreEqual(0, result.TransferErrors.Count);
+                Assert.AreEqual(1, result.TransferredFileNames.Count());
+                Assert.AreEqual(1, result.TransferredFilePaths.Count());
+                Assert.IsTrue(result.UserResultMessage.Contains("files transferred"));
+                Assert.IsTrue(result.OperationsLog.Count < 4);
+
+                TearDown();
+            }
+        }
+
+        [Test]
+        public void UploadFTPS_CorrectFingerprint_FileExists_NotFoundActions()
+        {
+            var notFoundActions = new[] { SourceNotFoundAction.Error, SourceNotFoundAction.Ignore, SourceNotFoundAction.Info };
+
+            foreach (var notFoundAction in notFoundActions)
+            {
+                Random random = new();
+                var randomNumber = random.Next(1, 100);
+                SetUp();
+                var source = _source;
+                source.NotFoundAction = notFoundAction;
+                source.Operation = SourceOperation.Move;
+                source.FileNameAfterTransfer = _file + Guid.NewGuid().ToString();
+                source.DirectoryToMoveAfterTransfer = _dir;
+                source.FilePaths = _dir;
+
+                var destination = _destination;
+                destination.Directory = "/temp";
+                destination.Action = DestinationAction.Error;
+                destination.FileName = _file + Guid.NewGuid().ToString();
+
+                var connection = _connection;
+                connection.SslMode = FtpsSslMode.None;
+                connection.UseFTPS = true;
+                connection.CertificateHashStringSHA1 = "D911262984DE9CC32A3518A1094CD24249EA5C49";
+                connection.TransportType = FtpTransportType.Binary;
+                connection.ConnectionTimeout = randomNumber;
+                connection.KeepConnectionAliveInterval = randomNumber;
+                connection.Encoding = "UTF-8";
+                connection.BufferSize = randomNumber + 1000;
+
+                var options = _options;
+                options.ThrowErrorOnFail = true;
+                options.PreserveLastModified = true;
+                options.RenameSourceFileBeforeTransfer = true;
+                options.RenameDestinationFileDuringTransfer = true;
+                options.CreateDestinationDirectories = true;
+                options.OperationLog = true;
+
+                var info = _info;
+                info.TransferName = _file + Guid.NewGuid().ToString();
+                info.WorkDir = _dir;
+                info.TaskExecutionID = "123";
+
+                var result = FTP.UploadFiles(source, destination, connection, options, info, new CancellationToken());
+                Assert.IsTrue(result.Success);
+                Assert.IsFalse(result.ActionSkipped);
+                Assert.AreEqual(1, result.SuccessfulTransferCount);
+                Assert.AreEqual(0, result.TransferErrors.Count);
+                Assert.AreEqual(1, result.TransferredFileNames.Count());
+                Assert.AreEqual(1, result.TransferredFilePaths.Count());
+                Assert.IsTrue(result.UserResultMessage.Contains("files transferred"));
+                Assert.IsTrue(result.OperationsLog.Count < 4);
+
+                TearDown();
+            }
+        }
+
+        [Test]
+        public void UploadFTPS_CorrectFingerprint_FileExists_Bools()
+        {
+            var bools = new[] { true, false };
+
+            foreach (var bo in bools)
+            {
+                Random random = new();
+                var randomNumber = random.Next(1, 100);
+                SetUp();
+                var source = _source;
+                source.NotFoundAction = SourceNotFoundAction.Error;
+                source.Operation = SourceOperation.Move;
+                source.FileNameAfterTransfer = _file + Guid.NewGuid().ToString();
+                source.DirectoryToMoveAfterTransfer = _dir;
+                source.FilePaths = _dir;
+
+                var destination = _destination;
+                destination.Directory = "/temp";
+                destination.Action = DestinationAction.Error;
+                destination.FileName = _file + Guid.NewGuid().ToString();
+
+                var connection = _connection;
+                connection.SslMode = FtpsSslMode.None;
+                connection.UseFTPS = bo;
+                connection.CertificateHashStringSHA1 = "D911262984DE9CC32A3518A1094CD24249EA5C49";
+                connection.TransportType = FtpTransportType.Binary;
+                connection.ConnectionTimeout = randomNumber;
+                connection.KeepConnectionAliveInterval = randomNumber;
+                connection.Encoding = "UTF-8";
+                connection.BufferSize = randomNumber + 1000;
+
+                var options = _options;
+                options.ThrowErrorOnFail = bo;
+                options.PreserveLastModified = bo;
+                options.RenameSourceFileBeforeTransfer = bo;
+                options.RenameDestinationFileDuringTransfer = bo;
+                options.CreateDestinationDirectories = bo;
+                options.OperationLog = bo;
+
+                var info = _info;
+                info.TransferName = _file + Guid.NewGuid().ToString();
+                info.WorkDir = _dir;
+                info.TaskExecutionID = "123";
+
+                var result = FTP.UploadFiles(source, destination, connection, options, info, new CancellationToken());
+                Assert.IsTrue(result.Success);
+                Assert.IsFalse(result.ActionSkipped);
+                Assert.AreEqual(1, result.SuccessfulTransferCount);
+                Assert.AreEqual(0, result.TransferErrors.Count);
+                Assert.AreEqual(1, result.TransferredFileNames.Count());
+                Assert.AreEqual(1, result.TransferredFilePaths.Count());
+                Assert.IsTrue(result.UserResultMessage.Contains("files transferred"));
+                Assert.IsTrue(result.OperationsLog.Count < 4);
+
+                TearDown();
+            }
+        }
+
+        [Test]
+        public void UploadFTPS_CorrectFingerprint_FileExists_SourceOperations()
+        {
+            var sourceOperations = new[] { SourceOperation.Move, SourceOperation.Delete, SourceOperation.Rename, SourceOperation.Nothing };
+
+            foreach (var sourceOperation in sourceOperations)
+            {
+                Random random = new();
+                var randomNumber = random.Next(1, 100);
+                SetUp();
+                var source = _source;
+                source.NotFoundAction = SourceNotFoundAction.Error;
+                source.Operation = sourceOperation;
+                source.FileNameAfterTransfer = _file + Guid.NewGuid().ToString();
+                source.DirectoryToMoveAfterTransfer = _dir;
+                source.FilePaths = _dir;
+
+                var destination = _destination;
+                destination.Directory = "/temp";
+                destination.Action = DestinationAction.Error;
+                destination.FileName = _file + Guid.NewGuid().ToString();
+
+                var connection = _connection;
+                connection.SslMode = FtpsSslMode.None;
+                connection.UseFTPS = true;
+                connection.CertificateHashStringSHA1 = "D911262984DE9CC32A3518A1094CD24249EA5C49";
+                connection.TransportType = FtpTransportType.Binary;
+                connection.ConnectionTimeout = randomNumber;
+                connection.KeepConnectionAliveInterval = randomNumber;
+                connection.Encoding = "UTF-8";
+                connection.BufferSize = randomNumber + 1000;
+
+                var options = _options;
+                options.ThrowErrorOnFail = true;
+                options.PreserveLastModified = true;
+                options.RenameSourceFileBeforeTransfer = true;
+                options.RenameDestinationFileDuringTransfer = true;
+                options.CreateDestinationDirectories = true;
+                options.OperationLog = true;
+
+                var info = _info;
+                info.TransferName = _file + Guid.NewGuid().ToString();
+                info.WorkDir = _dir;
+                info.TaskExecutionID = "123";
+
+                var result = FTP.UploadFiles(source, destination, connection, options, info, new CancellationToken());
+                Assert.IsTrue(result.Success);
+                Assert.IsFalse(result.ActionSkipped);
+                Assert.AreEqual(1, result.SuccessfulTransferCount);
+                Assert.AreEqual(0, result.TransferErrors.Count);
+                Assert.AreEqual(1, result.TransferredFileNames.Count());
+                Assert.AreEqual(1, result.TransferredFilePaths.Count());
+                Assert.IsTrue(result.UserResultMessage.Contains("files transferred"));
+                Assert.IsTrue(result.OperationsLog.Count < 4);
+
+                TearDown();
+            }
+        }
+
+        [Test]
+        public void UploadFTPS_CorrectFingerprint_FileExists_FileEncodings()
+        {
+            var fileEncodings = new[] { "UTF-8", "ASCII", "foobar123", string.Empty };
+
+            foreach (var fileEncoding in fileEncodings)
+            {
+                Random random = new();
+                var randomNumber = random.Next(1, 100);
+                SetUp();
+                var source = _source;
+                source.NotFoundAction = SourceNotFoundAction.Error;
+                source.Operation = SourceOperation.Move;
+                source.FileNameAfterTransfer = _file + Guid.NewGuid().ToString();
+                source.DirectoryToMoveAfterTransfer = _dir;
+                source.FilePaths = _dir;
+
+                var destination = _destination;
+                destination.Directory = "/temp";
+                destination.Action = DestinationAction.Error;
+                destination.FileName = _file + Guid.NewGuid().ToString();
+
+                var connection = _connection;
+                connection.SslMode = FtpsSslMode.None;
+                connection.UseFTPS = true;
+                connection.CertificateHashStringSHA1 = "D911262984DE9CC32A3518A1094CD24249EA5C49";
+                connection.TransportType = FtpTransportType.Binary;
+                connection.ConnectionTimeout = randomNumber;
+                connection.KeepConnectionAliveInterval = randomNumber;
+                connection.Encoding = fileEncoding;
+                connection.BufferSize = randomNumber + 1000;
+
+                var options = _options;
+                options.ThrowErrorOnFail = true;
+                options.PreserveLastModified = true;
+                options.RenameSourceFileBeforeTransfer = true;
+                options.RenameDestinationFileDuringTransfer = true;
+                options.CreateDestinationDirectories = true;
+                options.OperationLog = true;
+
+                var info = _info;
+                info.TransferName = _file + Guid.NewGuid().ToString();
+                info.WorkDir = _dir;
+                info.TaskExecutionID = "123";
+
+
+                if (connection.Encoding.Equals("foobar123"))
+                {
+                    var ex = Assert.Throws<ArgumentException>(() => FTP.UploadFiles(source, destination, connection, options, info, new CancellationToken()));
+                    Assert.IsTrue(ex.Message.Contains("is not a supported encoding name"));
+                }
+                else
+                {
+                    var result = FTP.UploadFiles(source, destination, connection, options, info, new CancellationToken());
+                    Assert.IsTrue(result.Success);
+                    Assert.IsFalse(result.ActionSkipped);
+                    Assert.AreEqual(1, result.SuccessfulTransferCount);
+                    Assert.AreEqual(0, result.TransferErrors.Count);
+                    Assert.AreEqual(1, result.TransferredFileNames.Count());
+                    Assert.AreEqual(1, result.TransferredFilePaths.Count());
+                    Assert.IsTrue(result.UserResultMessage.Contains("files transferred"));
+                    Assert.IsTrue(result.OperationsLog.Count < 4);
+                }
+
+                TearDown();
+            }
+        }
+
         // Test all actions, types and modes and their combinations. Might consume a lot of memory.  
         [Test]
+        [Ignore("Might consume a lot of memory.")]
         public void UploadFTPS_CorrectFingerprint_FileExists()
         {
             var destinationActions = new[] { DestinationAction.Error, DestinationAction.Overwrite, DestinationAction.Append };
@@ -188,7 +611,7 @@ namespace Frends.FTP.UploadFiles.Tests
                                         source.FilePaths = _dir;
 
                                         var destination = _destination;
-                                        destination.Directory = "/";
+                                        destination.Directory = "/temp";
                                         destination.Action = destinationAction;
                                         destination.FileName = _file + Guid.NewGuid().ToString();
 
@@ -275,7 +698,7 @@ namespace Frends.FTP.UploadFiles.Tests
                                         source.DirectoryToMoveAfterTransfer = _dir;
 
                                         var destination = _destination;
-                                        destination.Directory = "/";
+                                        destination.Directory = "/temp";
                                         destination.Action = destinationAction;
                                         destination.FileName = fileName + "EDIT";
 
