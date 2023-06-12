@@ -13,7 +13,7 @@ namespace Frends.FTP.UploadFiles.Tests
     public class UploadFilesTests
     {
         private string _dir;
-        private readonly string _file = "file1.txt" + Guid.NewGuid().ToString();
+        private readonly string _file = "file1" + Guid.NewGuid().ToString() + ".txt";
 
         private Source _source = new();
         private Connection _connection = new();
@@ -337,6 +337,7 @@ namespace Frends.FTP.UploadFiles.Tests
                                         TearDown();
                                     }
         }
+
 
         private void CreateDummyFileInDummyDir(string fileName)
         {
