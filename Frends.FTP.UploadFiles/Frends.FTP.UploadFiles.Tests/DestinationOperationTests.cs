@@ -20,11 +20,12 @@ public class DestinationActionTests : UploadFilesTestBase
         var result2 = CallUploadFiles(
             DestinationAction.Append, "file1.txt", nameof(DestinationAction_Append_NoRenameInTransfer), false);
 
+        Console.WriteLine(result1.OperationsLog);
+        Console.WriteLine(result2.OperationsLog);
         Assert.IsTrue(result1.Success, result1.UserResultMessage);
         Assert.IsTrue(result2.Success, result2.UserResultMessage);
         Assert.AreEqual(1, result2.SuccessfulTransferCount);
         Assert.AreEqual("mycontentmycontent", Helpers.GetFileFromFtp(nameof(DestinationAction_Append_NoRenameInTransfer), "file1.txt"));
-        Console.WriteLine(result2.OperationsLog);
     }
 
     [Test]
@@ -37,6 +38,8 @@ public class DestinationActionTests : UploadFilesTestBase
         var result2 = CallUploadFiles(
             DestinationAction.Append, "file1.txt", nameof(DestinationAction_Append_WithRenameInTransfer), true);
 
+        Console.WriteLine(result1.OperationsLog);
+        Console.WriteLine(result2.OperationsLog);
         Assert.IsTrue(result1.Success, result1.UserResultMessage);
         Assert.IsTrue(result2.Success, result2.UserResultMessage);
         Assert.AreEqual(1, result2.SuccessfulTransferCount);
@@ -60,6 +63,7 @@ public class DestinationActionTests : UploadFilesTestBase
         var connection = Helpers.GetFtpsConnection();
 
         var result = FTP.UploadFiles(source, destination, connection, options, new Info(), new CancellationToken());
+        Console.WriteLine(result.OperationsLog);
         return result;
     }
 }
