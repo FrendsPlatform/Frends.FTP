@@ -20,8 +20,11 @@ public class DestinationActionTests : UploadFilesTestBase
         var result2 = CallUploadFiles(
             DestinationAction.Append, "file1.txt", nameof(DestinationAction_Append_NoRenameInTransfer), false);
 
-        Console.WriteLine(result1.OperationsLog);
-        Console.WriteLine(result2.OperationsLog);
+        foreach (var log in result1.OperationsLog)
+            Console.WriteLine(log.Key + " " + log.Value);
+        foreach (var log in result2.OperationsLog)
+            Console.WriteLine(log.Key + " " + log.Value);
+
         Assert.IsTrue(result1.Success, result1.UserResultMessage);
         Assert.IsTrue(result2.Success, result2.UserResultMessage);
         Assert.AreEqual(1, result2.SuccessfulTransferCount);
@@ -38,8 +41,10 @@ public class DestinationActionTests : UploadFilesTestBase
         var result2 = CallUploadFiles(
             DestinationAction.Append, "file1.txt", nameof(DestinationAction_Append_WithRenameInTransfer), true);
 
-        Console.WriteLine(result1.OperationsLog);
-        Console.WriteLine(result2.OperationsLog);
+        foreach (var log in result1.OperationsLog)
+            Console.WriteLine(log.Key + " " + log.Value);
+        foreach (var log in result2.OperationsLog)
+            Console.WriteLine(log.Key + " " + log.Value);
         Assert.IsTrue(result1.Success, result1.UserResultMessage);
         Assert.IsTrue(result2.Success, result2.UserResultMessage);
         Assert.AreEqual(1, result2.SuccessfulTransferCount);
@@ -63,7 +68,10 @@ public class DestinationActionTests : UploadFilesTestBase
         var connection = Helpers.GetFtpsConnection();
 
         var result = FTP.UploadFiles(source, destination, connection, options, new Info(), new CancellationToken());
-        Console.WriteLine(result.OperationsLog);
+
+        foreach (var log in result.OperationsLog)
+            Console.WriteLine(log.Key + " " + log.Value);
+
         return result;
     }
 }
