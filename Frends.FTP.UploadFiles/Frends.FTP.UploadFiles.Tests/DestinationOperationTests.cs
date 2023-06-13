@@ -73,8 +73,23 @@ public class DestinationActionTests : UploadFilesTestBase
 
         var result = FTP.UploadFiles(source, destination, connection, options, new Info(), new CancellationToken());
 
+        Console.WriteLine($@"Success: {result.Success}, FailedTransferCount: {result.FailedTransferCount}, SuccessfulTransferCount: {result.SuccessfulTransferCount}, UserResultMessage: {result.UserResultMessage}");
+
         foreach (var log in result.OperationsLog)
-            Console.WriteLine($@"Success: {result.Success}, TransferredFilePaths: {result.TransferredFilePaths}, TransferredFileNames: {result.TransferredFileNames}, UserResultMessage: {result.UserResultMessage}, FailedTransferCount: {result.FailedTransferCount}, TransferErrors: {result.TransferErrors}, SuccessfulTransferCount: {result.SuccessfulTransferCount}, LogKey: {log.Key}, LogValue: {log.Value}");
+            Console.WriteLine($@"LogKey: {log.Key}, LogValue: {log.Value}");
+
+        foreach (var log in result.TransferredFilePaths)
+            Console.WriteLine($@"TransferredFilePaths: {log}");
+
+        foreach (var log in result.TransferredFileNames)
+            Console.WriteLine($@"TransferredFileNames: {log}");
+
+        foreach (var log in result.TransferredFileNames)
+            Console.WriteLine($@"TransferredFileNames: {log}");
+
+        foreach (var log in result.TransferErrors)
+            Console.WriteLine($@"TransferErrors: {log.Key}, {log.Value}");
+
 
         return result;
     }
