@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
-using Frends.FTP.UploadFiles.Enums;
+﻿using Frends.FTP.UploadFiles.Enums;
 using Frends.FTP.UploadFiles.TaskConfiguration;
 using Frends.FTP.UploadFiles.TaskResult;
 using NUnit.Framework;
+using System;
+using System.Threading;
 
 namespace Frends.FTP.UploadFiles.Tests;
 
@@ -63,14 +63,18 @@ public class DestinationActionTests : UploadFilesTestBase
         };
         var destination = new Destination
         { Directory = targetDir, Action = destinationAction };
-        var options = new Options { CreateDestinationDirectories = true, RenameDestinationFileDuringTransfer = renameDestinationFilesDuringTransfer,
-        OperationLog = true};
+        var options = new Options
+        {
+            CreateDestinationDirectories = true,
+            RenameDestinationFileDuringTransfer = renameDestinationFilesDuringTransfer,
+            OperationLog = true
+        };
         var connection = Helpers.GetFtpsConnection();
 
         var result = FTP.UploadFiles(source, destination, connection, options, new Info(), new CancellationToken());
 
         foreach (var log in result.OperationsLog)
-            Console.WriteLine(log.Key + " " + log.Value);
+            Console.WriteLine($@"Success: {result.Success}, TransferredFilePaths: {result.TransferredFilePaths}, TransferredFileNames: {result.TransferredFileNames}, UserResultMessage: {result.UserResultMessage}, FailedTransferCount: {result.FailedTransferCount}, TransferErrors: {result.TransferErrors}, SuccessfulTransferCount: {result.SuccessfulTransferCount}, LogKey: {log.Key}, LogValue: {log.Value}");
 
         return result;
     }
