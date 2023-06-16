@@ -563,7 +563,7 @@ public class UploadFilesTests
 
     // Test all actions, types and modes and their combinations. Might consume a lot of memory.  
     [Test]
-    [Ignore("Consumes a lot of time and memory.")]
+    //[Ignore("Consumes a lot of time and memory.")]
     public void UploadFTPS_CorrectFingerprint_FileExists()
     {
         var destinationActions = new[] { DestinationAction.Error, DestinationAction.Overwrite, DestinationAction.Append };
