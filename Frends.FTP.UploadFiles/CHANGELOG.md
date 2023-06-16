@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0.2] - 2023-04-17
+## [1.0.2] - 2023-06-16
 ### Added
 - Operations log improvements.
 
