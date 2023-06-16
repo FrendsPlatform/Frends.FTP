@@ -6,6 +6,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 
@@ -150,6 +151,7 @@ namespace Frends.FTP.UploadFiles
             }
         }
 
+        [ExcludeFromCodeCoverage]
         private static string GetLogLines(IEnumerable<Tuple<DateTimeOffset, string>> buffer)
         {
             try
@@ -168,6 +170,7 @@ namespace Frends.FTP.UploadFiles
             return logger;
         }
 
+        [ExcludeFromCodeCoverage]
         private static IDictionary<string, string> GetLogDictionary(IList<Tuple<DateTimeOffset, string>> entries)
         {
             const string dateFormat = "yyyy-MM-dd HH:mm:ss.f0Z";

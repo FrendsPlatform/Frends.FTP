@@ -5,6 +5,7 @@ using Frends.FTP.UploadFiles.TaskConfiguration;
 using Frends.FTP.UploadFiles.TaskResult;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net.Security;
@@ -138,6 +139,7 @@ namespace Frends.FTP.UploadFiles.Definitions
         }
 
         #region Helper methods
+        [ExcludeFromCodeCoverage]
         private static FtpClient CreateFtpClient(Connection connect)
         {
             var client = new FtpClient(connect.Address, connect.Port, connect.UserName, connect.Password);
