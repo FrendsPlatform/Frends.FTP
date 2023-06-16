@@ -21,7 +21,7 @@ public class UploadFilesTestBase
         return File.Exists(Path.Combine(dir ?? Dir, fileName));
     }
 
-    protected string CreateDummyDir()
+    protected static string CreateDummyDir()
     {
         var dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
         Directory.CreateDirectory(dir);

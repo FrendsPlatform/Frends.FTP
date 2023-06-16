@@ -20,11 +20,6 @@ public class DestinationActionTests : UploadFilesTestBase
         var result2 = CallUploadFiles(
             DestinationAction.Append, "file1.txt", nameof(DestinationAction_Append_NoRenameInTransfer), false);
 
-        foreach (var log in result1.OperationsLog)
-            Console.WriteLine(log.Key + " " + log.Value);
-        foreach (var log in result2.OperationsLog)
-            Console.WriteLine(log.Key + " " + log.Value);
-
         Assert.IsTrue(result1.Success, result1.UserResultMessage);
         Assert.IsTrue(result2.Success, result2.UserResultMessage);
         Assert.AreEqual(1, result2.SuccessfulTransferCount);
@@ -41,10 +36,6 @@ public class DestinationActionTests : UploadFilesTestBase
         var result2 = CallUploadFiles(
             DestinationAction.Append, "file1.txt", nameof(DestinationAction_Append_WithRenameInTransfer), true);
 
-        foreach (var log in result1.OperationsLog)
-            Console.WriteLine(log.Key + " " + log.Value);
-        foreach (var log in result2.OperationsLog)
-            Console.WriteLine(log.Key + " " + log.Value);
         Assert.IsTrue(result1.Success, result1.UserResultMessage);
         Assert.IsTrue(result2.Success, result2.UserResultMessage);
         Assert.AreEqual(1, result2.SuccessfulTransferCount);
@@ -59,38 +50,14 @@ public class DestinationActionTests : UploadFilesTestBase
         {
             Directory = Dir,
             FileName = sourceFileName,
-            Operation = SourceOperation.Nothing,
+            Operation = SourceOperation.Nothing
         };
         var destination = new Destination
         { Directory = targetDir, Action = destinationAction };
-        var options = new Options
-        {
-            CreateDestinationDirectories = true,
-            RenameDestinationFileDuringTransfer = renameDestinationFilesDuringTransfer,
-            OperationLog = true
-        };
+        var options = new Options { CreateDestinationDirectories = true, RenameDestinationFileDuringTransfer = renameDestinationFilesDuringTransfer };
         var connection = Helpers.GetFtpsConnection();
 
         var result = FTP.UploadFiles(source, destination, connection, options, new Info(), new CancellationToken());
-
-        Console.WriteLine($@"Success: {result.Success}, FailedTransferCount: {result.FailedTransferCount}, SuccessfulTransferCount: {result.SuccessfulTransferCount}, UserResultMessage: {result.UserResultMessage}");
-
-        foreach (var log in result.OperationsLog)
-            Console.WriteLine($@"LogKey: {log.Key}, LogValue: {log.Value}");
-
-        foreach (var log in result.TransferredFilePaths)
-            Console.WriteLine($@"TransferredFilePaths: {log}");
-
-        foreach (var log in result.TransferredFileNames)
-            Console.WriteLine($@"TransferredFileNames: {log}");
-
-        foreach (var log in result.TransferredFileNames)
-            Console.WriteLine($@"TransferredFileNames: {log}");
-
-        foreach (var log in result.TransferErrors)
-            Console.WriteLine($@"TransferErrors: {log.Key}, {log.Value}");
-
-
         return result;
     }
 }
