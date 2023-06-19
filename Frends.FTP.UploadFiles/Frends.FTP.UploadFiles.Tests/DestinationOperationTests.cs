@@ -2,7 +2,6 @@
 using Frends.FTP.UploadFiles.TaskConfiguration;
 using Frends.FTP.UploadFiles.TaskResult;
 using NUnit.Framework;
-using System;
 using System.Threading;
 
 namespace Frends.FTP.UploadFiles.Tests;

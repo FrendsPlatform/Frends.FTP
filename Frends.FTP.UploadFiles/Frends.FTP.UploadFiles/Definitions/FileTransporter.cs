@@ -58,7 +58,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                 {
                     userResultMessage = $"Directory '{_sourceDirectoryWithMacrosExpanded}' doesn't exist.";
                     _logger.NotifyError(_batchContext, userResultMessage, new Exception(userResultMessage));
-                    return FileTransporter.FormFailedFileTransferResult(userResultMessage);
+                    return FormFailedFileTransferResult(userResultMessage);
                 }
 
                 if (files == null || !files.Any())
@@ -79,7 +79,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                         if (!client.IsConnected)
                         {
                             _logger.NotifyError(_batchContext, "Error while connecting to destination: ", new Exception(userResultMessage));
-                            return FileTransporter.FormFailedFileTransferResult(userResultMessage);
+                            return FormFailedFileTransferResult(userResultMessage);
                         }
 
                         // Check does the destination directory exists.
@@ -95,14 +95,14 @@ namespace Frends.FTP.UploadFiles.Definitions
                                 {
                                     userResultMessage = $"Error while creating destination directory '{_destinationDirectoryWithMacrosExpanded}': {ex.Message}";
                                     _logger.NotifyError(_batchContext, userResultMessage, new Exception(userResultMessage));
-                                    return FileTransporter.FormFailedFileTransferResult(userResultMessage);
+                                    return FormFailedFileTransferResult(userResultMessage);
                                 }
                             }
                             else
                             {
                                 userResultMessage = $"Destination directory '{_destinationDirectoryWithMacrosExpanded}' was not found.";
                                 _logger.NotifyError(_batchContext, userResultMessage, new Exception(userResultMessage));
-                                return FileTransporter.FormFailedFileTransferResult(userResultMessage);
+                                return FormFailedFileTransferResult(userResultMessage);
                             }
                         }
 
@@ -132,13 +132,15 @@ namespace Frends.FTP.UploadFiles.Definitions
             {
                 userResultMessage = $"Unable to establish the socket: No such host is known.";
                 _logger.NotifyError(_batchContext, userResultMessage, new Exception(userResultMessage));
-                return FileTransporter.FormFailedFileTransferResult(userResultMessage);
+                return FormFailedFileTransferResult(userResultMessage);
             }
 
             return FormResultFromSingleTransferResults(Result);
         }
 
         #region Helper methods
+        // ExcludeFromCodeCoverage(Justification) is not supported for 4.7.1 and 2.0:
+        // This one is excluded because currently, it seems impossible to get past 79% coverage in CI, even though it's over 81% when run locally.
         [ExcludeFromCodeCoverage]
         private static FtpClient CreateFtpClient(Connection connect)
         {
@@ -331,16 +333,16 @@ namespace Frends.FTP.UploadFiles.Definitions
 
             var errorMessages = results.SelectMany(x => x.ErrorMessages).ToList();
             if (errorMessages.Any())
-                userResultMessage = FileTransporter.MessageJoin(userResultMessage,
+                userResultMessage = MessageJoin(userResultMessage,
                     $"{errorMessages.Count} Errors: {string.Join(", ", errorMessages)}");
 
             var transferredFiles = results.Select(x => x.TransferredFile).Where(x => x != null).ToList();
             if (transferredFiles.Any())
-                userResultMessage = FileTransporter.MessageJoin(userResultMessage,
+                userResultMessage = MessageJoin(userResultMessage,
                     string.Format("{0} files transferred: {1}", transferredFiles.Count,
                         string.Join(", ", transferredFiles)));
             else
-                userResultMessage = FileTransporter.MessageJoin(userResultMessage, "No files transferred.");
+                userResultMessage = MessageJoin(userResultMessage, "No files transferred.");
 
             return userResultMessage;
         }

@@ -51,7 +51,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                 return remoteFileDefinition;
             }
 
-            var result = this.ExpandMacrosAndMasks(originalFileName, remoteFileDefinition);
+            var result = ExpandMacrosAndMasks(originalFileName, remoteFileDefinition);
 
             if (result.EndsWith("\\"))
                 result = Path.Combine(result, originalFileNameWithoutPath);
