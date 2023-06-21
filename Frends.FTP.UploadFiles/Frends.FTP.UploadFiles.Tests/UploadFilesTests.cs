@@ -2,7 +2,6 @@ using Frends.FTP.UploadFiles.Enums;
 using Frends.FTP.UploadFiles.TaskConfiguration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Authentication;
@@ -91,7 +90,7 @@ public class UploadFilesTests
     public void CleanUp()
     {
         if (Directory.Exists(_dir))
-           Directory.Delete(_dir, true);
+            Directory.Delete(_dir, true);
     }
 
     [TestMethod]
