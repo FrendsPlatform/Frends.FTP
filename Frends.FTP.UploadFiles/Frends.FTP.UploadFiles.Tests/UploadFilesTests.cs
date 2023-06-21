@@ -96,7 +96,20 @@ public class UploadFilesTests
     public void CleanUp()
     {
         if (Directory.Exists(_dir))
-            Directory.Delete(_dir, true);
+        {
+            try
+            {
+                Directory.Delete(_dir, true);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Console.WriteLine("Insufficient access rights to delete the directory.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while deleting the directory: {ex.Message}");
+            }
+        }
 
         var dirs = new List<string>() { "TestFiles", "DestinationAction_Append_NoRenameInTransfer", "DestinationAction_Append_WithRenameInTransfer", "MacrosWorkInDestinationFileName", "MacrosWorkInSourceDirectory", "SourceOperation_Delete", "SourceOperation_Move", "SourceOperation_Nothing", "SourceOperation_Rename", "SourceOperation_Delete" };
 
@@ -105,7 +118,20 @@ public class UploadFilesTests
             var targetDir = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "DockerVolumes", "data", dir);
             var fullPath = Path.GetFullPath(targetDir);
             if (Directory.Exists(fullPath))
-                Directory.Delete(fullPath, true);
+            {
+                try
+                {
+                    Directory.Delete(fullPath, true);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    Console.WriteLine($"Insufficient access rights to delete directory '{fullPath}'.");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred while deleting directory '{fullPath}': {ex.Message}");
+                }
+            }
         }
     }
 
