@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 
@@ -28,13 +28,13 @@ public class UploadFilesTestBase
         return dir;
     }
 
-    [SetUp]
+    [TestInitialize]
     public void SetUp()
     {
         Dir = CreateDummyDir();
     }
 
-    [TearDown]
+    [TestCleanup]
     public void TearDown()
     {
         Directory.Delete(Dir, true);

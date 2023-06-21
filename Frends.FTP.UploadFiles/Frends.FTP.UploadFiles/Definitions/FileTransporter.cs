@@ -5,7 +5,6 @@ using Frends.FTP.UploadFiles.TaskConfiguration;
 using Frends.FTP.UploadFiles.TaskResult;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net.Security;
@@ -139,9 +138,6 @@ namespace Frends.FTP.UploadFiles.Definitions
         }
 
         #region Helper methods
-        // ExcludeFromCodeCoverage(Justification) is not supported for 4.7.1 and 2.0:
-        // This one is excluded because currently, it seems impossible to get past 79% coverage in CI, even though it's over 81% when run locally.
-        [ExcludeFromCodeCoverage]
         private static FtpClient CreateFtpClient(Connection connect)
         {
             var client = new FtpClient(connect.Address, connect.Port, connect.UserName, connect.Password);

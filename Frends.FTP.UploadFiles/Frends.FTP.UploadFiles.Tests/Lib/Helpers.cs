@@ -47,12 +47,10 @@ internal static class Helpers
     internal static string GetFileFromFtp(string subDir, string file)
     {
         var tmpFile = Path.GetTempFileName();
-        using (var client = new FtpClient(FtpHost, FtpPort, FtpUsername, FtpPassword))
-        {
-            client.Connect();
-            client.SetWorkingDirectory(subDir);
-            client.DownloadFile(tmpFile, file);
-            return File.ReadAllText(tmpFile);
-        }
+        using var client = new FtpClient(FtpHost, FtpPort, FtpUsername, FtpPassword);
+        client.Connect();
+        client.SetWorkingDirectory(subDir);
+        client.DownloadFile(tmpFile, file);
+        return File.ReadAllText(tmpFile);
     }
 }

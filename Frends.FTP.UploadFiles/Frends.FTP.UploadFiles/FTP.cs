@@ -6,7 +6,6 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 
@@ -152,8 +151,7 @@ namespace Frends.FTP.UploadFiles
         }
 
         // ExcludeFromCodeCoverage(Justification) is not supported for 4.7.1 and 2.0:
-        // This one is excluded because currently, it seems impossible to get past 79% coverage in CI, even though it's over 81% when run locally.
-        [ExcludeFromCodeCoverage]
+        //[ExcludeFromCodeCoverage]
         private static string GetLogLines(IEnumerable<Tuple<DateTimeOffset, string>> buffer)
         {
             try
@@ -172,9 +170,6 @@ namespace Frends.FTP.UploadFiles
             return logger;
         }
 
-        // ExcludeFromCodeCoverage(Justification) is not supported for 4.7.1 and 2.0:
-        // This one is excluded because currently, it seems impossible to get past 79% coverage in CI, even though it's over 81% when run locally.
-        [ExcludeFromCodeCoverage]
         private static IDictionary<string, string> GetLogDictionary(IList<Tuple<DateTimeOffset, string>> entries)
         {
             const string dateFormat = "yyyy-MM-dd HH:mm:ss.f0Z";

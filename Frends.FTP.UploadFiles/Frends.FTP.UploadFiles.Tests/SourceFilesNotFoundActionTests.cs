@@ -1,16 +1,16 @@
 ﻿using Frends.FTP.UploadFiles.Enums;
 using Frends.FTP.UploadFiles.TaskConfiguration;
 using Frends.FTP.UploadFiles.TaskResult;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using System.Threading;
 
 namespace Frends.FTP.UploadFiles.Tests;
 
-[TestFixture]
+[TestClass]
 public class SourceFilesNotFoundActionTests : UploadFilesTestBase
 {
-    [Test]
+    [TestMethod]
     public void SourceFilesNotFoundAction_Ignore()
     {
         var result = CallUploadFiles(
@@ -25,7 +25,7 @@ public class SourceFilesNotFoundActionTests : UploadFilesTestBase
         Assert.IsFalse(result.OperationsLog.Any(o => o.Value.Contains("No source files")));
     }
 
-    [Test]
+    [TestMethod]
     public void SourceFilesNotFoundAction_Info()
     {
         var result = CallUploadFiles(
@@ -41,7 +41,7 @@ public class SourceFilesNotFoundActionTests : UploadFilesTestBase
         Assert.IsTrue(result.OperationsLog.Any(o => o.Value.Contains("No source files")));
     }
 
-    [Test]
+    [TestMethod]
     public void SourceFilesNotFoundAction_Error()
     {
         var result = CallUploadFiles(

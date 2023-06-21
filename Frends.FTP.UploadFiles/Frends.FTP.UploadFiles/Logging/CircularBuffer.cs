@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 namespace Frends.FTP.UploadFiles.Logging
 {
-    // ExcludeFromCodeCoverage(Justification) is not supported for 4.7.1 and 2.0:
-    // This one is excluded because currently, it seems impossible to get past 79% coverage in CI, even though it's over 81% when run locally.
     /// <summary>
     /// Circular buffer impl, original from https://codereview.stackexchange.com/a/134147
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    [ExcludeFromCodeCoverage]
     internal class CircularBuffer<T>
     {
         private readonly ConcurrentQueue<T> _data;

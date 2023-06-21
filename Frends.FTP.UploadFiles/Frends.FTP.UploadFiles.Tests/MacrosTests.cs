@@ -1,7 +1,7 @@
 ﻿using Frends.FTP.UploadFiles.Enums;
 using Frends.FTP.UploadFiles.TaskConfiguration;
 using Frends.FTP.UploadFiles.TaskResult;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Threading;
@@ -18,7 +18,7 @@ namespace Frends.FTP.UploadFiles.Tests;
 /// - source file name does not support macros for some reason in Cobalt, currently not implementing because
 ///   need to understand reasoning better
 /// </summary>
-[TestFixture]
+[TestClass]
 public class MacrosTests
 {
     private readonly string _dockerDataVolumePath = Path.GetFullPath("../../../DockerVolumes/data");
@@ -42,7 +42,7 @@ public class MacrosTests
         return File.Exists(Path.Combine(_dockerDataVolumePath, subDir, fileName));
     }
 
-    [Test]
+    [TestMethod]
     public void MacrosWorkInSourceDirectory()
     {
         // Setup
@@ -67,7 +67,7 @@ public class MacrosTests
             string.Join(",", Directory.EnumerateFiles(Path.Combine(_dockerDataVolumePath, nameof(MacrosWorkInSourceDirectory)))));
     }
 
-    [Test]
+    [TestMethod]
     public void MacrosWorkInDestinationDirectory()
     {
         // Setup
@@ -90,7 +90,7 @@ public class MacrosTests
         Assert.IsTrue(FtpFileExists("file1.txt", destinationWithMacrosExpanded), result.UserResultMessage);
     }
 
-    [Test]
+    [TestMethod]
     public void MacrosWorkInDestinationFileName()
     {
         // Setup

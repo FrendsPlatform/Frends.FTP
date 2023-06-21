@@ -1,16 +1,16 @@
 ﻿using Frends.FTP.UploadFiles.Enums;
 using Frends.FTP.UploadFiles.TaskConfiguration;
 using Frends.FTP.UploadFiles.TaskResult;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Threading;
 
 namespace Frends.FTP.UploadFiles.Tests;
 
-[TestFixture]
+[TestClass]
 public class SourceOperationTests : UploadFilesTestBase
 {
-    [Test]
+    [TestMethod]
     public void SourceOperation_Delete()
     {
         // Setup
@@ -30,7 +30,7 @@ public class SourceOperationTests : UploadFilesTestBase
         Assert.IsFalse(DummyFileExists("file3.txt"));
     }
 
-    [Test]
+    [TestMethod]
     public void SourceOperation_Nothing()
     {
         // Setup
@@ -50,7 +50,7 @@ public class SourceOperationTests : UploadFilesTestBase
         Assert.IsTrue(DummyFileExists("file3.txt"));
     }
 
-    [Test]
+    [TestMethod]
     public void SourceOperation_Move()
     {
         // Setup
@@ -79,7 +79,7 @@ public class SourceOperationTests : UploadFilesTestBase
         Assert.IsTrue(DummyFileExists("file3.txt", moveTo));
     }
 
-    [Test]
+    [TestMethod]
     public void SourceOperation_Rename()
     {
         // Setup

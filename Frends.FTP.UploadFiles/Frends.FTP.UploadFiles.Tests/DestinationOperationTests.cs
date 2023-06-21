@@ -1,15 +1,15 @@
 ﻿using Frends.FTP.UploadFiles.Enums;
 using Frends.FTP.UploadFiles.TaskConfiguration;
 using Frends.FTP.UploadFiles.TaskResult;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 
 namespace Frends.FTP.UploadFiles.Tests;
 
-[TestFixture]
+[TestClass]
 public class DestinationActionTests : UploadFilesTestBase
 {
-    [Test]
+    [TestMethod]
     public void DestinationAction_Append_NoRenameInTransfer()
     {
         CreateDummyFileInDummyDir("file1.txt", "mycontent");
@@ -25,7 +25,7 @@ public class DestinationActionTests : UploadFilesTestBase
         Assert.AreEqual("mycontentmycontent", Helpers.GetFileFromFtp(nameof(DestinationAction_Append_NoRenameInTransfer), "file1.txt"));
     }
 
-    [Test]
+    [TestMethod]
     public void DestinationAction_Append_WithRenameInTransfer()
     {
         CreateDummyFileInDummyDir("file1.txt", "mycontent");

@@ -265,7 +265,7 @@ namespace Frends.FTP.UploadFiles.Definitions
         {
             _result.Success = false; // the routine instance should be marked as failed if even one transfer fails
             var errorMessage =
-                $"Failure in {_state}: File '{SourceFile.Name}' could not be transferred to '{_destinationDirectoryWithMacrosExpanded}'. Error: {exception.Message}";
+                $"Failure in {_state}: File '{SourceFile.Name}' could not be transferred to '{_destinationDirectoryWithMacrosExpanded}'. Error: {exception.Message}. InnerException: {exception.InnerException}";
             if (!string.IsNullOrWhiteSpace(sourceFileRestoreMessage))
                 errorMessage += " " + sourceFileRestoreMessage;
 

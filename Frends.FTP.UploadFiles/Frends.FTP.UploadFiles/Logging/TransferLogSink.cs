@@ -2,7 +2,6 @@
 using Serilog.Events;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Frends.FTP.UploadFiles.Logging
@@ -60,13 +59,10 @@ namespace Frends.FTP.UploadFiles.Logging
             }
         }
 
-        // ExcludeFromCodeCoverage(Justification) is not supported for 4.7.1 and 2.0:
-        // This one is excluded because currently, it seems impossible to get past 79% coverage in CI, even though it's over 81% when run locally.
         /// <summary>
         /// Gets the log messages from sink
         /// </summary>
         /// <returns></returns>
-        [ExcludeFromCodeCoverage]
         public IList<Tuple<DateTimeOffset, string>> GetBufferedLogMessages()
         {
             if (_allMsgsBuffer != null) return _allMsgsBuffer;
