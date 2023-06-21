@@ -100,10 +100,7 @@ public class UploadFilesTests
             try
             {
                 Directory.Delete(_dir, true);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                Console.WriteLine("Insufficient access rights to delete the directory.");
+                Console.WriteLine("Directory deleted successfully.");
             }
             catch (Exception ex)
             {
@@ -122,10 +119,7 @@ public class UploadFilesTests
                 try
                 {
                     Directory.Delete(fullPath, true);
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    Console.WriteLine($"Insufficient access rights to delete directory '{fullPath}'.");
+                    Console.WriteLine($"Directory '{fullPath}' deleted successfully.");
                 }
                 catch (Exception ex)
                 {
