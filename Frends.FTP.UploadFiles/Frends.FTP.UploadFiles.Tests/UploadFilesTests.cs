@@ -27,11 +27,6 @@ public class UploadFilesTests
     {
         _dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
         Directory.CreateDirectory(_dir);
-        var targetDir = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "DockerVolumes", "data", "TestFiles");
-        var fullPath = Path.GetFullPath(targetDir);
-        Directory.CreateDirectory(fullPath);
-
-
         File.WriteAllText(Path.Combine(_dir, _file), "test");
 
         _source = new()
@@ -68,7 +63,7 @@ public class UploadFilesTests
 
         _destination = new()
         {
-            Directory = "/TestFiles",
+            Directory = "/",
             Action = default,
             FileName = $"{_file}-{Guid.NewGuid()}",
         };
@@ -96,21 +91,7 @@ public class UploadFilesTests
     public void CleanUp()
     {
         if (Directory.Exists(_dir))
-            Directory.Delete(_dir, true);
-        
-        // Permission issues when testing in CI (linux).
-        if (OperatingSystem.IsWindows())
-        {
-            var dirs = new List<string>() { "TestFiles", "DestinationAction_Append_NoRenameInTransfer", "DestinationAction_Append_WithRenameInTransfer", "MacrosWorkInDestinationFileName", "MacrosWorkInSourceDirectory", "SourceOperation_Delete", "SourceOperation_Move", "SourceOperation_Nothing", "SourceOperation_Rename", "SourceOperation_Delete" };
-
-            foreach (var dir in dirs)
-            {
-                var targetDir = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "DockerVolumes", "data", dir);
-                var fullPath = Path.GetFullPath(targetDir);
-                if (Directory.Exists(fullPath) && OperatingSystem.IsWindows())
-                        Directory.Delete(fullPath, true);
-            }
-        }
+           Directory.Delete(_dir, true);
     }
 
     [TestMethod]
