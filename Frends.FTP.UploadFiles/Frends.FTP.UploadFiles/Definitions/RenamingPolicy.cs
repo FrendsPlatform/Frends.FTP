@@ -165,7 +165,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             return filename;
         }
 
-        private string ExpandFileMasks(string filePath, string originalFileName)
+        private static string ExpandFileMasks(string filePath, string originalFileName)
         {
             string filename = filePath;
             if (IsFileMask(filename))
@@ -191,7 +191,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             return mask;
         }
 
-        private bool IsFileMacro(string input, IDictionary<string, Func<string, string>> macroDictionary)
+        private static bool IsFileMacro(string input, IDictionary<string, Func<string, string>> macroDictionary)
         {
             if (input == null)
                 return false;
@@ -224,7 +224,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             return b;
         }
 
-        private IDictionary<string, Func<string, string>> InitializeSourceFileNameMacroHandlers()
+        private static IDictionary<string, Func<string, string>> InitializeSourceFileNameMacroHandlers()
         {
             return new Dictionary<string, Func<string, string>>
                 {
@@ -233,7 +233,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                 };
         }
 
-        private IDictionary<string, Func<string, string>> InitializeMacroHandlers(string transferName, Guid transferId)
+        private static IDictionary<string, Func<string, string>> InitializeMacroHandlers(string transferName, Guid transferId)
         {
             return new Dictionary<string, Func<string, string>>
                 {
@@ -266,7 +266,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             return ExpandMacrosFromDictionary(fileDefinition, _macroHandlers, "");
         }
 
-        private string ExpandMacrosFromDictionary(string fileDefinition, IDictionary<string, Func<string, string>> macroHandlers, string originalFile)
+        private static string ExpandMacrosFromDictionary(string fileDefinition, IDictionary<string, Func<string, string>> macroHandlers, string originalFile)
         {
             foreach (var macroHandler in macroHandlers)
             {
