@@ -37,6 +37,28 @@ public class UploadFilesTestBase
     [TestCleanup]
     public void TearDown()
     {
-        Directory.Delete(Dir, true);
+        if (Directory.Exists(Dir)) Directory.Delete(Dir, true);
+
+        var currentDirectoryInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
+        var parentDir = currentDirectoryInfo.Parent?.Parent.Parent;
+
+        if (parentDir != null)
+        {
+            var dataFolder = Path.Combine(parentDir.FullName, "DockerVolumes", "data");
+
+            if (Directory.Exists(dataFolder))
+            {
+                var subDirectories = Directory.GetDirectories(dataFolder);
+
+                foreach (var subDirectory in subDirectories)
+                    Directory.Delete(subDirectory, true);
+
+                var files = Directory.GetFiles(dataFolder);
+                foreach (var file in files)
+                    File.Delete(file);
+
+                Console.WriteLine("data-folder cleaned.");
+            }
+        }
     }
 }
