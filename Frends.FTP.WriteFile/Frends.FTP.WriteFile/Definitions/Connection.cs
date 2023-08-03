@@ -3,42 +3,66 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Frends.FTP.WriteFile.Definitions;
 
-/// <summary>FTP transport types.</summary>
+/// <summary>
+/// FTP transport types.
+/// </summary>
 public enum FtpTransportType
 {
-    /// <summary>Binary transport.</summary>
+    /// <summary>
+    /// Binary transport.
+    /// </summary>
     Binary,
 
-    /// <summary>ASCII transport.</summary>
+    /// <summary>
+    /// ASCII transport.
+    /// </summary>
     Ascii,
 }
 
-/// <summary>FTP connection modes.</summary>
+/// <summary>
+/// FTP connection modes.
+/// </summary>
 public enum FtpMode
 {
-    /// <summary>Passive mode</summary>
+    /// <summary>
+    /// Passive mode
+    /// </summary>
     Passive,
-    /// <summary>Active mode.</summary>
+    /// <summary>
+    /// Active mode.
+    /// </summary>
     Active,
 }
 
-/// <summary>FTPS encryption modes.</summary>
+/// <summary>
+/// FTPS encryption modes.
+/// </summary>
 public enum FtpsSslMode
 {
-    /// <summary>No encryption (plain text).</summary>
+    /// <summary>
+    /// No encryption (plain text).
+    /// </summary>
     None,
 
-    /// <summary>Use explicit encryption.</summary>
+    /// <summary>
+    /// Use explicit encryption.
+    /// </summary>
     Explicit,
 
-    /// <summary>Use implicit encryption.</summary>
+    /// <summary>
+    /// Use implicit encryption.
+    /// </summary>
     Implicit,
 
-    /// <summary>Tries to use FTPS encryption and falls back to plain text FTP.</summary>
+    /// <summary>
+    /// Tries to use FTPS encryption and falls back to plain text FTP.
+    /// </summary>
     Auto,
 }
 
-/// <summary>Parameters class usually contains parameters that are required.</summary>
+/// <summary>
+/// Parameters class usually contains parameters that are required.
+/// </summary>
 public class Connection
 {
     /// <summary>

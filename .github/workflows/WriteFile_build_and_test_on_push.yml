@@ -1,19 +1,19 @@
-name: UploadFiles Test
+name: WriteFile Test
 
 on:
   push:
     branches-ignore:
       - main
     paths:
-      - 'Frends.FTP.UploadFiles/**'
+      - 'Frends.FTP.WriteFile/**'
   workflow_dispatch:
 
 jobs:
   build:
     uses: FrendsPlatform/FrendsTasks/.github/workflows/linux_build_test.yml@main
     with:
-      workdir: Frends.FTP.UploadFiles
-      prebuild_command: docker-compose -f Frends.FTP.UploadFiles.Tests/docker-compose.yml up -d
+      workdir: Frends.FTP.WriteFile
+      prebuild_command: docker-compose -f Frends.FTP.WriteFile.Tests/docker-compose.yml up -d
     secrets:
       badge_service_api_key: ${{ secrets.BADGE_SERVICE_API_KEY }}
       test_feed_api_key: ${{ secrets.TASKS_TEST_FEED_API_KEY }}
