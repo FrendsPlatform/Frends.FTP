@@ -150,8 +150,6 @@ namespace Frends.FTP.UploadFiles
             }
         }
 
-        // ExcludeFromCodeCoverage(Justification) is not supported for 4.7.1 and 2.0:
-        //[ExcludeFromCodeCoverage]
         private static string GetLogLines(IEnumerable<Tuple<DateTimeOffset, string>> buffer)
         {
             try
