@@ -30,10 +30,9 @@ public class FTP
 
         if (!client.IsConnected) throw new ArgumentException($"Error while connecting to destination: {connection.Address}");
 
-        if (!client.Download(out byte[] bytes, input.Path))
-            throw new ArgumentException($"Could not find file '{input.Path}'.");
-            
-        var encoding = GetEncoding(input.FileEncoding, input.EnableBom, input.EncodingInString);
+        if (!client.Download(out byte[] bytes, input.Path)) throw new ArgumentException($"Could not find file '{input.Path}'.");
+        
+        Encoding encoding = GetEncoding(input.FileEncoding, input.EnableBom, input.EncodingInString);
         var content = encoding.GetString(bytes);
         var file = client.GetObjectInfo(input.Path);
 

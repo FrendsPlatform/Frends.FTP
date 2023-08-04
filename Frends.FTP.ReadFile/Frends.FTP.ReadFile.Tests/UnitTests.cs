@@ -12,7 +12,7 @@ public class UnitTests
     private Input _input;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private string _dir = "/upload";
-    private readonly string _content = "This is a test file qwertyuiopåasdfghjklöäzxcvbnm"; 
+    private readonly string _content = "This is a test file qwertyuiopåasdfghjklöäzxcvbnm";
 
     [SetUp]
     public void SetUp()
