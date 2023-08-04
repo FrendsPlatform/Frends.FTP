@@ -1,12 +1,12 @@
 using FluentFTP;
 using Frends.FTP.WriteFile.Definitions;
 using Frends.FTP.WriteFile.Tests.Lib;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System.Security.Authentication;
 
 namespace Frends.FTP.WriteFile.Tests;
 
-[TestClass]
+[TestFixture]
 public class UnitTests
 {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -14,7 +14,7 @@ public class UnitTests
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private string _dir = "/upload";
 
-    [TestInitialize]
+    [SetUp]
     public void SetUp()
     {
         _input = new Input
@@ -29,7 +29,7 @@ public class UnitTests
         };
     }
 
-    [TestCleanup]
+    [TearDown]
     public void Teardown()
     {
         var connection = Helpers.GetFtpConnection();
@@ -43,7 +43,7 @@ public class UnitTests
         client.Dispose();
     }
 
-    [TestMethod]
+    [Test]
     public void WriteFile_WriteTestFTP()
     {
         var connection = Helpers.GetFtpConnection();
@@ -52,7 +52,7 @@ public class UnitTests
         Assert.IsTrue(Helpers.CheckThatFileExistsInServer(_input.Path));
     }
 
-    [TestMethod]
+    [Test]
     public void WriteFile_WriteTestFTPS()
     {
         var connection = Helpers.GetFtpsConnection();
@@ -61,7 +61,7 @@ public class UnitTests
         Assert.IsTrue(Helpers.CheckThatFileExistsInServer(_input.Path));
     }
 
-    [TestMethod]
+    [Test]
     public void WriteFile_TestAppendFTP()
     {
         var connection = Helpers.GetFtpConnection();
@@ -73,7 +73,7 @@ public class UnitTests
         Assert.IsTrue(result1.SizeInMegaBytes < result2.SizeInMegaBytes);
     }
 
-    [TestMethod]
+    [Test]
     public void WriteFile_TestAppendWithAddNewLineFTP()
     {
         var connection = Helpers.GetFtpConnection();
@@ -85,7 +85,7 @@ public class UnitTests
         Assert.IsTrue(Helpers.GetFileContent(result.Path).Contains(Environment.NewLine));
     }
 
-    [TestMethod]
+    [Test]
     public void WriteFile_TestThrowsWhenFileExistsFTP()
     {
         var connection = Helpers.GetFtpsConnection();
@@ -93,11 +93,11 @@ public class UnitTests
         Assert.AreEqual(_input.Path, result.Path);
         Assert.IsTrue(Helpers.CheckThatFileExistsInServer(_input.Path));
 
-        var ex = Assert.ThrowsException<ArgumentException>(() => FTP.WriteFile(connection, _input, default));
+        var ex = Assert.Throws<ArgumentException>(() => FTP.WriteFile(connection, _input, default));
         Assert.AreEqual($"File already exists: {_input.Path}", ex.Message);
     }
 
-    [TestMethod]
+    [Test]
     public void WriteFile_TestOverwriteFTP()
     {
         var connection = Helpers.GetFtpsConnection();
@@ -111,17 +111,17 @@ public class UnitTests
         Assert.IsTrue(Helpers.CheckThatFileExistsInServer(_input.Path));
     }
 
-    [TestMethod]
+    [Test]
     public void WriteFile_TestThrowsWhenDirectoryNotExistsFTP()
     {
         var connection = Helpers.GetFtpsConnection();
         _input.CreateDestinationDirectories = false;
-        var ex = Assert.ThrowsException<FtpException>(() => FTP.WriteFile(connection, _input, default));
+        var ex = Assert.Throws<FtpException>(() => FTP.WriteFile(connection, _input, default));
         Assert.AreEqual("Error while uploading the file to the server. See InnerException for more info.", ex.Message);
         Assert.AreEqual("Can't open that file: No such file or directory", ex.InnerException?.Message);
     }
 
-    [TestMethod]
+    [Test]
     public void WriteFile_TestWithEncodingsFTP()
     {
         var connection = Helpers.GetFtpsConnection();
@@ -138,7 +138,7 @@ public class UnitTests
         }
     }
 
-    [TestMethod]
+    [Test]
     public void WriteFile_TestWithEncodingOtherFTP()
     {
         var connection = Helpers.GetFtpsConnection();
@@ -149,7 +149,7 @@ public class UnitTests
         Assert.IsTrue(Helpers.CheckThatFileExistsInServer(_input.Path));
     }
 
-    [TestMethod]
+    [Test]
     public void WriteFile_TestThrowsWithIncorrectFingerprint()
     {
         var connection = new Connection
@@ -164,7 +164,7 @@ public class UnitTests
         };
 
         // Test and assert
-        var ex = Assert.ThrowsException<AggregateException>(() =>
+        var ex = Assert.Throws<AggregateException>(() =>
         {
             var result = FTP.WriteFile(connection, _input, default);
         });
@@ -173,7 +173,7 @@ public class UnitTests
         Assert.AreEqual(typeof(AuthenticationException), ex.InnerExceptions[0].GetType());
     }
 
-    [TestMethod]
+    [Test]
     public void UploadFTPS_CorrectFingerprint()
     {
         var connection = new Connection
