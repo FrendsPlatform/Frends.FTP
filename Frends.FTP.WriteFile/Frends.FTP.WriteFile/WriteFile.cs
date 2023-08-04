@@ -26,58 +26,45 @@ public class FTP
     /// <returns>Object { string Path, double SizeBytes }</returns>
     public static Result WriteFile([PropertyTab] Connection connection, [PropertyTab] Input input, CancellationToken cancellationToken)
     {
-        var tempFile = Path.Combine(Path.GetTempPath(), $"frends_{Guid.NewGuid()}.8CO");
+        var encoding = GetEncoding(input.FileEncoding, input.EnableBom, input.EncodingInString);
 
-        try
+        var byteContent = input.WriteBehaviour == WriteOperation.Append && input.AddNewLine ? encoding.GetBytes(string.Concat(Environment.NewLine, input.Content)) : encoding.GetBytes(input.Content);
+
+        using var client = CreateFtpClient(connection);
+        client.Connect();
+
+        if (!client.IsConnected) throw new ArgumentException($"Error while connecting to destination: {connection.Address}");
+
+        if (!client.DirectoryExists(Path.GetDirectoryName(input.Path)) && input.CreateDestinationDirectories)
+            client.CreateDirectory(Path.GetDirectoryName(input.Path));
+
+        if (client.FileExists(input.Path))
         {
-            var encoding = GetEncoding(input.FileEncoding, input.EnableBom, input.EncodingInString);
-
-            if (input.WriteBehaviour == WriteOperation.Append && input.AddNewLine)
-                File.WriteAllText(tempFile, string.Concat(Environment.NewLine, input.Content), encoding);
-            else
-                File.WriteAllText(tempFile, input.Content, encoding);
-
-            using var client = CreateFtpClient(connection);
-            client.Connect();
-
-            if (!client.IsConnected) throw new ArgumentException($"Error while connecting to destination: {connection.Address}");
-
-            if (!client.DirectoryExists(Path.GetDirectoryName(input.Path)) && input.CreateDestinationDirectories)
-                client.CreateDirectory(Path.GetDirectoryName(input.Path));
-
-            if (client.FileExists(input.Path))
+            switch (input.WriteBehaviour)
             {
-                switch (input.WriteBehaviour)
-                {
-                    case WriteOperation.Append:
-                        client.UploadFile(tempFile, input.Path, FtpRemoteExists.AddToEnd);
-                        break;
-                    case WriteOperation.Overwrite:
-                        client.UploadFile(tempFile, input.Path, FtpRemoteExists.Overwrite);
-                        break;
-                    case WriteOperation.Error:
-                        throw new ArgumentException($"File already exists: {input.Path}");
-                    default:
-                        throw new ArgumentException($"Unknown WriteBehaviour type: '{input.WriteBehaviour}'.");
-                }
+                case WriteOperation.Append:
+                    client.Upload(byteContent, input.Path, FtpRemoteExists.AddToEnd);
+                    break;
+                case WriteOperation.Overwrite:
+                    client.Upload(byteContent, input.Path, FtpRemoteExists.Overwrite);
+                    break;
+                case WriteOperation.Error:
+                    throw new ArgumentException($"File already exists: {input.Path}");
+                default:
+                    throw new ArgumentException($"Unknown WriteBehaviour type: '{input.WriteBehaviour}'.");
             }
-            else
-            {
-                client.UploadFile(tempFile, input.Path);
-            }
-
-            var file = client.GetObjectInfo(input.Path);
-
-            client.Disconnect();
-            client.Dispose();
-
-            return new Result(file);
         }
-        finally
+        else
         {
-            if (File.Exists(tempFile))
-                File.Delete(tempFile);
+            client.Upload(byteContent, input.Path);
         }
+
+        var file = client.GetObjectInfo(input.Path);
+
+        client.Disconnect();
+        client.Dispose();
+
+        return new Result(file);
     }
 
     internal static FtpClient CreateFtpClient(Connection connect)
