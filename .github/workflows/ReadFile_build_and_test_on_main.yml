@@ -1,0 +1,23 @@
+name: ReadFile build main
+
+on:
+  push:
+    branches:    
+      - main
+    paths:
+      - 'Frends.FTP.ReadFile/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: FrendsPlatform/FrendsTasks/.github/workflows/build_main.yml@main
+    with:
+      workdir: Frends.FTP.ReadFile
+      env_var_name_1: HiQ_FTP_Host
+      env_var_name_2: HiQ_FTP_User
+      env_var_name_3: HiQ_FTP_Password
+    secrets:
+      badge_service_api_key: ${{ secrets.BADGE_SERVICE_API_KEY }}
+      env_var_value_1: ${{ secrets.HIQ_FTP_HOST }}
+      env_var_value_2: ${{ secrets.HIQ_FTP_USER }}
+      env_var_value_3: ${{ secrets.HIQ_FTP_PASSWORD }}
