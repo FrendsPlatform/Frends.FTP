@@ -2,6 +2,7 @@ using Frends.FTP.ReadFile.Definitions;
 using Frends.FTP.ReadFile.Tests.Lib;
 using NUnit.Framework;
 using System.Security.Authentication;
+using System.Text;
 
 namespace Frends.FTP.ReadFile.Tests;
 
@@ -78,7 +79,7 @@ public class UnitTests
         var result = FTP.ReadFile(connection, _input, default);
         Assert.AreEqual(_input.Path, result.Path);
         Assert.IsTrue(Helpers.CheckThatFileExistsInServer(_input.Path));
-        Assert.AreEqual("This is a test file qwertyuiop??asdfghjkl????zxcvbnm", result.Content);
+        Assert.AreEqual(Encoding.ASCII.GetString(Encoding.UTF8.GetBytes(_content)), result.Content);
     }
 
     [Test]
@@ -90,6 +91,7 @@ public class UnitTests
         Assert.AreEqual(_input.Path, result.Path);
         Assert.IsTrue(Helpers.CheckThatFileExistsInServer(_input.Path));
         Assert.AreEqual(_content, result.Content);
+        Assert.AreEqual(Encoding.Default.GetString(Encoding.UTF8.GetBytes(_content)), result.Content);
     }
 
     [Test]
@@ -100,7 +102,9 @@ public class UnitTests
         var result = FTP.ReadFile(connection, _input, default);
         Assert.AreEqual(_input.Path, result.Path);
         Assert.IsTrue(Helpers.CheckThatFileExistsInServer(_input.Path));
-        Assert.AreEqual("This is a test file qwertyuiopåasdfghjklöäzxcvbnm", result.Content);
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        var win = Encoding.GetEncoding("windows-1252");
+        Assert.AreEqual(win.GetString(Encoding.UTF8.GetBytes(_content)), result.Content);
     }
 
     [Test]
@@ -112,7 +116,7 @@ public class UnitTests
         var result = FTP.ReadFile(connection, _input, default);
         Assert.AreEqual(_input.Path, result.Path);
         Assert.IsTrue(Helpers.CheckThatFileExistsInServer(_input.Path));
-        Assert.AreEqual("This is a test file qwertyuiopåasdfghjklöäzxcvbnm", result.Content);
+        Assert.AreEqual(Encoding.Latin1.GetString(Encoding.UTF8.GetBytes(_content)), result.Content);
     }
 
     [Test]
