@@ -77,7 +77,7 @@ public class FTP
                     return;
                 }
 
-                // Accept if we want to accept a certain hash
+                // Accept if we want to accept a certain hash.
                 e.Accept = e.Certificate.GetCertHashString() == connect.CertificateHashStringSHA1;
             };
 
