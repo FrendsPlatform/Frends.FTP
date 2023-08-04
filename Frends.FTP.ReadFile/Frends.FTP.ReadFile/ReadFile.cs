@@ -70,7 +70,7 @@ public class FTP
 
             client.ValidateCertificate += (control, e) =>
             {
-                // If cert is valid and such - go on and accept
+                // If cert is valid and such - go on and accept.
                 if (e.PolicyErrors == SslPolicyErrors.None)
                 {
                     e.Accept = true;
