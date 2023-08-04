@@ -14,7 +14,7 @@ public class UploadFilesTests
 {
     private string _dir;
     private readonly string _file = "file1.txt";
-    private string _dataFolder;
+    private string _datafolder;
 
     private Source _source = new();
     private Connection _connection = new();
@@ -85,32 +85,31 @@ public class UploadFilesTests
             TransferName = default,
             WorkDir = default,
         };
-
-        var currentDirectoryInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
-        var parentDir = currentDirectoryInfo.Parent?.Parent.Parent;
-        _dataFolder = Path.Combine(parentDir.FullName, "DockerVolumes", "data");
-        File.WriteAllBytes(@$"{_dataFolder}\_donotremove.txt", Array.Empty<byte>());
     }
 
     [TestCleanup]
     public void CleanUp()
     {
-        if (Directory.Exists(_dir))
-            Directory.Delete(_dir, true);
+        var currentDirectoryInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
+        var parentDir = currentDirectoryInfo.Parent?.Parent.Parent;
 
-        if (Directory.Exists(_dataFolder))
+        if (parentDir != null)
         {
-            var subDirectories = Directory.GetDirectories(_dataFolder);
+            var dataFolder = Path.Combine(parentDir.FullName, "DockerVolumes", "data");
 
-            foreach (var subDirectory in subDirectories)
-                Directory.Delete(subDirectory, true);
+            if (Directory.Exists(dataFolder))
+            {
+                var subDirectories = Directory.GetDirectories(dataFolder);
 
-            var files = Directory.GetFiles(_dataFolder);
-            foreach (var file in files)
-                if (!Path.GetFileName(file).Equals("_donotremove.txt", StringComparison.OrdinalIgnoreCase))
+                foreach (var subDirectory in subDirectories)
+                    Directory.Delete(subDirectory, true);
+
+                var files = Directory.GetFiles(dataFolder);
+                foreach (var file in files)
                     File.Delete(file);
 
-            Console.WriteLine("data-folder cleaned.");
+                Console.WriteLine("data-folder cleaned.");
+            }
         }
     }
 
