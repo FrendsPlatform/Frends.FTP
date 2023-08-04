@@ -115,9 +115,7 @@ namespace Frends.FTP.UploadFiles
             using (var logger = InitializeFtpLogger(operationsLogger))
             {
                 if (string.IsNullOrWhiteSpace(info.ProcessUri))
-                {
                     fileTransferLog.Warning("ProcessUri is empty. This means the transfer view cannot link to the correct page");
-                }
 
                 if (!Guid.TryParse(info.TaskExecutionID, out var executionId))
                 {

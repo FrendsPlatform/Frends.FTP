@@ -1,10 +1,13 @@
+using FluentFTP;
 using Frends.FTP.UploadFiles.Enums;
 using Frends.FTP.UploadFiles.TaskConfiguration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Authentication;
+using System.Text;
 using System.Threading;
 
 namespace Frends.FTP.UploadFiles.Tests;
@@ -12,9 +15,9 @@ namespace Frends.FTP.UploadFiles.Tests;
 [TestClass]
 public class UploadFilesTests
 {
-    private string _dir;
+    private string _tempDir;
     private readonly string _file = "file1.txt";
-    private string _datafolder;
+    private string _dataDir;
 
     private Source _source = new();
     private Connection _connection = new();
@@ -25,18 +28,23 @@ public class UploadFilesTests
     [TestInitialize]
     public void SetUp()
     {
-        _dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-        Directory.CreateDirectory(_dir);
-        File.WriteAllText(Path.Combine(_dir, _file), "test");
+
+        var currentDirectoryInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
+        var parentDir = currentDirectoryInfo.Parent?.Parent.Parent;
+        _tempDir = Path.Combine(parentDir.FullName, "tempFiles");
+        _dataDir = Path.Combine(parentDir.FullName, "DockerVolumes", "data");
+        Directory.CreateDirectory(_tempDir);
+        File.WriteAllText(Path.Combine(_tempDir, _file), "test");
+        Directory.CreateDirectory(Path.Combine(_tempDir, "Done"));
 
         _source = new()
         {
-            Directory = _dir,
+            Directory = _tempDir,
             FileName = _file,
-            DirectoryToMoveAfterTransfer = _dir,
+            DirectoryToMoveAfterTransfer = Path.Combine(_tempDir, "Done"),
             FileNameAfterTransfer = _file + Guid.NewGuid().ToString(),
             NotFoundAction = default,
-            FilePaths = _dir,
+            FilePaths = _tempDir,
             Operation = default,
         };
 
@@ -70,7 +78,7 @@ public class UploadFilesTests
 
         _options = new()
         {
-            CreateDestinationDirectories = default,
+            CreateDestinationDirectories = true,
             OperationLog = default,
             PreserveLastModified = default,
             RenameDestinationFileDuringTransfer = default,
@@ -90,27 +98,43 @@ public class UploadFilesTests
     [TestCleanup]
     public void CleanUp()
     {
-        var currentDirectoryInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
-        var parentDir = currentDirectoryInfo.Parent?.Parent.Parent;
-
-        if (parentDir != null)
+        if (Directory.Exists(_tempDir))
         {
-            var dataFolder = Path.Combine(parentDir.FullName, "DockerVolumes", "data");
+            var subDirectories = Directory.GetDirectories(_tempDir);
 
-            if (Directory.Exists(dataFolder))
-            {
-                var subDirectories = Directory.GetDirectories(dataFolder);
+            foreach (var subDirectory in subDirectories)
+                Directory.Delete(subDirectory, true);
 
-                foreach (var subDirectory in subDirectories)
-                    Directory.Delete(subDirectory, true);
+            var files = Directory.GetFiles(_tempDir);
+            foreach (var file in files)
+                File.Delete(file);
 
-                var files = Directory.GetFiles(dataFolder);
-                foreach (var file in files)
-                    File.Delete(file);
-
-                Console.WriteLine("data-folder cleaned.");
-            }
+            Console.WriteLine("tempDir cleaned.");
         }
+
+        if (Directory.Exists(_dataDir))
+        {
+            var subDirectories = Directory.GetDirectories(_dataDir);
+
+            foreach (var subDirectory in subDirectories)
+                Directory.Delete(subDirectory, true);
+
+            var files = Directory.GetFiles(_dataDir);
+            foreach (var file in files)
+                File.Delete(file);
+
+            Console.WriteLine("dataDir cleaned.");
+        }
+
+        var client = new FtpClient(Helpers.FtpHost, Helpers.FtpPort, Helpers.FtpUsername, Helpers.FtpPassword)
+        {
+            ConnectTimeout = 10
+        };
+        client.Connect();
+        if (client.DirectoryExists("/"))
+            client.DeleteDirectory("/");
+        client.Disconnect();
+        client.Dispose();
     }
 
     [TestMethod]

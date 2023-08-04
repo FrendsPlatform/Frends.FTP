@@ -134,7 +134,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                 return FormFailedFileTransferResult(userResultMessage);
             }
 
-            return FormResultFromSingleTransferResults(Result);
+            return FileTransporter.FormResultFromSingleTransferResults(Result);
         }
 
         #region Helper methods
@@ -298,11 +298,11 @@ namespace Frends.FTP.UploadFiles.Definitions
             };
         }
 
-        private FileTransferResult FormResultFromSingleTransferResults(List<SingleFileTransferResult> singleResults)
+        private static FileTransferResult FormResultFromSingleTransferResults(List<SingleFileTransferResult> singleResults)
         {
             var success = singleResults.All(x => x.Success);
             var actionSkipped = success && singleResults.All(x => x.ActionSkipped);
-            var userResultMessage = GetUserResultMessage(singleResults.ToList());
+            var userResultMessage = FileTransporter.GetUserResultMessage(singleResults.ToList());
 
             var transferErrors = singleResults.Where(r => !r.Success).GroupBy(r => r.TransferredFile ?? "--unknown--")
                     .ToDictionary(rg => rg.Key, rg => (IList<string>)rg.SelectMany(r => r.ErrorMessages).ToList());
@@ -323,7 +323,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             };
         }
 
-        private string GetUserResultMessage(IList<SingleFileTransferResult> results)
+        private static string GetUserResultMessage(IList<SingleFileTransferResult> results)
         {
             var userResultMessage = string.Empty;
 
