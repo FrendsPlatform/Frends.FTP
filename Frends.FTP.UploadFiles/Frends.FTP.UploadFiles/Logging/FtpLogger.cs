@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.IO;
-using Frends.FTP.UploadFiles.Definitions;
+﻿using Frends.FTP.UploadFiles.Definitions;
 using Frends.FTP.UploadFiles.Enums;
 using Serilog;
+using System;
+using System.Collections.Concurrent;
+using System.IO;
 
 namespace Frends.FTP.UploadFiles.Logging
 {
@@ -70,7 +70,7 @@ namespace Frends.FTP.UploadFiles.Logging
                 var transferName = context.Info == null ? "unknown" : context.Info.TransferName;
                 var transferNameForLog = transferName ?? string.Empty;
 
-                var errorMessage = $"\r\n\r\nFRENDS FTP file transfer '{transferNameForLog}' from '{sourceEndPointName}' to '{destinationEndPointName}': \r\n{msg}\r\n";
+                var errorMessage = $"\r\n\r\nFrends FTP file transfer '{transferNameForLog}' from '{sourceEndPointName}' to '{destinationEndPointName}': \r\n{msg}\r\n";
                 _log.Error(errorMessage, e);
             }
             catch (Exception ex)

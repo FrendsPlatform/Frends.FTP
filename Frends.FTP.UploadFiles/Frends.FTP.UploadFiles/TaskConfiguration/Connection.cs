@@ -8,7 +8,7 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
     {
         /// <summary>Binary transport.</summary>
         Binary,
-        
+
         /// <summary>ASCII transport.</summary>
         Ascii,
     }
@@ -27,13 +27,13 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
     {
         /// <summary>No encryption (plain text).</summary>
         None,
-        
+
         /// <summary>Use explicit encryption.</summary>
         Explicit,
-        
+
         /// <summary>Use implicit encryption.</summary>
         Implicit,
-        
+
         /// <summary>Tries to use FTPS encryption and falls back to plain text FTP.</summary>
         Auto,
     }
@@ -121,13 +121,13 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         /// <example>false</example>
         [DefaultValue(false)]
         public bool UseFTPS { get; set; } = false;
-        
+
         /// <summary>
         /// Whether the data channel is secured or not.
         /// </summary>
         /// <example>true</example>
         [DefaultValue(true)]
-        [UIHint(nameof(UseFTPS),"", true)]
+        [UIHint(nameof(UseFTPS), "", true)]
         public bool SecureDataChannel { get; set; }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         /// </summary>
         /// <example>FtpsSslMode.None</example>
         [DefaultValue(FtpsSslMode.None)]
-        [UIHint(nameof(UseFTPS),"", true)]
+        [UIHint(nameof(UseFTPS), "", true)]
         public FtpsSslMode SslMode { get; set; }
 
         /// <summary>
@@ -143,31 +143,31 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         /// </summary>
         /// <example>false</example>
         [DefaultValue(false)]
-        [UIHint(nameof(UseFTPS),"", true)]
+        [UIHint(nameof(UseFTPS), "", true)]
         public bool EnableClientAuth { get; set; }
-        
+
         /// <summary>
         /// If enabled the any certificate will be considered valid.
         /// </summary>
         /// <example>false</example>
         [DefaultValue(false)]
-        [UIHint(nameof(UseFTPS),"", true)]
+        [UIHint(nameof(UseFTPS), "", true)]
         public bool ValidateAnyCertificate { get; set; }
-        
+
         /// <summary>
         /// Path to client certificate (X509).
         /// </summary>
         /// <example>c:\example.cer</example>
         [DisplayFormat(DataFormatString = "Text")]
-        [UIHint(nameof(UseFTPS),"", true)]
+        [UIHint(nameof(UseFTPS), "", true)]
         public string ClientCertificatePath { get; set; }
-        
+
         /// <summary>
         /// Certificate SHA1 hash string to validate against.
         /// </summary>
         /// <example>D911262984DE9CC32A3518A1094CD24249EA5C49</example>
         [DefaultValue("")]
-        [UIHint(nameof(UseFTPS),"", true)]
+        [UIHint(nameof(UseFTPS), "", true)]
         public string CertificateHashStringSHA1 { get; set; }
 
         #endregion

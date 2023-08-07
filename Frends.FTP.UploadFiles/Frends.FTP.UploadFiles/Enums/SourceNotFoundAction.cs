@@ -9,12 +9,12 @@
         /// Will log an error in case source files are missing.
         /// </summary>
         Error,
-        
+
         /// <summary>
         /// Will log a notification in case source files are missing.
         /// </summary>
         Info,
-        
+
         /// <summary>
         /// Will not log anything and continue execution without any additional actions.
         /// </summary>

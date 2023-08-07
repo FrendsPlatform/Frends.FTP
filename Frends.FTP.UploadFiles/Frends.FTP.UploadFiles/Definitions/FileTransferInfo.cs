@@ -1,5 +1,5 @@
-﻿using System;
-using Frends.FTP.UploadFiles.Enums;
+﻿using Frends.FTP.UploadFiles.Enums;
+using System;
 
 namespace Frends.FTP.UploadFiles.Definitions
 {

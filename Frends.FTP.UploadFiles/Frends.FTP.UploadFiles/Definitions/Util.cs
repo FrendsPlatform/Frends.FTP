@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Frends.FTP.UploadFiles.Definitions
 {

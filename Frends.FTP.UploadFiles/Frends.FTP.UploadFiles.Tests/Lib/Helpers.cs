@@ -1,7 +1,7 @@
-﻿using System;
-using System.IO;
-using FluentFTP;
+﻿using FluentFTP;
 using Frends.FTP.UploadFiles.TaskConfiguration;
+using System;
+using System.IO;
 
 namespace Frends.FTP.UploadFiles.Tests;
 
@@ -20,18 +20,25 @@ internal static class Helpers
         var connection = new Connection
         {
             UseFTPS = true,
-            Address = FtpHost, UserName = FtpUsername, Password = FtpPassword, Port = FtpsPort,
-            SslMode = FtpsSslMode.Explicit, CertificateHashStringSHA1 = Sha1Hash
+            Address = FtpHost,
+            UserName = FtpUsername,
+            Password = FtpPassword,
+            Port = FtpsPort,
+            SslMode = FtpsSslMode.Explicit,
+            CertificateHashStringSHA1 = Sha1Hash
         };
 
         return connection;
     }
-    
+
     internal static Connection GetFtpConnection()
     {
         var connection = new Connection
         {
-            Address = FtpHost, UserName = FtpUsername, Password = FtpPassword, Port = FtpPort,
+            Address = FtpHost,
+            UserName = FtpUsername,
+            Password = FtpPassword,
+            Port = FtpPort,
             SslMode = FtpsSslMode.None
         };
 
@@ -40,13 +47,25 @@ internal static class Helpers
 
     internal static string GetFileFromFtp(string subDir, string file)
     {
-        var tmpFile = Path.GetTempFileName();
-        using (var client = new FtpClient(FtpHost, FtpPort, FtpUsername, FtpPassword))
+        FtpClient client = null;
+        try
         {
-            client.Connect();
-            client.SetWorkingDirectory(subDir);
-            client.DownloadFile(tmpFile,file);
+            var tmpFile = Path.GetTempFileName();
+            using (client = new FtpClient(FtpHost, FtpPort, FtpUsername, FtpPassword))
+            {
+                client.Connect();
+                client.SetWorkingDirectory(subDir);
+                client.DownloadFile(tmpFile, file);
+            }
             return File.ReadAllText(tmpFile);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+        finally
+        {
+            client.Dispose();
         }
     }
 }

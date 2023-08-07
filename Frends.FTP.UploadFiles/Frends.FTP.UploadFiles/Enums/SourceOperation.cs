@@ -13,12 +13,12 @@
         /// Will rename the files after uploading.
         /// </summary>
         Rename,
-        
+
         /// <summary>
         /// Will move the files after uploading.
         /// </summary>
         Move,
-        
+
         /// <summary>
         /// Will do nothing to source files after uploading.
         /// </summary>

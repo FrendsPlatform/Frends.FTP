@@ -1,6 +1,7 @@
-﻿using System;
+﻿using FluentFTP;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
-using NUnit.Framework;
 
 namespace Frends.FTP.UploadFiles.Tests;
 
@@ -10,7 +11,7 @@ namespace Frends.FTP.UploadFiles.Tests;
 public class UploadFilesTestBase
 {
     protected string Dir;
-    
+
     protected void CreateDummyFileInDummyDir(string fileName, string contents = "test")
     {
         File.WriteAllText(Path.Combine(Dir, fileName), contents);
@@ -21,22 +22,31 @@ public class UploadFilesTestBase
         return File.Exists(Path.Combine(dir ?? Dir, fileName));
     }
 
-    protected string CreateDummyDir()
+    protected static string CreateDummyDir()
     {
         var dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
         Directory.CreateDirectory(dir);
         return dir;
     }
-    
-    [SetUp]
+
+    [TestInitialize]
     public void SetUp()
     {
         Dir = CreateDummyDir();
     }
 
-    [TearDown]
+    [TestCleanup]
     public void TearDown()
     {
-        Directory.Delete(Dir, true);
+        if (Directory.Exists(Dir)) Directory.Delete(Dir, true);
+        var client = new FtpClient(Helpers.FtpHost, Helpers.FtpPort, Helpers.FtpUsername, Helpers.FtpPassword)
+        {
+            ConnectTimeout = 10
+        };
+        client.Connect();
+        if (client.DirectoryExists("/"))
+            client.DeleteDirectory("/");
+        client.Disconnect();
+        client.Dispose();
     }
 }

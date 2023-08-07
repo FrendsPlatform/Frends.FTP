@@ -1,13 +1,13 @@
 ﻿using Frends.FTP.UploadFiles.Definitions;
 using Frends.FTP.UploadFiles.Logging;
 using Frends.FTP.UploadFiles.TaskConfiguration;
+using Frends.FTP.UploadFiles.TaskResult;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
-using Frends.FTP.UploadFiles.TaskResult;
 
 namespace Frends.FTP.UploadFiles
 {
@@ -17,10 +17,10 @@ namespace Frends.FTP.UploadFiles
     public static class FTP
     {
         /// <summary>
-        /// Upload files to an FTP server.
+        /// Upload files to an FTP server. 
         /// [Documentation](https://tasks.frends.com/tasks/frends-tasks/Frends.FTP.UploadFiles)
         /// </summary>
-        /// <frendsdocs>
+        /// <frendsdocs> 
         /// # Transfer overview
         /// The file transfer progress has the following steps:
         /// 1. Initialize
@@ -115,9 +115,7 @@ namespace Frends.FTP.UploadFiles
             using (var logger = InitializeFtpLogger(operationsLogger))
             {
                 if (string.IsNullOrWhiteSpace(info.ProcessUri))
-                {
                     fileTransferLog.Warning("ProcessUri is empty. This means the transfer view cannot link to the correct page");
-                }
 
                 if (!Guid.TryParse(info.TaskExecutionID, out var executionId))
                 {
