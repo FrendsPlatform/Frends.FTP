@@ -17,7 +17,6 @@ public class UploadFilesTests
 {
     private string _tempDir;
     private readonly string _file = "file1.txt";
-    private string _dataDir;
 
     private Source _source = new();
     private Connection _connection = new();
@@ -29,7 +28,6 @@ public class UploadFilesTests
     public void SetUp()
     {
         _tempDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../tempFiles");
-        _dataDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../DockerVolumes/data");
         Directory.CreateDirectory(_tempDir);
         File.WriteAllText(Path.Combine(_tempDir, _file), "test");
         Directory.CreateDirectory(Path.Combine(_tempDir, "Done"));
@@ -96,32 +94,7 @@ public class UploadFilesTests
     public void CleanUp()
     {
         if (Directory.Exists(_tempDir))
-        {
-            var subDirectories = Directory.GetDirectories(_tempDir);
-
-            foreach (var subDirectory in subDirectories)
-                Directory.Delete(subDirectory, true);
-
-            var files = Directory.GetFiles(_tempDir);
-            foreach (var file in files)
-                File.Delete(file);
-
-            Console.WriteLine("tempDir cleaned.");
-        }
-
-        if (Directory.Exists(_dataDir))
-        {
-            var subDirectories = Directory.GetDirectories(_dataDir);
-
-            foreach (var subDirectory in subDirectories)
-                Directory.Delete(subDirectory, true);
-
-            var files = Directory.GetFiles(_dataDir);
-            foreach (var file in files)
-                File.Delete(file);
-
-            Console.WriteLine("dataDir cleaned.");
-        }
+            Directory.Delete(_tempDir, true);
 
         var client = new FtpClient(Helpers.FtpHost, Helpers.FtpPort, Helpers.FtpUsername, Helpers.FtpPassword)
         {
