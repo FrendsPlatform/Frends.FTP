@@ -63,8 +63,8 @@ internal static class Helpers
         {
             throw new Exception(ex.Message);
         }
-        finally 
-        { 
+        finally
+        {
             client.Dispose();
         }
     }

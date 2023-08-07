@@ -5,9 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Security.Authentication;
-using System.Text;
 using System.Threading;
 
 namespace Frends.FTP.UploadFiles.Tests;
