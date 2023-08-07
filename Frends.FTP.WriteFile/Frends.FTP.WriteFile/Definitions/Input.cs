@@ -27,6 +27,7 @@ public class Input
     /// <summary>
     /// Enables Task to create destination directories if they don't exist.
     /// </summary>
+    /// <example>true</example>
     [DefaultValue(false)]
     public bool CreateDestinationDirectories { get; set; }
 

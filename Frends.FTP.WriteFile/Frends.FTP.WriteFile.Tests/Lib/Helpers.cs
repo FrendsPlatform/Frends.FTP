@@ -1,4 +1,5 @@
 ﻿using Frends.FTP.WriteFile.Definitions;
+using Frends.FTP.WriteFile.Enums;
 
 namespace Frends.FTP.WriteFile.Tests.Lib;
 internal static class Helpers

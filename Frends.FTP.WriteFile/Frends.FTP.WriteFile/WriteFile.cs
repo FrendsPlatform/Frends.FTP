@@ -30,6 +30,8 @@ public class FTP
 
         var byteContent = input.WriteBehaviour == WriteOperation.Append && input.AddNewLine ? encoding.GetBytes(string.Concat(Environment.NewLine, input.Content)) : encoding.GetBytes(input.Content);
 
+        cancellationToken.ThrowIfCancellationRequested();
+
         using var client = CreateFtpClient(connection);
         client.Connect();
 

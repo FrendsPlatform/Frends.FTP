@@ -1,5 +1,6 @@
 using FluentFTP;
 using Frends.FTP.WriteFile.Definitions;
+using Frends.FTP.WriteFile.Enums;
 using Frends.FTP.WriteFile.Tests.Lib;
 using NUnit.Framework;
 using System.Security.Authentication;
@@ -22,9 +23,9 @@ public class UnitTests
             Content = "This is a test file",
             Path = Path.Combine(_dir, $"{Guid.NewGuid()}.txt").Replace("\\", "/"),
             CreateDestinationDirectories = true,
-            FileEncoding = Enums.FileEncoding.UTF8,
+            FileEncoding = FileEncoding.UTF8,
             EnableBom = true,
-            WriteBehaviour = Enums.WriteOperation.Error,
+            WriteBehaviour = WriteOperation.Error,
             AddNewLine = true
         };
     }
@@ -67,7 +68,7 @@ public class UnitTests
         var connection = Helpers.GetFtpConnection();
         var result1 = FTP.WriteFile(connection, _input, default);
         Assert.IsTrue(Helpers.CheckThatFileExistsInServer(_input.Path));
-        _input.WriteBehaviour = Enums.WriteOperation.Append;
+        _input.WriteBehaviour = WriteOperation.Append;
         _input.Content = string.Concat(Enumerable.Repeat("This is another line\n", 100));
         var result2 = FTP.WriteFile(connection, _input, default);
         Assert.IsTrue(result1.SizeInMegaBytes < result2.SizeInMegaBytes);
@@ -78,7 +79,7 @@ public class UnitTests
     {
         var connection = Helpers.GetFtpConnection();
         FTP.WriteFile(connection, _input, default);
-        _input.WriteBehaviour = Enums.WriteOperation.Append;
+        _input.WriteBehaviour = WriteOperation.Append;
         _input.Content = "This is another line";
         _input.AddNewLine = true;
         var result = FTP.WriteFile(connection, _input, default);
@@ -105,7 +106,7 @@ public class UnitTests
         Assert.AreEqual(_input.Path, result.Path);
         Assert.IsTrue(Helpers.CheckThatFileExistsInServer(_input.Path));
 
-        _input.WriteBehaviour = Enums.WriteOperation.Overwrite;
+        _input.WriteBehaviour = WriteOperation.Overwrite;
         result = FTP.WriteFile(connection, _input, default);
         Assert.AreEqual(_input.Path, result.Path);
         Assert.IsTrue(Helpers.CheckThatFileExistsInServer(_input.Path));
@@ -126,12 +127,12 @@ public class UnitTests
     {
         var connection = Helpers.GetFtpsConnection();
 
-        foreach (var encoding in Enum.GetValues(typeof(Enums.FileEncoding)))
+        foreach (var encoding in Enum.GetValues(typeof(FileEncoding)))
         {
-            if ((Enums.FileEncoding)encoding == Enums.FileEncoding.Other)
+            if ((FileEncoding)encoding == FileEncoding.Other)
                 continue;
-            _input.WriteBehaviour = Enums.WriteOperation.Overwrite;
-            _input.FileEncoding = (Enums.FileEncoding)encoding;
+            _input.WriteBehaviour = WriteOperation.Overwrite;
+            _input.FileEncoding = (FileEncoding)encoding;
             var result = FTP.WriteFile(connection, _input, default);
             Assert.AreEqual(_input.Path, result.Path);
             Assert.IsTrue(Helpers.CheckThatFileExistsInServer(_input.Path));
@@ -142,7 +143,7 @@ public class UnitTests
     public void WriteFile_TestWithEncodingOtherFTP()
     {
         var connection = Helpers.GetFtpsConnection();
-        _input.FileEncoding = Enums.FileEncoding.Other;
+        _input.FileEncoding = FileEncoding.Other;
         _input.EncodingInString = "iso-8859-1";
         var result = FTP.WriteFile(connection, _input, default);
         Assert.AreEqual(_input.Path, result.Path);
