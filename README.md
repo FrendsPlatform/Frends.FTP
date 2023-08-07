@@ -7,6 +7,7 @@ Frends tasks for FTP/FTPS operations.
 - [Frends.FTP.ListFiles](Frends.FTP.ListFiles/README.md)
 - [Frends.FTP.DownloadFiles](Frends.FTP.DownloadFiles/README.md)
 - [Frends.FTP.UploadFiles](Frends.FTP.UploadFiles/README.md)
+- [Frends.FTP.ReadFile](Frends.FTP.ReadFile/README.md)
 - [Frends.FTP.WriteFile](Frends.FTP.WriteFile/README.md)
 
 # Contributing

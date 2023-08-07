@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
+	<LangVersion>latest</LangVersion>
+	<Version>1.0.0</Version>
+	<Authors>Frends</Authors>
+	<Copyright>Frends</Copyright>
+	<Company>Frends</Company>
+	<Product>Frends</Product>
+	<PackageTags>Frends</PackageTags>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<Description>Frends tasks for reading a file from the FTP(S) server.</Description>
+	<PackageProjectUrl>https://frends.com/</PackageProjectUrl>
+	<RepositoryUrl>https://github.com/FrendsPlatform/Frends.FTP</RepositoryUrl>
+  </PropertyGroup>
+	
+  <ItemGroup>
+	  <None Include="FrendsTaskMetadata.json" Pack="true" PackagePath="/">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+  </ItemGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+			<_Parameter1>$(MSBuildProjectName).Tests</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="FluentFTP" Version="37.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Runtime" Version="4.3.1" />
+	<PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
+	<PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
+  </ItemGroup>
+
+</Project>
+

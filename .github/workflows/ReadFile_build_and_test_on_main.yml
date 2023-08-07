@@ -1,0 +1,18 @@
+name: ReadFile build main
+
+on:
+  push:
+    branches:    
+      - main
+    paths:
+      - 'Frends.FTP.ReadFile/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: FrendsPlatform/FrendsTasks/.github/workflows/linux_build_main.yml@main
+    with:
+      workdir: Frends.FTP.ReadFile
+      prebuild_command: docker-compose -f Frends.FTP.ReadFile.Tests/docker-compose.yml up -d
+    secrets:
+      badge_service_api_key: ${{ secrets.BADGE_SERVICE_API_KEY }}

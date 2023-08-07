@@ -1,0 +1,25 @@
+version: '3'
+
+# Usage example: https://github.com/stilliard/docker-pure-ftpd/wiki/Docker-stack-with-Wordpress-&-FTP
+
+services:
+ ftpd_server:
+  image: stilliard/pure-ftpd
+  container_name: pure-ftpd-upload
+  ports:
+   - "21:21"
+   - "30000-30009:30000-30009"
+  volumes:
+   - "./DockerVolumes/data:/home/username/"
+   - "./DockerVolumes/ssl:/etc/ssl/private/"
+  environment:
+   PUBLICHOST: "localhost"
+   FTP_USER_NAME: frendsuser
+   FTP_USER_PASS: frendspass
+   FTP_USER_HOME: /home/username
+   TLS_CN: "localhost"
+   TLS_ORG: "frends_org"
+   TLS_C: "FI"
+   TLS_USE_DSAPRAM: "true"
+   ADDED_FLAGS: "--tls=1" # 1 means both normal and tls connections are ok
+  restart: always
