@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using FluentFTP;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 
@@ -38,7 +39,14 @@ public class UploadFilesTestBase
     public void TearDown()
     {
         if (Directory.Exists(Dir)) Directory.Delete(Dir, true);
-        foreach (var directory in Directory.GetDirectories(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../DockerVolumes/data")))
-            Directory.Delete(directory, true);
+        var client = new FtpClient(Helpers.FtpHost, Helpers.FtpPort, Helpers.FtpUsername, Helpers.FtpPassword)
+        {
+            ConnectTimeout = 10
+        };
+        client.Connect();
+        if (client.DirectoryExists("/"))
+            client.DeleteDirectory("/");
+        client.Disconnect();
+        client.Dispose();
     }
 }
