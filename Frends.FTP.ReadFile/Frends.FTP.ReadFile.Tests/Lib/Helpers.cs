@@ -1,4 +1,5 @@
 ﻿using Frends.FTP.ReadFile.Definitions;
+using Frends.FTP.ReadFile.Enums;
 
 namespace Frends.FTP.ReadFile.Tests.Lib;
 internal static class Helpers

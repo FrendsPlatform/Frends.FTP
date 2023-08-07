@@ -1,4 +1,5 @@
 using Frends.FTP.ReadFile.Definitions;
+using Frends.FTP.ReadFile.Enums;
 using Frends.FTP.ReadFile.Tests.Lib;
 using NUnit.Framework;
 using System.Security.Authentication;
@@ -21,7 +22,7 @@ public class UnitTests
         _input = new Input
         {
             Path = Path.Combine(_dir, $"{Guid.NewGuid()}.txt").Replace("\\", "/"),
-            FileEncoding = Enums.FileEncoding.UTF8,
+            FileEncoding = FileEncoding.UTF8,
             EnableBom = true
         };
 
@@ -75,7 +76,7 @@ public class UnitTests
     public void ReadFile_TestWithASCIIFTP()
     {
         var connection = Helpers.GetFtpsConnection();
-        _input.FileEncoding = Enums.FileEncoding.ASCII;
+        _input.FileEncoding = FileEncoding.ASCII;
         var result = FTP.ReadFile(connection, _input, default);
         Assert.AreEqual(_input.Path, result.Path);
         Assert.IsTrue(Helpers.CheckThatFileExistsInServer(_input.Path));
@@ -86,7 +87,7 @@ public class UnitTests
     public void ReadFile_TestWithANSIFTP()
     {
         var connection = Helpers.GetFtpsConnection();
-        _input.FileEncoding = Enums.FileEncoding.ANSI;
+        _input.FileEncoding = FileEncoding.ANSI;
         var result = FTP.ReadFile(connection, _input, default);
         Assert.AreEqual(_input.Path, result.Path);
         Assert.IsTrue(Helpers.CheckThatFileExistsInServer(_input.Path));
@@ -98,7 +99,7 @@ public class UnitTests
     public void ReadFile_TestWithWINDOWS1252FTP()
     {
         var connection = Helpers.GetFtpsConnection();
-        _input.FileEncoding = Enums.FileEncoding.WINDOWS1252;
+        _input.FileEncoding = FileEncoding.WINDOWS1252;
         var result = FTP.ReadFile(connection, _input, default);
         Assert.AreEqual(_input.Path, result.Path);
         Assert.IsTrue(Helpers.CheckThatFileExistsInServer(_input.Path));
@@ -111,7 +112,7 @@ public class UnitTests
     public void ReadFile_TestWithEncodingOtherFTP()
     {
         var connection = Helpers.GetFtpsConnection();
-        _input.FileEncoding = Enums.FileEncoding.Other;
+        _input.FileEncoding = FileEncoding.Other;
         _input.EncodingInString = "iso-8859-1";
         var result = FTP.ReadFile(connection, _input, default);
         Assert.AreEqual(_input.Path, result.Path);
