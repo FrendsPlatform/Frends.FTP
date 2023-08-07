@@ -28,11 +28,8 @@ public class UploadFilesTests
     [TestInitialize]
     public void SetUp()
     {
-
-        var currentDirectoryInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
-        var parentDir = currentDirectoryInfo.Parent?.Parent.Parent;
-        _tempDir = Path.Combine(parentDir.FullName, "tempFiles");
-        _dataDir = Path.Combine(parentDir.FullName, "DockerVolumes", "data");
+        _tempDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../tempFiles");
+        _dataDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../DockerVolumes/data");
         Directory.CreateDirectory(_tempDir);
         File.WriteAllText(Path.Combine(_tempDir, _file), "test");
         Directory.CreateDirectory(Path.Combine(_tempDir, "Done"));
