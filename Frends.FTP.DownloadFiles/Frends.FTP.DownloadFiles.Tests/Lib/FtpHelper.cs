@@ -32,18 +32,25 @@ public class FtpHelper : IDisposable
         var connection = new Connection
         {
             UseFTPS = true,
-            Address = FtpHost, UserName = FtpUsername, Password = FtpPassword, Port = FtpsPort,
-            SslMode = FtpsSslMode.Explicit, CertificateHashStringSHA1 = Sha1Hash
+            Address = FtpHost,
+            UserName = FtpUsername,
+            Password = FtpPassword,
+            Port = FtpsPort,
+            SslMode = FtpsSslMode.Explicit,
+            CertificateHashStringSHA1 = Sha1Hash
         };
 
         return connection;
     }
-    
+
     internal static Connection GetFtpConnection()
     {
         var connection = new Connection
         {
-            Address = FtpHost, UserName = FtpUsername, Password = FtpPassword, Port = FtpPort,
+            Address = FtpHost,
+            UserName = FtpUsername,
+            Password = FtpPassword,
+            Port = FtpPort,
             SslMode = FtpsSslMode.None
         };
 
@@ -59,7 +66,7 @@ public class FtpHelper : IDisposable
     }
 
     internal void CreateDirectoryOnFTP(string subDir)
-    { 
+    {
         Client.CreateDirectory(subDir);
     }
 

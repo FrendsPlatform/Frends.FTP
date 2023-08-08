@@ -21,7 +21,7 @@ public class DownloadFilesTestBase
     {
         FtpHelper.Dispose();
     }
-    
+
     protected bool LocalFileExists(string fileName, string subDir = null)
     {
         var path = subDir == null ? LocalDirFullPath : Path.Combine(Path.GetTempPath(), subDir);
@@ -34,7 +34,7 @@ public class DownloadFilesTestBase
         Directory.CreateDirectory(dir);
         return dir;
     }
-    
+
     [SetUp]
     public void SetUp()
     {
