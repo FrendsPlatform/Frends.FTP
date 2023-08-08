@@ -84,7 +84,7 @@ internal class RenamingPolicy
                 "When using move as a source operation, you should always define a directory",
                 nameof(sourceOperationTo));
         }
-            
+
         directoryName = CanonizeAndCheckPath(directoryName);
 
         // this should always be a directory
@@ -119,10 +119,10 @@ internal class RenamingPolicy
             throw new ArgumentException("When using rename as a source operation, you need to define the new name");
 
         var filePath = ExpandMacrosAndMasks(originalFilePath, sourceOperationTo);
-            
+
         var result = CanonizeAndCheckPath(filePath);
         var originalFileDirectory = Path.GetDirectoryName(originalFilePath);
-            
+
         // Path Combine will ignore originalFileDirectory is result already
         // contains absolute path. Thus we either get the whole path in result or, if
         // it is not an absolute path - then we get a path with original file dir as base.
@@ -194,7 +194,7 @@ internal class RenamingPolicy
 
         return false;
     }
-        
+
     private static bool IsFileMask(string input)
     {
         var isFileMask = false;

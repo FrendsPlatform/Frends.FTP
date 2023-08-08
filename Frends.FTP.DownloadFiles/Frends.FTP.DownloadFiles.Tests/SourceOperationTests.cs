@@ -116,6 +116,31 @@ public class SourceOperationTests : DownloadFilesTestBase
     }
 
     [Test]
+    public void SourceOperation_FileAlreadyExistsInMoveToFolder()
+    {
+        // Setup
+        FtpHelper.CreateFileOnFTP(FtpDir, "file1.txt");
+        var moveToSubDir = Guid.NewGuid().ToString();
+        FtpHelper.CreateDirectoryOnFTP(moveToSubDir);
+        FtpHelper.CreateFileOnFTP(moveToSubDir, "file1.txt");
+
+        var result = CallDownloadFiles(
+            SourceOperation.Move,
+            FtpDir,
+            "file*.txt",
+            LocalDirFullPath,
+            $"/does-not-exist{Guid.NewGuid()}",
+            throwError: false);
+
+        Assert.IsFalse(result.Success, result.UserResultMessage);
+        Assert.AreEqual(0, result.SuccessfulTransferCount);
+        Assert.AreEqual(1, result.FailedTransferCount);
+
+        // Check that original file is still there
+        Assert.IsTrue(FtpHelper.FileExistsOnFTP(FtpDir, "file1.txt"), result.UserResultMessage);
+    }
+
+    [Test]
     public void SourceOperation_RenameWithMacro()
     {
         // Setup
@@ -128,7 +153,8 @@ public class SourceOperationTests : DownloadFilesTestBase
             FtpDir,
             "file*.txt",
             LocalDirFullPath,
-            renameTo: "%Year%-%SourceFileName%%SourceFileExtension%");
+            renameTo: "%Year%-%SourceFileName%%SourceFileExtension%",
+            operationslog: false);
 
         Assert.IsTrue(result.Success, result.UserResultMessage);
         Assert.AreEqual(3, result.SuccessfulTransferCount);
@@ -148,7 +174,9 @@ public class SourceOperationTests : DownloadFilesTestBase
         string sourceFileName,
         string targetDir,
         string moveToDir = null,
-        string renameTo = null)
+        string renameTo = null,
+        bool operationslog = true,
+        bool throwError = true)
     {
         var source = new Source
         {
@@ -160,7 +188,7 @@ public class SourceOperationTests : DownloadFilesTestBase
         };
         var destination = new Destination
         { Directory = targetDir, Action = DestinationAction.Overwrite };
-        var options = new Options { CreateDestinationDirectories = true, RenameSourceFileBeforeTransfer = true };
+        var options = new Options { ThrowErrorOnFail = throwError, CreateDestinationDirectories = true, RenameSourceFileBeforeTransfer = true, OperationLog = operationslog };
         var connection = FtpHelper.GetFtpsConnection();
 
         var result = FTP.DownloadFiles(source, destination, connection, options, new Info(), new CancellationToken());
