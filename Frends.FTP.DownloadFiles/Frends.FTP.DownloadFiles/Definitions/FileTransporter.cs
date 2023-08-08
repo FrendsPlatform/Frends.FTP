@@ -132,16 +132,18 @@ internal class FileTransporter
     private static FtpClient CreateFtpClient(Connection connect)
     {
         var client = new FtpClient(connect.Address, connect.Port, connect.UserName, connect.Password);
-        client.EncryptionMode = connect.SslMode switch
-        {
-            FtpsSslMode.None => FtpEncryptionMode.None,
-            FtpsSslMode.Implicit => FtpEncryptionMode.Implicit,
-            FtpsSslMode.Explicit => FtpEncryptionMode.Explicit,
-            FtpsSslMode.Auto => FtpEncryptionMode.Auto,
-            _ => throw new ArgumentOutOfRangeException($"Unknown Encoding type: '{connect.SslMode}'."),
-        };
+
         if (connect.UseFTPS)
         {
+            client.EncryptionMode = connect.SslMode switch
+            {
+                FtpsSslMode.None => FtpEncryptionMode.None,
+                FtpsSslMode.Implicit => FtpEncryptionMode.Implicit,
+                FtpsSslMode.Explicit => FtpEncryptionMode.Explicit,
+                FtpsSslMode.Auto => FtpEncryptionMode.Auto,
+                _ => throw new ArgumentOutOfRangeException($"Unknown Encoding type: '{connect.SslMode}'."),
+            };
+
             if (connect.EnableClientAuth)
                 client.ClientCertificates.Add(new X509Certificate2(connect.ClientCertificatePath));
 

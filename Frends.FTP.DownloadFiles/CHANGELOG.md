@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.4] - 2023-08-08
+### Changed
+- Moved client.EncryptionMode setting to be done if UseFTPS is enabled.
+
 ## [1.0.3] - 2022-11-22
 ### Changed
 - Connection.BufferSize documentation update. Value is set as bytes instead of KBs.
