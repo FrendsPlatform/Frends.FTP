@@ -1,6 +1,7 @@
 using Frends.FTP.DownloadFiles.TaskConfiguration;
 using NUnit.Framework;
 using System;
+using System.IO;
 using System.Security.Authentication;
 using System.Threading;
 using Frends.FTP.DownloadFiles.Enums;
@@ -31,6 +32,62 @@ namespace Frends.FTP.DownloadFiles.Tests
             Assert.IsTrue(result.Success, result.UserResultMessage);
             Assert.AreEqual(1, result.SuccessfulTransferCount);
             Assert.IsTrue(LocalFileExists("file1.txt"), result.UserResultMessage);
+        }
+
+        [Test]
+        public void DownloadFTP_DestinationFileExists_ExceptionNotThrown()
+        {
+            // Setup
+            FtpHelper.CreateFileOnFTP(FtpDir, "file1.txt");
+            var source = new Source { Directory = FtpDir, FileName = "file1.txt" };
+            var destination = new Destination { Directory = LocalDirFullPath, Action = DestinationAction.Error };
+            var connection = new Connection
+            {
+                Address = FtpHelper.FtpHost,
+                UserName = FtpHelper.FtpUsername,
+                Password = FtpHelper.FtpPassword,
+                Port = FtpHelper.FtpPort
+            };
+
+            var options = new Options
+            {
+                ThrowErrorOnFail = false
+            };
+
+            File.WriteAllText(Path.Combine(destination.Directory, source.FileName), "Hello");
+
+            // Test and assert
+            var result = FTP.DownloadFiles(source, destination, connection, options, new Info(), new CancellationToken());
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual(1, result.FailedTransferCount);
+        }
+
+        [Test]
+        public void DownloadFTP_DestinationFileExists_ExceptionThrown()
+        {
+            // Setup
+            FtpHelper.CreateFileOnFTP(FtpDir, "file1.txt");
+            var source = new Source { Directory = FtpDir, FileName = "file1.txt" };
+            var destination = new Destination { Directory = LocalDirFullPath, Action = DestinationAction.Error };
+            var connection = new Connection
+            {
+                Address = FtpHelper.FtpHost,
+                UserName = FtpHelper.FtpUsername,
+                Password = FtpHelper.FtpPassword,
+                Port = FtpHelper.FtpPort
+            };
+
+            var options = new Options
+            {
+                ThrowErrorOnFail = true
+            };
+
+            File.WriteAllText(Path.Combine(destination.Directory, source.FileName), "Hello");
+
+            // Test and assert
+            var ex = Assert.Throws<Exception>(() => FTP.DownloadFiles(source, destination, connection, options, new Info(), new CancellationToken()));
+            Console.WriteLine(ex.Message);
+            Assert.IsTrue(ex.Message.Contains($"Error: Unable to transfer file. Destination file already exists: {destination.FileName}"));
         }
 
         [Test]
