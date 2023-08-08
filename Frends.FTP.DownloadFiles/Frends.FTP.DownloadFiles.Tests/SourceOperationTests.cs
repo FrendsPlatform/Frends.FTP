@@ -105,7 +105,8 @@ public class SourceOperationTests : DownloadFilesTestBase
             FtpDir,
             "file*.txt",
             LocalDirFullPath,
-            $"/does-not-exist{Guid.NewGuid()}");
+            $"/does-not-exist{Guid.NewGuid()}",
+            throwError: false);
 
         Assert.IsFalse(result.Success, result.UserResultMessage);
         Assert.AreEqual(0, result.SuccessfulTransferCount);
