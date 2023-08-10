@@ -89,7 +89,7 @@ internal class FileTransporter
             return FormFailedFileTransferResult(userResultMessage);
         }
 
-        return FileTransporter.FormResultFromSingleTransferResults(Result);
+        return FormResultFromSingleTransferResults(Result);
     }
 
     private bool CreateDestinationDirIfNeeded(out FileTransferResult fileTransferResult)

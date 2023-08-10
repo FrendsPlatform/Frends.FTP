@@ -169,7 +169,7 @@ public class SourceOperationTests : DownloadFilesTestBase
         Assert.IsTrue(FtpHelper.FileExistsOnFTP(FtpDir, $"{year}-file3.txt"));
     }
 
-    private Result CallDownloadFiles(
+    private static Result CallDownloadFiles(
         SourceOperation sourceOperation,
         string sourceDirName,
         string sourceFileName,
