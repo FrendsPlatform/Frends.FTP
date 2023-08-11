@@ -35,7 +35,7 @@ internal class SingleFileTransfer
     public FileItem SourceFile { get; set; }
 
     public string DestinationFileNameWithMacrosExpanded { get; set; }
-        
+
     public SingleFileTransferResult TransferSingleFile()
     {
         try
@@ -44,7 +44,7 @@ internal class SingleFileTransfer
             _result.TransferredFilePath = SourceFile.FullPath;
             if (_batchContext.Options.RenameSourceFileBeforeTransfer)
                 RenameSourceFile();
-            else 
+            else
                 _sourceFileDuringTransfer = SourceFile.FullPath;
 
             if (DestinationFileExists(DestinationFileNameWithMacrosExpanded))
@@ -83,13 +83,13 @@ internal class SingleFileTransfer
     private void AppendDestinationFile()
     {
         var doRename = _batchContext.Options.RenameDestinationFileDuringTransfer;
-            
+
         Trace(
             TransferState.AppendToDestinationFile,
             "Appending file {0} to existing file {1}",
             SourceFile.Name,
             DestinationFileNameWithMacrosExpanded);
-            
+
         // No renaming needed - just do the native call with client
         if (!doRename)
         {
@@ -101,17 +101,17 @@ internal class SingleFileTransfer
         {
             var destinationFileDuringTransfer = Util.CreateUniqueFileName();
             var fullDestTempFilePath = GetDestinationFilePath(destinationFileDuringTransfer);
-                
+
             // Move file to temp location if file already exists
             var fullDestFilePath = GetDestinationFilePath(DestinationFileNameWithMacrosExpanded);
             if (File.Exists(fullDestFilePath))
                 File.Move(fullDestFilePath, fullDestTempFilePath);
-                
+
             // Do the download to temp location
             var tmp = Path.GetTempFileName();
             _client.DownloadFile(tmp, _sourceFileDuringTransfer);
             Append(destinationFileDuringTransfer, tmp);
-                
+
             // Move file back to original location
             File.Move(fullDestTempFilePath, fullDestFilePath);
         }
@@ -161,7 +161,7 @@ internal class SingleFileTransfer
         var doRename = _batchContext.Options.RenameDestinationFileDuringTransfer;
 
         _destinationFileDuringTransfer = doRename ? Util.CreateUniqueFileName() : DestinationFileNameWithMacrosExpanded;
-            
+
         Trace(
             TransferState.PutFile,
             "Downloading {0}destination file {1}",
@@ -172,7 +172,7 @@ internal class SingleFileTransfer
             GetDestinationFilePath(_destinationFileDuringTransfer), _sourceFileDuringTransfer);
 
         if (!doRename) return;
-            
+
         if (removeExisting)
         {
             Trace(
@@ -219,7 +219,7 @@ internal class SingleFileTransfer
             case SourceOperation.Rename:
                 var renameToPath = _renamingPolicy.CreateFilePathForRename(SourceFile.FullPath, _batchContext.Source.FileNameAfterTransfer);
                 Trace(TransferState.SourceOperationRename, "Renaming source file {0} to {1}", SourceFile.FullPath, renameToPath);
-                    
+
                 _client.MoveFile(filePath, renameToPath);
 
                 if (string.IsNullOrEmpty(SourceFile.FullPath))
@@ -327,7 +327,7 @@ internal class SingleFileTransfer
         // restore the source file so we can retry the operations
         // - but only if the source file has been renamed in the first place
         if (string.IsNullOrEmpty(_sourceFileDuringTransfer)) return string.Empty;
-            
+
         try
         {
             if (ShouldSourceFileBeRestoredOnError())
@@ -377,7 +377,7 @@ internal class SingleFileTransfer
 
     private class DestinationFileExistsException : Exception
     {
-        public DestinationFileExistsException(string fileName) 
+        public DestinationFileExistsException(string fileName)
             : base($"Unable to transfer file. Destination file already exists: {fileName}") { }
     }
 }

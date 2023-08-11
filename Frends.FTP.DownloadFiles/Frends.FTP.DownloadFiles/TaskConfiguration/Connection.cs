@@ -86,13 +86,13 @@ public class Connection
     /// <example>false</example>
     [DefaultValue("false")]
     public bool UseFTPS { get; set; } = false;
-        
+
     /// <summary>
     /// Whether the data channel is secured or not.
     /// </summary>
     /// <example>false</example>
     [DefaultValue("true")]
-    [UIHint(nameof(UseFTPS),"", true)]
+    [UIHint(nameof(UseFTPS), "", true)]
     public bool SecureDataChannel { get; set; }
 
     /// <summary>
@@ -100,7 +100,7 @@ public class Connection
     /// </summary>
     /// <example>FtpsSslMode.None</example>
     [DefaultValue(FtpsSslMode.None)]
-    [UIHint(nameof(UseFTPS),"", true)]
+    [UIHint(nameof(UseFTPS), "", true)]
     public FtpsSslMode SslMode { get; set; }
 
     /// <summary>
@@ -108,31 +108,31 @@ public class Connection
     /// </summary>
     /// <example>false</example>
     [DefaultValue("false")]
-    [UIHint(nameof(UseFTPS),"", true)]
+    [UIHint(nameof(UseFTPS), "", true)]
     public bool EnableClientAuth { get; set; }
-        
+
     /// <summary>
     /// If enabled the any certificate will be considered valid.
     /// </summary>
     /// <example>false</example>
     [DefaultValue("false")]
-    [UIHint(nameof(UseFTPS),"", true)]
+    [UIHint(nameof(UseFTPS), "", true)]
     public bool ValidateAnyCertificate { get; set; }
-        
+
     /// <summary>
     /// Path to client certificate (X509).
     /// </summary>
     /// <example>c:\example.cer</example>
-    [UIHint(nameof(UseFTPS),"", true)]
+    [UIHint(nameof(UseFTPS), "", true)]
     [DisplayFormat(DataFormatString = "Text")]
     public string ClientCertificatePath { get; set; }
-        
+
     /// <summary>
     /// Certificate SHA1 hash string to validate against.
     /// </summary>
     /// <example>BA7816BF8F01CFEA414140DE5DAE2223B00361A3</example>
     [DefaultValue("")]
-    [UIHint(nameof(UseFTPS),"", true)]
+    [UIHint(nameof(UseFTPS), "", true)]
     public string CertificateHashStringSHA1 { get; set; }
 
     #endregion

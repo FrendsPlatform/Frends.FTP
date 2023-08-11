@@ -6,7 +6,7 @@ namespace Frends.FTP.DownloadFiles.TaskConfiguration;
 /// Options for file transfer
 /// </summary>
 public class Options
-{   
+{
     /// <summary>
     /// Should an exception be thrown when file transfer fails.
     /// </summary>

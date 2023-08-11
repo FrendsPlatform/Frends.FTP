@@ -8,7 +8,7 @@ namespace Frends.FTP.DownloadFiles.Logging;
 internal interface IFtpLogger : IDisposable
 {
     void NotifyError(BatchContext context, string msg, Exception e);
-        
+
     void NotifyInformation(BatchContext context, string msg);
 
     void NotifyTrace(string message);
@@ -81,7 +81,7 @@ internal class FtpLogger : IFtpLogger
             _log.Error("Error when logging success message: " + ex.Message, ex);
         }
     }
-        
+
     public void LogTransferFailed(SingleFileTransfer transfer, BatchContext context, string errorMessage, Exception exception)
     {
         try

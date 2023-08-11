@@ -15,9 +15,9 @@ public class DestinationActionTests : DownloadFilesTestBase
     public void DestinationAction_Append_NoRenameInTransfer()
     {
         FtpHelper.CreateFileOnFTP(FtpDir, "file1.txt", "mycontent");
-        
+
         var result1 = CallDownloadFiles(
-            DestinationAction.Overwrite, 
+            DestinationAction.Overwrite,
             "file1.txt",
             LocalDirFullPath,
             false);
@@ -26,18 +26,18 @@ public class DestinationActionTests : DownloadFilesTestBase
             "file1.txt",
             LocalDirFullPath,
             false);
-        
+
         Assert.IsTrue(result1.Success, result1.UserResultMessage);
         Assert.IsTrue(result2.Success, result2.UserResultMessage);
         Assert.AreEqual(1, result2.SuccessfulTransferCount);
         Assert.AreEqual("mycontentmycontent", File.ReadAllText($"{LocalDirFullPath}/file1.txt"));
     }
-    
+
     [Test]
     public void DestinationAction_Append_WithRenameInTransfer()
     {
         FtpHelper.CreateFileOnFTP(FtpDir, "file1.txt", "mycontent");
-        
+
         var result1 = CallDownloadFiles(
             DestinationAction.Overwrite,
             "file1.txt",
@@ -48,24 +48,25 @@ public class DestinationActionTests : DownloadFilesTestBase
             "file1.txt",
             LocalDirFullPath,
             true);
-        
+
         Assert.IsTrue(result1.Success, result1.UserResultMessage);
         Assert.IsTrue(result2.Success, result2.UserResultMessage);
         Assert.AreEqual(1, result2.SuccessfulTransferCount);
         Assert.AreEqual("mycontentmycontent", File.ReadAllText($"{LocalDirFullPath}/file1.txt"));
     }
-    
+
     private Result CallDownloadFiles(
         DestinationAction destinationAction, string sourceFileName, string targetDir,
         bool renameDestinationFilesDuringTransfer)
     {
         var source = new Source
         {
-            Directory = FtpDir, FileName = sourceFileName,
+            Directory = FtpDir,
+            FileName = sourceFileName,
             Operation = SourceOperation.Nothing
         };
-        var destination = new Destination
-            { Directory = targetDir, Action = destinationAction };
+
+        var destination = new Destination { Directory = targetDir, Action = destinationAction };
         var options = new Options { CreateDestinationDirectories = true, RenameDestinationFileDuringTransfer = renameDestinationFilesDuringTransfer };
         var connection = FtpHelper.GetFtpsConnection();
 
