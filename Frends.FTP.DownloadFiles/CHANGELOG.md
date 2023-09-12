@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.5] - 2023-09-12
+### Added
+- Added search for local certificates from machine certification store.
+
 ## [1.0.4] - 2023-08-08
 ### Changed
 - Moved client.EncryptionMode setting to be done if UseFTPS is enabled.

@@ -145,7 +145,25 @@ internal class FileTransporter
             };
 
             if (connect.EnableClientAuth)
-                client.ClientCertificates.Add(new X509Certificate2(connect.ClientCertificatePath));
+            {
+                if (!string.IsNullOrEmpty(connect.ClientCertificatePath))
+                {
+                    client.ClientCertificates.Add(new X509Certificate2(connect.ClientCertificatePath));
+                }
+                else
+                {
+                    X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
+                    try
+                    {
+                        store.Open(OpenFlags.ReadOnly);
+                        client.ClientCertificates.AddRange(store.Certificates);
+                    }
+                    finally
+                    {
+                        store.Close();
+                    }
+                }
+            }
 
             client.ValidateCertificate += (control, e) =>
             {
