@@ -156,6 +156,11 @@ internal class FileTransporter
                     try
                     {
                         store.Open(OpenFlags.ReadOnly);
+                        foreach (var cert in store.Certificates)
+                        {
+                            var test = cert.FriendlyName;
+                            test = "";
+                        }
                         client.ClientCertificates.AddRange(store.Certificates);
                     }
                     finally

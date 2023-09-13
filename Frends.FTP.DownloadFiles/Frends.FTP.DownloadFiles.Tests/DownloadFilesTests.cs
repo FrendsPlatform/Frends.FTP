@@ -202,19 +202,35 @@ namespace Frends.FTP.DownloadFiles.Tests
                 SslMode = FtpsSslMode.Explicit,
                 EnableClientAuth = true,
                 UseFTPS = true,
+                ValidateAnyCertificate = false,
+                CertificateHashStringSHA1 = "",
+                ClientCertificatePath = ""
             };
 
-
-            // Test and assert
-            var ex = Assert.Throws<AggregateException>(() =>
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
             {
-                var result = FTP.DownloadFiles(source, destination, connection, new Options(), new Info(),
-                    new CancellationToken());
+                var ex = Assert.Throws<System.Security.Cryptography.CryptographicException>(() =>
+                {
+                    var result = FTP.DownloadFiles(source, destination, connection, new Options(), new Info(),
+                        new CancellationToken());
 
-            });
+                });
 
-            Assert.AreEqual(1, ex.InnerExceptions.Count);
-            Assert.AreEqual(typeof(AuthenticationException), ex.InnerExceptions[0].GetType());
+                Assert.AreEqual("", ex.Message);
+            }
+            else
+            {
+                var ex = Assert.Throws<AggregateException>(() =>
+                {
+                    var result = FTP.DownloadFiles(source, destination, connection, new Options(), new Info(),
+                        new CancellationToken());
+
+                });
+
+                Assert.AreEqual(1, ex.InnerExceptions.Count);
+                Assert.AreEqual(typeof(AuthenticationException), ex.InnerExceptions[0].GetType());
+            }
+            
         }
     }
 }
