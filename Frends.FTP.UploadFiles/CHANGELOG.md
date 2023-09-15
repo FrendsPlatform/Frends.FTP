@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0.3] - 2023-099-12
+## [1.0.3] - 2023-09-12
 ### Added
 - Added search for local certificates from machine certification store.
 

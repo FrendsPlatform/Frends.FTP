@@ -652,4 +652,47 @@ public class UploadFilesTests
             SetUp();
         }
     }
+
+    [TestMethod]
+    public void UploadFTPS_LocalMachineHasNoCertificates()
+    {
+        var connection = new Connection
+        {
+            Address = Helpers.FtpHost,
+            UserName = Helpers.FtpUsername,
+            Password = Helpers.FtpPassword,
+            Port = Helpers.FtpsPort,
+            SslMode = FtpsSslMode.Explicit,
+            EnableClientAuth = true,
+            UseFTPS = true,
+            ValidateAnyCertificate = false,
+            CertificateHashStringSHA1 = "",
+            ClientCertificatePath = ""
+        };
+
+        if (Environment.OSVersion.Platform == PlatformID.Unix)
+        {
+            var ex = Assert.ThrowsException<System.Security.Cryptography.CryptographicException>(() =>
+            {
+                var result = FTP.UploadFiles(_source, _destination, connection, new Options(), new Info(),
+                    new CancellationToken());
+
+            });
+
+            Assert.AreEqual("Unix LocalMachine X509Store is limited to the Root and Certif", ex.Message);
+        }
+        else
+        {
+            var ex = Assert.ThrowsException<AggregateException>(() =>
+            {
+                var result = FTP.UploadFiles(_source, _destination, connection, new Options(), new Info(),
+                    new CancellationToken());
+
+            });
+
+            Assert.AreEqual(1, ex.InnerExceptions.Count);
+            Assert.AreEqual(typeof(AuthenticationException), ex.InnerExceptions[0].GetType());
+        }
+
+    }
 }
