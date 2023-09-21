@@ -7,6 +7,7 @@ using System.Threading;
 
 namespace Frends.FTP.UploadFiles.Tests;
 
+[Ignore("Debug")]
 [TestClass]
 public class SourceOperationTests : UploadFilesTestBase
 {

@@ -107,8 +107,6 @@ namespace Frends.FTP.UploadFiles.Definitions
 
                         client.SetWorkingDirectory(_destinationDirectoryWithMacrosExpanded);
 
-                        //_batchContext.DestinationFiles = client.GetListing(".");
-
                         foreach (var file in files)
                         {
                             // Check that the connection is alive and if not try to connect again
@@ -169,15 +167,17 @@ namespace Frends.FTP.UploadFiles.Definitions
                     }
                     else
                     {
-                        X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
-                        try
+                        using (X509Store store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
                         {
-                            store.Open(OpenFlags.ReadOnly);
-                            client.ClientCertificates.AddRange(store.Certificates);
-                        }
-                        finally
-                        {
-                            store.Close();
+                            try
+                            {
+                                store.Open(OpenFlags.ReadOnly);
+                                client.ClientCertificates.AddRange(store.Certificates);
+                            }
+                            finally
+                            {
+                                store.Close();
+                            }
                         }
                     }
                 }
