@@ -147,25 +147,25 @@ internal class FileTransporter
             if (connect.EnableClientAuth)
             {
                 if (!string.IsNullOrEmpty(connect.ClientCertificatePath))
-                {
                     client.ClientCertificates.Add(new X509Certificate2(connect.ClientCertificatePath));
-                }
                 else
                 {
-                    X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
-                    try
+                    using (X509Store store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
                     {
-                        store.Open(OpenFlags.ReadOnly);
-                        foreach (var cert in store.Certificates)
+                        try
                         {
-                            var test = cert.FriendlyName;
-                            test = "";
+                            store.Open(OpenFlags.ReadOnly);
+                            if (!string.IsNullOrEmpty(connect.ClientCertificateName))
+                                client.ClientCertificates.Add(store.Certificates.Find(X509FindType.FindBySubjectName, connect.ClientCertificateName, false)[0]);
+                            else if (!string.IsNullOrEmpty(connect.ClientCertificateThumbprint))
+                                client.ClientCertificates.Add(store.Certificates.Find(X509FindType.FindByThumbprint, connect.ClientCertificateThumbprint, false)[0]);
+                            else
+                                client.ClientCertificates.AddRange(store.Certificates);
                         }
-                        client.ClientCertificates.AddRange(store.Certificates);
-                    }
-                    finally
-                    {
-                        store.Close();
+                        finally
+                        {
+                            store.Close();
+                        }
                     }
                 }
             }

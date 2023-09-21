@@ -1,8 +1,9 @@
 # Changelog
 
-## [1.0.5] - 2023-09-12
+## [1.1.0] - 2023-09-12
 ### Added
 - Added search for local certificates from machine certification store.
+- [Breaking] Added parameters ClientCertificationName and ClientCertificationThumbprint for exclusive search of client certification.
 
 ## [1.0.4] - 2023-08-08
 ### Changed

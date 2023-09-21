@@ -183,7 +183,7 @@ namespace Frends.FTP.DownloadFiles.Tests
         }
 
         [Test]
-        public void DownloadFTPS_LocalMachineHasNoCertificates()
+        public void DownloadFTPS_CurrentUserHasNoCertificates()
         {
             // Setup
             FtpHelper.CreateFileOnFTP(FtpDir, "file1.txt");
@@ -207,30 +207,16 @@ namespace Frends.FTP.DownloadFiles.Tests
                 ClientCertificatePath = ""
             };
 
-            if (Environment.OSVersion.Platform == PlatformID.Unix)
+            var ex = Assert.Throws<AggregateException>(() =>
             {
-                var ex = Assert.Throws<System.Security.Cryptography.CryptographicException>(() =>
-                {
-                    var result = FTP.DownloadFiles(source, destination, connection, new Options(), new Info(),
-                        new CancellationToken());
+                var result = FTP.DownloadFiles(source, destination, connection, new Options(), new Info(),
+                    new CancellationToken());
 
-                });
+            });
 
-                Assert.AreEqual("", ex.Message);
-            }
-            else
-            {
-                var ex = Assert.Throws<AggregateException>(() =>
-                {
-                    var result = FTP.DownloadFiles(source, destination, connection, new Options(), new Info(),
-                        new CancellationToken());
+            Assert.AreEqual(1, ex.InnerExceptions.Count);
+            Assert.AreEqual(typeof(AuthenticationException), ex.InnerExceptions[0].GetType());
 
-                });
-
-                Assert.AreEqual(1, ex.InnerExceptions.Count);
-                Assert.AreEqual(typeof(AuthenticationException), ex.InnerExceptions[0].GetType());
-            }
-            
         }
     }
 }
