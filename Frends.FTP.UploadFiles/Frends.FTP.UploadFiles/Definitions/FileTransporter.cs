@@ -172,7 +172,12 @@ namespace Frends.FTP.UploadFiles.Definitions
                             try
                             {
                                 store.Open(OpenFlags.ReadOnly);
-                                client.ClientCertificates.AddRange(store.Certificates);
+                                if (!string.IsNullOrEmpty(connect.ClientCertificateName))
+                                    client.ClientCertificates.Add(store.Certificates.Find(X509FindType.FindBySubjectName, connect.ClientCertificateName, false).First());
+                                else if (!string.IsNullOrEmpty(connect.ClientCertificateThumbprint))
+                                    client.ClientCertificates.Add(store.Certificates.Find(X509FindType.FindByThumbprint, connect.ClientCertificateThumbprint, false).First());
+                                else
+                                    client.ClientCertificates.AddRange(store.Certificates);
                             }
                             finally
                             {

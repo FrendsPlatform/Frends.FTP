@@ -667,31 +667,19 @@ public class UploadFilesTests
             UseFTPS = true,
             ValidateAnyCertificate = false,
             CertificateHashStringSHA1 = "",
-            ClientCertificatePath = ""
+            ClientCertificatePath = "",
+            ClientCertificateName = "",
+            ClientCertificateThumbprint = ""
         };
 
-        if (Environment.OSVersion.Platform == PlatformID.Unix)
+        var ex = Assert.ThrowsException<AggregateException>(() =>
         {
-            var ex = Assert.ThrowsException<System.Security.Cryptography.CryptographicException>(() =>
-            {
-                var result = FTP.UploadFiles(_source, _destination, connection, new Options(), new Info(),
-                    default);
+            var result = FTP.UploadFiles(_source, _destination, connection, new Options(), new Info(),
+                default);
 
-            });
+        });
 
-            Assert.AreEqual("Unix LocalMachine X509Store is limited to the Root and Certificate", ex.Message);
-        }
-        else
-        {
-            var ex = Assert.ThrowsException<AggregateException>(() =>
-            {
-                var result = FTP.UploadFiles(_source, _destination, connection, new Options(), new Info(),
-                    default);
-
-            });
-
-            Assert.AreEqual(1, ex.InnerExceptions.Count);
-            Assert.AreEqual(typeof(AuthenticationException), ex.InnerExceptions[0].GetType());
-        }
+        Assert.AreEqual(1, ex.InnerExceptions.Count);
+        Assert.AreEqual(typeof(AuthenticationException), ex.InnerExceptions[0].GetType());
     }
 }

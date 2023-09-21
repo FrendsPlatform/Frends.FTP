@@ -147,6 +147,22 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         public bool EnableClientAuth { get; set; }
 
         /// <summary>
+        /// Optional. Enables certification search by name from the certification store of current user.
+        /// </summary>
+        /// <example>mycert.crt</example>
+        [DefaultValue("")]
+        [UIHint(nameof(EnableClientAuth), "", true)]
+        public string ClientCertificateName { get; set; }
+
+        /// <summary>
+        /// Optional. Enables certification search by thumbprint from the certification store of current user.
+        /// </summary>
+        /// <example>a909502dd82ae41433e6f83886b00d4277a32a7b</example>
+        [DefaultValue("")]
+        [UIHint(nameof(EnableClientAuth), "", true)]
+        public string ClientCertificateThumbprint { get; set; }
+
+        /// <summary>
         /// If enabled the any certificate will be considered valid.
         /// </summary>
         /// <example>false</example>
