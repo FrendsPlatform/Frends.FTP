@@ -18,7 +18,6 @@ namespace Frends.FTP.UploadFiles.Tests;
 /// - source file name does not support macros for some reason in Cobalt, currently not implementing because
 ///   need to understand reasoning better
 /// </summary>
-[Ignore("Debug")]
 [TestClass]
 public class MacrosTests
 {

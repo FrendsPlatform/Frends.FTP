@@ -173,9 +173,9 @@ namespace Frends.FTP.UploadFiles.Definitions
                             {
                                 store.Open(OpenFlags.ReadOnly);
                                 if (!string.IsNullOrEmpty(connect.ClientCertificateName))
-                                    client.ClientCertificates.Add(store.Certificates.Find(X509FindType.FindBySubjectName, connect.ClientCertificateName, false).First());
+                                    client.ClientCertificates.Add(store.Certificates.Find(X509FindType.FindBySubjectName, connect.ClientCertificateName, false)[0]);
                                 else if (!string.IsNullOrEmpty(connect.ClientCertificateThumbprint))
-                                    client.ClientCertificates.Add(store.Certificates.Find(X509FindType.FindByThumbprint, connect.ClientCertificateThumbprint, false).First());
+                                    client.ClientCertificates.Add(store.Certificates.Find(X509FindType.FindByThumbprint, connect.ClientCertificateThumbprint, false)[0]);
                                 else
                                     client.ClientCertificates.AddRange(store.Certificates);
                             }
