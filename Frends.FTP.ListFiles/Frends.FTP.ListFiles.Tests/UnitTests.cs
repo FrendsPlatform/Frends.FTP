@@ -304,7 +304,7 @@ public class UnitTests : ListFilesTestBase
     /// Test without host. Returns an error.
     /// </summary>
     [Test]
-    public async void ListFiles_HostIsNULL_Test()
+    public async Task ListFiles_HostIsNULL_Test()
     {
         var connection = FtpHelper.GetFtpConnection();
         connection.Address = string.Empty;
