@@ -1,44 +1,28 @@
-
+using FluentFTP;
 using Frends.FTP.ListFiles.Definitions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Frends.FTP.ListFiles.Tests.Lib;
+using NUnit.Framework;
 
 namespace Frends.FTP.ListFiles.Tests;
 
-[TestClass]
-public class UnitTests
+/// <summary>
+/// `docker-compose -f Frends.FTP.ListFiles.Tests/docker-compose.yml up -d`
+/// </summary>
+[TestFixture]
+public class UnitTests : ListFilesTestBase
 {
-    /// <summary>
-    /// Test files and directories created into Azure container. "Top dir" for this task's testing is /ListFiles.
-    /// </summary>
-    private readonly string? _host = Environment.GetEnvironmentVariable("HiQ_FTP_Host");
-    private readonly string? _user = Environment.GetEnvironmentVariable("HiQ_FTP_User");
-    private readonly string? _pw = Environment.GetEnvironmentVariable("HiQ_FTP_Password");
-    private readonly string _path = "/ListFiles";
-
-    Input? input;
-
     /// <summary>
     /// List all files from top dir using null as filename. Returns 5 files from top dir and skip sub dir files.
     /// </summary>
-    [TestMethod]
-    public void ListFiles_FilenameIsNUll_ListsAllFiles_Test()
+    [Test]
+    public async Task ListFilesFTP_FilenameIsNUll_ListsAllFiles_Test()
     {
-        input = new Input()
-        {
-            Filename = null,
-            Host = _host,
-            Port = 21,
-            Path = _path,
-            Username = _user,
-            Password = _pw
-        };
+        input.FileMask = "";
+        var result = await FTP.ListFiles(input, FtpHelper.GetFtpConnection(), default);
 
+        Assert.AreEqual(5, result.Files.Count);
 
-        var result = FTP.ListFiles(input, default);
-
-        Assert.IsTrue(result.Result.Files.Count == 5);
-
-        Assert.IsTrue(result.Result.Files.Any(x => 
+        Assert.IsTrue(result.Files.Any(x =>
             x.Name.Contains("Test1.txt") ||
             x.Name.Contains("Test1.xlsx") ||
             x.Name.Contains("Test1.xml") ||
@@ -46,7 +30,7 @@ public class UnitTests
             x.Name.Contains("DemoTest.txt")
         ));
 
-        Assert.IsFalse(result.Result.Files.Any(x => 
+        Assert.IsFalse(result.Files.Any(x =>
             x.Name.Contains("_test.txt") ||
             x.Name.Contains("pref_test.txt") ||
             x.Name.Contains("pro_test.txt") ||
@@ -59,25 +43,14 @@ public class UnitTests
     /// List all files from top dir using wildcard * as filename. Returns 5 files from top dir and skip sub dir files.
     /// Filename is *.
     /// </summary>
-    [TestMethod]
-    public void ListFiles_FilenameWithWildcard_ListsAllFiles_Test()
+    [Test]
+    public async Task ListFilesFTP_FilenameWithWildcard_ListsAllFiles_Test()
     {
-        input = new Input()
-        {
-            Filename = "*",
-            Host = _host,
-            Port = 21,
-            Path = _path,
-            Username = _user,
-            Password = _pw
-        };
+        var result = await FTP.ListFiles(input, FtpHelper.GetFtpConnection(), default);
 
+        Assert.AreEqual(5, result.Files.Count);
 
-        var result = FTP.ListFiles(input, default);
-
-        Assert.IsTrue(result.Result.Files.Count == 5);
-
-        Assert.IsTrue(result.Result.Files.Any(x =>
+        Assert.IsTrue(result.Files.Any(x =>
             x.Name.Contains("Test1.txt") ||
             x.Name.Contains("Test1.xlsx") ||
             x.Name.Contains("Test1.xml") ||
@@ -85,7 +58,7 @@ public class UnitTests
             x.Name.Contains("DemoTest.txt")
         ));
 
-        Assert.IsFalse(result.Result.Files.Any(x =>
+        Assert.IsFalse(result.Files.Any(x =>
             x.Name.Contains("_test.txt") ||
             x.Name.Contains("pref_test.txt") ||
             x.Name.Contains("pro_test.txt") ||
@@ -95,86 +68,63 @@ public class UnitTests
     }
 
     /// <summary>
-    /// List file from /Subfolder. Returns 5 files and skips top dir files.
+    /// Given path doesn't exist. Making sure that this throws error.
     /// </summary>
-    [TestMethod]
-    public void ListFiles_ListsAllFilesFromSubdir_Test()
+    [Test]
+    public void ListFilesFTP_DirectoryDoNotExists_Test()
     {
         input = new Input()
         {
-            Filename = null,
-            Host = _host,
-            Port = 21,
-            Path = _path,
-            Username = _user,
-            Password = _pw
+            FileMask = "",
+            Directory = "/NoFilesHere"
         };
 
-        var result = FTP.ListFiles(input, default);
+        var ex = Assert.ThrowsAsync<ArgumentException>(async () => await FTP.ListFiles(input, FtpHelper.GetFtpConnection(), default));
 
-        Assert.IsTrue(result.Result.Files.Count == 5);
-
-        Assert.IsTrue(result.Result.Files.Any(x =>
-            x.Name.Contains("Test1.txt") ||
-            x.Name.Contains("Test1.xlsx") ||
-            x.Name.Contains("Test1.xml") ||
-            x.Name.Contains("testfile.txt") ||
-            x.Name.Contains("DemoTest.txt")
-        ));
-
-        Assert.IsFalse(result.Result.Files.Any(x =>
-            x.Name.Contains("_test.txt") ||
-            x.Name.Contains("pref_test.txt") ||
-            x.Name.Contains("pro_test.txt") ||
-            x.Name.Contains("pro_tet.txt") ||
-            x.Name.Contains("prof_test.txt")
-            ));
+        Assert.AreEqual("FTP directory '/NoFilesHere' doesn't exist.", ex.Message);
     }
 
     /// <summary>
-    /// Given path doesn't contain any files. Making sure that this doesn't cause any errors.
+    /// Given Directory doesn't contain any files. Making sure that this doesn't cause any errors.
     /// </summary>
-    [TestMethod]
-    public void ListFiles_NoFilesInPath_Test()
+    [Test]
+    public async Task ListFilesFTP_NoFilesInDirectory_Test()
     {
         input = new Input()
         {
-            Filename = null,
-            Host = _host,
-            Port = 21,
-            Path = "/NoFilesHere",
-            Username = _user,
-            Password = _pw
+            FileMask = "",
+            Directory = "/NoFilesHere"
         };
 
-        var result = FTP.ListFiles(input, default);
+        FtpHelper.CreateDirectoryOnFTP(input.Directory);
 
-        Assert.IsTrue(result.Result.Files.Count == 0);
+        var result = await FTP.ListFiles(input, FtpHelper.GetFtpConnection(), default);
+
+        Assert.AreEqual(0, result.Files.Count);
+
+        FtpHelper.DeleteDirectoryOnFTP(input.Directory);
     }
 
     /// <summary>
     /// Test with complete filename. Returns Test1.txt.
     /// </summary>
-    [TestMethod]
-    public void ListFiles_CompleteFileName_Test()
+    [Test]
+    public async Task ListFilesFTPS_CompleteFileName_Test()
     {
         input = new Input()
         {
-            Filename = "Test1.txt",
-            Host = _host,
-            Port = 21,
-            Path = _path,
-            Username = _user,
-            Password = _pw
+            FileMask = "Test1.txt",
+            Directory = FtpDir
         };
 
-        var result = FTP.ListFiles(input, default);
+        var result = await FTP.ListFiles(input, FtpHelper.GetFtpsConnection(), default);
 
-        Assert.IsTrue(result.Result.Files.Count == 1 && result.Result.Files.Any(x =>
+        Assert.AreEqual(1, result.Files.Count);
+        Assert.IsTrue(result.Files.Any(x =>
             x.Name.Contains("Test1.txt")
         ));
 
-        Assert.IsFalse(result.Result.Files.Any(x =>
+        Assert.IsFalse(result.Files.Any(x =>
             x.Name.Contains("Test1.xlsx") ||
             x.Name.Contains("Test1.xml") ||
             x.Name.Contains("testfile.txt") ||
@@ -190,31 +140,27 @@ public class UnitTests
     /// <summary>
     /// Test with filename containing wildcard. Result contains 4 files.
     /// </summary>
-    [TestMethod]
-    public void ListFiles_FilenameWithWildcard_Test()
+    [Test]
+    public async Task ListFilesFTPS_FilenameWithWildcard_Test()
     {
         input = new Input()
         {
-            Filename = "test*",
-            Host = _host,
-            Port = 21,
-            Path = _path,
-            Username = _user,
-            Password = _pw
+            FileMask = "test*",
+            Directory = FtpDir,
         };
 
-        var result = FTP.ListFiles(input, default);
+        var result = await FTP.ListFiles(input, FtpHelper.GetFtpsConnection(), default);
 
-        Assert.IsTrue(result.Result.Files.Count == 4);
+        Assert.AreEqual(4, result.Files.Count);
 
-        Assert.IsTrue(result.Result.Files.Any(x =>
+        Assert.IsTrue(result.Files.Any(x =>
             x.Name.Contains("Test1.txt") ||
             x.Name.Contains("Test1.xlsx") ||
             x.Name.Contains("Test1.xml") ||
             x.Name.Contains("testfile.txt")
         ));
 
-        Assert.IsFalse(result.Result.Files.Any(x =>
+        Assert.IsFalse(result.Files.Any(x =>
             x.Name.Contains("DemoTest.txt") ||
             x.Name.Contains("_test.txt") ||
             x.Name.Contains("pref_test.txt") ||
@@ -227,29 +173,21 @@ public class UnitTests
     /// <summary>
     /// Test with filename containing regex. Returns 2 files Test1.txt and Test1.xlsx.
     /// </summary>
-    [TestMethod]
-    public void ListFiles_FilenameWithRegex_Test()
+    [Test]
+    public async Task ListFiles_FilenameWithRegex_Test()
     {
-        input = new Input()
-        {
-            Filename = "Test1.(txt|xlsx)",
-            Host = _host,
-            Port = 21,
-            Path = _path,
-            Username = _user,
-            Password = _pw
-        };
+        input.FileMask = "Test1.(txt|xlsx)";
 
-        var result = FTP.ListFiles(input, default);
+        var result = await FTP.ListFiles(input, FtpHelper.GetFtpConnection(), default);
 
-        Assert.IsTrue(result.Result.Files.Count == 2);
+        Assert.AreEqual(2, result.Files.Count);
 
-        Assert.IsTrue(result.Result.Files.Any(x =>
+        Assert.IsTrue(result.Files.Any(x =>
             x.Name.Contains("Test1.txt") ||
             x.Name.Contains("Test1.xlsx")
         ));
 
-        Assert.IsFalse(result.Result.Files.Any(x =>
+        Assert.IsFalse(result.Files.Any(x =>
             x.Name.Contains("Test1.xml") ||
             x.Name.Contains("testfile.txt") ||
             x.Name.Contains("DemoTest.txt") ||
@@ -264,26 +202,19 @@ public class UnitTests
     /// <summary>
     /// Test with filename containing regex. Returns 1 file Test1.xml.
     /// </summary>
-    [TestMethod]
-    public void ListFiles_FilenameWithRegex2_Test()
+    [Test]
+    public async Task ListFilesFTPS_FilenameWithRegex2_Test()
     {
-        input = new Input()
-        {
-            Filename = "Test1.[^t][^x][^t]",
-            Host = _host,
-            Port = 21,
-            Path = _path,
-            Username = _user,
-            Password = _pw
-        };
+        input.FileMask = "Test1.[^t][^x][^t]";
 
-        var result = FTP.ListFiles(input, default);
+        var result = await FTP.ListFiles(input, FtpHelper.GetFtpsConnection(), default);
 
-        Assert.IsTrue(result.Result.Files.Count == 1 && result.Result.Files.Any(x =>
+        Assert.AreEqual(1, result.Files.Count);
+        Assert.IsTrue(result.Files.Any(x =>
             x.Name.Contains("Test1.xml")
         ));
 
-        Assert.IsFalse(result.Result.Files.Any(x =>
+        Assert.IsFalse(result.Files.Any(x =>
             x.Name.Contains("Test1.txt") ||
             x.Name.Contains("Test1.xlsx") ||
             x.Name.Contains("testfile.txt") ||
@@ -300,30 +231,37 @@ public class UnitTests
     /// List files from subfolder /Subfolder using regex. Result contains 3 files pro_test.txt, pref_test.txt, _test.txt 
     /// and files prof_test.txt, pro_tet.txt. 
     /// </summary>
-    [TestMethod]
-    public void ListFiles_FilenameWithRegex3_Test()
+    [Test]
+    public async Task ListFilesFTPS_FilenameWithRegex3_Test()
     {
-        input = new Input()
+        input.FileMask = "<regex>^(?!prof).*_test.txt";
+        input.Directory = $"{input.Directory}/Subfolder";
+
+        FtpHelper.CreateDirectoryOnFTP(input.Directory);
+
+        var files = new string[]
         {
-            Filename = "<regex>^(?!prof).*_test.txt",
-            Host = _host,
-            Port = 21,
-            Path = $"{_path}/Subfolder",
-            Username = _user,
-            Password = _pw
+            "_test.txt",
+            "pref_test.txt",
+            "pro_test.txt"
         };
 
-        var result = FTP.ListFiles(input, default);
+        foreach (var file in files)
+        {
+            FtpHelper.CreateFileOnFTP(input.Directory, file);
+        }
 
-        Assert.IsTrue(result.Result.Files.Count == 3);
+        var result = await FTP.ListFiles(input, FtpHelper.GetFtpsConnection(), default);
 
-        Assert.IsTrue(result.Result.Files.Any(x =>
+        Assert.AreEqual(3, result.Files.Count);
+
+        Assert.IsTrue(result.Files.Any(x =>
             x.Name.Contains("_test.txt") ||
             x.Name.Contains("pref_test.txt") ||
             x.Name.Contains("pro_test.txt")
         ));
 
-        Assert.IsFalse(result.Result.Files.Any(x =>
+        Assert.IsFalse(result.Files.Any(x =>
             x.Name.Contains("Test1.xml") ||
             x.Name.Contains("Test1.txt") ||
             x.Name.Contains("Test1.xlsx") ||
@@ -332,85 +270,60 @@ public class UnitTests
             x.Name.Contains("pro_tet.txt") ||
             x.Name.Contains("prof_test.txt")
             ));
+
+        FtpHelper.DeleteDirectoryOnFTP(input.Directory);
     }
 
     /// <summary>
     /// Test without username when password is not null. Returns an error because password is not null.
     /// </summary>
-    [TestMethod]
-    public void ListFiles_UserIsNULLAndPasswordIsNotNull_Test()
+    [Test]
+    public void ListFilesFTP_UserIsNULLAndPasswordIsNotNull_Test()
     {
-        input = new Input()
-        {
-            Filename = "test*",
-            Host = _host,
-            Port = 21,
-            Path = _path,
-            Username = "",
-            Password = _pw
-        };
+        var connection = FtpHelper.GetFtpConnection();
+        connection.UserName = string.Empty;
 
-        var ex = Assert.ThrowsExceptionAsync<Exception>(async () => await FTP.ListFiles(input, default)).Result;
-        Assert.IsTrue(ex.Message.Contains("Username required."));
+        var ex = Assert.ThrowsAsync<FtpAuthenticationException>(async () => await FTP.ListFiles(input, connection, default));
+        Assert.AreEqual("This is a private system - No anonymous login", ex.Message);
     }
 
     /// <summary>
     /// Test without password when username is not null. Returns an error because username is not null.
     /// </summary>
-    [TestMethod]
+    [Test]
     public void ListFiles_PasswordIsNULLAndUserIsNotNull_Test()
     {
-        input = new Input()
-        {
-            Filename = "test*",
-            Host = _host,
-            Port = 21,
-            Path = _path,
-            Username = _user,
-            Password = ""
-        };
+        var connection = FtpHelper.GetFtpConnection();
+        connection.Password = string.Empty;
 
-        var ex = Assert.ThrowsExceptionAsync<Exception>(async () => await FTP.ListFiles(input, default)).Result;
-        Assert.IsTrue(ex.Message.Contains("Password required."));
+        var ex = Assert.ThrowsAsync<FtpAuthenticationException>(async () => await FTP.ListFiles(input, connection, default));
+        Assert.AreEqual("Login authentication failed", ex.Message);
     }
 
     /// <summary>
     /// Test without host. Returns an error.
     /// </summary>
-    [TestMethod]
+    [Test]
     public void ListFiles_HostIsNULL_Test()
     {
-        input = new Input()
-        {
-            Filename = "test*",
-            Host = "",
-            Port = 21,
-            Path = _path,
-            Username = _user,
-            Password = _pw
-        };
+        var connection = FtpHelper.GetFtpConnection();
+        connection.Address = string.Empty;
 
-        var ex = Assert.ThrowsExceptionAsync<Exception>(async () => await FTP.ListFiles(input, default)).Result;
-        Assert.IsTrue(ex.Message.Contains("Host required."));
+        var ex = Assert.ThrowsAsync<ArgumentException>(async () => await FTP.ListFiles(input, connection, default));
+        Assert.AreEqual("Unable to establish the socket: No such host is known.", ex.Message);
     }
 
     /// <summary>
     /// Test without required (FTP server) credentials.
     /// </summary>
-    [TestMethod]
+    [Test]
     public void WithoutUserAndPasswordTest()
     {
-        input = new Input()
-        {
-            Filename = null,
-            Host = _host,
-            Port = 21,
-            Path = _path,
-            Username = "",
-            Password = ""
-        };
+        var connection = FtpHelper.GetFtpConnection();
+        connection.UserName = string.Empty;
+        connection.Password = string.Empty;
 
-        var ex = Assert.ThrowsExceptionAsync<Exception>(async () => await FTP.ListFiles(input, default)).Result;
-        Assert.IsTrue(ex.Message.Contains("Error when creating a list of files"));
+        var ex = Assert.ThrowsAsync<FtpAuthenticationException>(async () => await FTP.ListFiles(input, connection, default));
+        Assert.AreEqual("This is a private system - No anonymous login", ex.Message);
     }
 }
