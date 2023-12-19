@@ -307,7 +307,7 @@ public class UnitTests : ListFilesTestBase
     public void ListFiles_HostIsNULL_Test()
     {
         var connection = FtpHelper.GetFtpConnection();
-        connection.Address = string.Empty;
+        connection.Address = "";
 
         var ex = Assert.ThrowsAsync<ArgumentException>(async () => await FTP.ListFiles(input, connection, default));
         Assert.AreEqual("Unable to establish the socket: No such host is known.", ex.Message);
