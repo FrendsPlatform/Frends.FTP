@@ -13,6 +13,6 @@ jobs:
     uses: FrendsPlatform/FrendsTasks/.github/workflows/build_main.yml@main
     with:
       workdir: Frends.FTP.ListFiles
-      prebuild_command: docker-compose -f Frends.FTP.DownloadFiles.Tests/docker-compose.yml up -d
+      prebuild_command: docker-compose -f Frends.FTP.ListFiles.Tests/docker-compose.yml up -d
     secrets:
       badge_service_api_key: ${{ secrets.BADGE_SERVICE_API_KEY }}
