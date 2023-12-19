@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace Frends.FTP.ListFiles.Tests;
 
 /// <summary>
-/// `docker-compose -f Frends.FTP.ListFiles.Tests/docker-compose.yml up -d`
+/// To run these tests you need to run `docker-compose -f Frends.FTP.ListFiles.Tests/docker-compose.yml up -d`
 /// </summary>
 [TestFixture]
 public class UnitTests : ListFilesTestBase
