@@ -29,8 +29,8 @@ public class FTP
     {
         try
         {
-            using var client = CreateFtpClient(connection);
-            
+            using FtpClient client = CreateFtpClient(connection);
+
             await client.ConnectAsync(cancellationToken);
 
             if (!client.DirectoryExists(input.Directory))
@@ -51,7 +51,7 @@ public class FTP
         catch (SocketException)
         {
             throw new ArgumentException("Unable to establish the socket: No such host is known.");
-        }  
+        }
     }
 
     private static FtpClient CreateFtpClient(Connection connect)
