@@ -82,7 +82,7 @@ public class Connection
     public FtpsSslMode SslMode { get; set; }
 
     /// <summary>
-    /// If enabled the client certificate is searched from user's certificate store
+    /// If enabled the client certificate is searched from user's certificate store.
     /// </summary>
     /// <example>false</example>
     [DefaultValue("false")]
