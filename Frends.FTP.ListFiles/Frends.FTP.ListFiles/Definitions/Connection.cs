@@ -74,7 +74,7 @@ public class Connection
     public bool SecureDataChannel { get; set; }
 
     /// <summary>
-    /// Specifies whether to use Explicit or Implicit SSL
+    /// Specifies whether to use Explicit or Implicit SSL.
     /// </summary>
     /// <example>FtpsSslMode.None</example>
     [DefaultValue(FtpsSslMode.None)]
