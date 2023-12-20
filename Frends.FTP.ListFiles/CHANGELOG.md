@@ -1,6 +1,6 @@
 # Changelog
 
-## [2.0.0] - 2022-12-19
+## [2.0.0] - 2022-12-20
 ### Fixed
 - Fixed documentation
 - Fixed Tests and change the Tests to use docker container.

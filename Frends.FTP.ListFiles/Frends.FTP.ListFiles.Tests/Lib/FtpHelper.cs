@@ -18,6 +18,7 @@ public class FtpHelper : IDisposable
     public FtpHelper()
     {
         client = new FtpClient(FtpHost, FtpPort, FtpUsername, FtpPassword);
+        client.Connect();
     }
 
     internal static Connection GetFtpsConnection()
@@ -52,27 +53,20 @@ public class FtpHelper : IDisposable
 
     internal void CreateFileOnFTP(string subDir, string fileName, string content = "hello")
     {
-        client.Connect();
         client.CreateDirectory(subDir);
         client.SetWorkingDirectory(subDir);
         client.Upload(Encoding.UTF8.GetBytes(content), fileName);
         client.SetWorkingDirectory("/");
-        client.Disconnect();
     }
 
     internal void CreateDirectoryOnFTP(string subDir)
     {
-        client.Connect();
         client.CreateDirectory(subDir);
-        client.Disconnect();
     }
 
     internal bool FileExistsOnFTP(string subDir, string fileName)
     {
-        client.Connect();
-        var found = client.FileExists(subDir + "/" + fileName);
-        client.Disconnect();
-        return found;
+        return client.FileExists(subDir + "/" + fileName);
     }
 
     public void Dispose()
@@ -84,8 +78,6 @@ public class FtpHelper : IDisposable
 
     public void DeleteDirectoryOnFTP(string ftpDir)
     {
-        client.Connect();
         client.DeleteDirectory(ftpDir, FtpListOption.Recursive);
-        client.Disconnect();
     }
 }
