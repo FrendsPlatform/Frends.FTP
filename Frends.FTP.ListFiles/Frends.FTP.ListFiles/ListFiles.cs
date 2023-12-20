@@ -66,7 +66,7 @@ public class FTP
                 FtpsSslMode.Implicit => FtpEncryptionMode.Implicit,
                 FtpsSslMode.Explicit => FtpEncryptionMode.Explicit,
                 FtpsSslMode.Auto => FtpEncryptionMode.Auto,
-                _ => throw new ArgumentOutOfRangeException($"Unknown Encoding type: '{connect.SslMode}'."),
+                _ => FtpEncryptionMode.Auto,
             };
 
             if (connect.EnableClientAuth)

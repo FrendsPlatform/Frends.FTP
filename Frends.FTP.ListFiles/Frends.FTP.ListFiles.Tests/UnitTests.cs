@@ -300,9 +300,6 @@ public class UnitTests : ListFilesTestBase
         Assert.AreEqual("Login authentication failed", ex.Message);
     }
 
-    /// <summary>
-    /// Test without host. Returns an error.
-    /// </summary>
     [Test]
     public async Task ListFiles_HostIsEmpty_Test()
     {
@@ -325,5 +322,59 @@ public class UnitTests : ListFilesTestBase
 
         var ex = Assert.ThrowsAsync<FtpAuthenticationException>(async () => await FTP.ListFiles(input, connection, default));
         Assert.AreEqual("This is a private system - No anonymous login", ex.Message);
+    }
+
+    [Test]
+    public async Task TestWithNoneSslModes()
+    {
+        var connection = FtpHelper.GetFtpsConnection();
+
+        connection.SslMode = FtpsSslMode.None;
+        var result = await FTP.ListFiles(input, connection, default);
+        Assert.AreEqual(5, result.Files.Count);
+    }
+
+    [Test]
+    public async Task TestWithExplicitSslModes()
+    {
+        var connection = FtpHelper.GetFtpsConnection();
+
+        connection.SslMode = FtpsSslMode.Explicit;
+        var result = await FTP.ListFiles(input, connection, default);
+        Assert.AreEqual(5, result.Files.Count);
+    }
+
+    [Test]
+    public async Task TestWithAutoSslModes()
+    {
+        var connection = FtpHelper.GetFtpsConnection();
+
+        connection.SslMode = FtpsSslMode.Auto;
+        var result = await FTP.ListFiles(input, connection, default);
+        Assert.AreEqual(5, result.Files.Count);
+    }
+
+    [Test]
+    public void TestWithCertificatePath()
+    {
+        // Our test certificate hashes:
+        // SHA-256: 90:bc:7f:71:14:f5:c2:ad:03:46:d6:ff:75:d5:fe:12:ba:74:23:73:54:31:70:60:b4:8b:bd:8e:87:21:9c:16
+        // SHA-1: d9:11:26:29:84:de:9c:c3:2a:35:18:a1:09:4c:d2:42:49:ea:5c:49
+        var connection = new Connection
+        {
+            Address = FtpHelper.FtpHost,
+            UserName = FtpHelper.FtpUsername,
+            Password = FtpHelper.FtpPassword,
+            Port = FtpHelper.FtpsPort,
+            SslMode = FtpsSslMode.Explicit,
+            EnableClientAuth = true,
+            UseFTPS = true,
+            ValidateAnyCertificate = false,
+            CertificateHashStringSHA1 = "",
+            ClientCertificatePath = ""
+        };
+
+        var ex = Assert.ThrowsAsync<AggregateException>(async () => await FTP.ListFiles(input, connection, default));
+        Assert.IsTrue(ex.Message.Contains("The remote certificate was rejected by the provided RemoteCertificateValidationCallback."));
     }
 }
