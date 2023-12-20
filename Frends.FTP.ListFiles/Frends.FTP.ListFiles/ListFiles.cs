@@ -30,8 +30,7 @@ public class FTP
         try
         {
             using FtpClient client = CreateFtpClient(connection);
-
-            await client.ConnectAsync(cancellationToken);
+            client.Connect();
 
             if (!client.DirectoryExists(input.Directory))
                 throw new ArgumentException($"FTP directory '{input.Directory}' doesn't exist.");
@@ -45,7 +44,8 @@ public class FTP
                 throw new ArgumentException(
                     "Source end point returned null list for file list. If there are no files to transfer, the result should be an empty list.");
 
-            await client.DisconnectAsync(cancellationToken);
+            client.Disconnect();
+            client.Dispose();
             return new Result(files);
         }
         catch (SocketException)
@@ -120,8 +120,9 @@ public class FTP
         {
             FtpMode.Active => FtpDataConnectionType.AutoActive,
             FtpMode.Passive => FtpDataConnectionType.AutoPassive,
-            _ => throw new ArgumentOutOfRangeException($"Unknown FTP mode {connect.Mode}"),
+            _ => throw new ArgumentOutOfRangeException($"Unknown FTP mode {connect.Mode}."),
         };
+
         return client;
     }
 

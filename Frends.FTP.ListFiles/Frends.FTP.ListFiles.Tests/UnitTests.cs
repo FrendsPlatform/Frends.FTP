@@ -304,16 +304,11 @@ public class UnitTests : ListFilesTestBase
     /// Test without host. Returns an error.
     /// </summary>
     [Test]
-    public void ListFiles_HostIsNULL_Test()
+    public void ListFiles_HostIsEmpty_Test()
     {
-        var connection = new Connection
-        {
-            Address = string.Empty,
-            UserName = "frendsuser",
-            Password = "frendspass",
-            Port = 21,
-            SslMode = FtpsSslMode.None
-        };
+        var connection = FtpHelper.GetFtpConnection();
+        connection.Address = "";
+        connection.Mode = FtpMode.Active;
 
         var ex = Assert.ThrowsAsync<ArgumentException>(async () => await FTP.ListFiles(input, connection, default));
         Assert.AreEqual("Unable to establish the socket: No such host is known.", ex.Message);
