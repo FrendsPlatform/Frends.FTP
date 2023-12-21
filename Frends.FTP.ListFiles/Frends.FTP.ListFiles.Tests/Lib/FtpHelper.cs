@@ -64,11 +64,6 @@ public class FtpHelper : IDisposable
         client.CreateDirectory(subDir);
     }
 
-    internal bool FileExistsOnFTP(string subDir, string fileName)
-    {
-        return client.FileExists(subDir + "/" + fileName);
-    }
-
     public void Dispose()
     {
         GC.SuppressFinalize(this);
