@@ -16,10 +16,14 @@ Rebuild the project
 
 `dotnet build`
 
-Run tests
+### Run tests
 
-`dotnet test`
+Run the Docker compose from solution root using
 
-Create a NuGet package
+`docker-compose -f Frends.FTP.ListFiles.Tests/docker-compose.yml up`
+
+Run the tests
+
+### Create a NuGet package
 
 `dotnet pack --configuration Release` 
