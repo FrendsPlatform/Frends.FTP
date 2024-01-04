@@ -218,5 +218,25 @@ namespace Frends.FTP.DownloadFiles.Tests
             Assert.AreEqual(typeof(AuthenticationException), ex.InnerExceptions[0].GetType());
 
         }
+
+        [Test]
+        public void DownloadFTP_LargeFiles()
+        {
+            FtpHelper.CreateLargeFileOnFTP(FtpDir, 5);
+            var source = new Source { Directory = FtpDir, FileName = "*.bin", Operation = SourceOperation.Delete };
+            var destination = new Destination { Directory = LocalDirFullPath, Action = DestinationAction.Overwrite };
+            var connection = new Connection
+            {
+                Address = FtpHelper.FtpHost,
+                UserName = FtpHelper.FtpUsername,
+                Password = FtpHelper.FtpPassword,
+                Port = FtpHelper.FtpPort
+            };
+
+            // Test and assert
+            var result = FTP.DownloadFiles(source, destination, connection, new Options(), new Info(), new CancellationToken());
+            Assert.IsTrue(result.Success, result.UserResultMessage);
+            Assert.AreEqual(5, result.SuccessfulTransferCount);
+        }
     }
 }

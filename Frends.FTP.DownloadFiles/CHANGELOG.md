@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.1.1] - 2024-01-04
+### Added
+- Added setup for FtpClient.ReadTimeout, FtpClient.DataConnectionConnectTimeout and FtpClient.DataConnectionReadTimeout which were all defaulting to 15 seconds.
+
 ## [1.1.0] - 2023-09-12
 ### Added
 - Added search for local certificates from machine certification store.
