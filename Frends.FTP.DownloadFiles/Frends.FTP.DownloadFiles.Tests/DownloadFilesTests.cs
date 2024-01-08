@@ -86,7 +86,6 @@ namespace Frends.FTP.DownloadFiles.Tests
 
             // Test and assert
             var ex = Assert.Throws<Exception>(() => FTP.DownloadFiles(source, destination, connection, options, new Info(), new CancellationToken()));
-            Console.WriteLine(ex.Message);
             Assert.IsTrue(ex.Message.Contains($"Error: Unable to transfer file. Destination file already exists: {destination.FileName}"));
         }
 
