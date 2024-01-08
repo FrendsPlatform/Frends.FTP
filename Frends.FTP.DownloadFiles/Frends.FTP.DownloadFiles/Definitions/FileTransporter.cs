@@ -193,6 +193,10 @@ internal class FileTransporter
 
         // Client lib timeout is in milliseconds, ours is in seconds, thus *1000 conversion
         client.ConnectTimeout = connect.ConnectionTimeout * 1000;
+        client.ReadTimeout = connect.ConnectionTimeout * 1000;
+        client.DataConnectionConnectTimeout = connect.ConnectionTimeout * 1000;
+        client.DataConnectionReadTimeout = connect.ConnectionTimeout * 1000;
+
         client.LocalFileBufferSize = connect.BufferSize;
 
         // Transport type Binary / ASCII

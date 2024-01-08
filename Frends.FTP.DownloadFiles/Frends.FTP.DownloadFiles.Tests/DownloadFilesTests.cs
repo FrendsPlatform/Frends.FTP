@@ -86,7 +86,6 @@ namespace Frends.FTP.DownloadFiles.Tests
 
             // Test and assert
             var ex = Assert.Throws<Exception>(() => FTP.DownloadFiles(source, destination, connection, options, new Info(), new CancellationToken()));
-            Console.WriteLine(ex.Message);
             Assert.IsTrue(ex.Message.Contains($"Error: Unable to transfer file. Destination file already exists: {destination.FileName}"));
         }
 
@@ -217,6 +216,26 @@ namespace Frends.FTP.DownloadFiles.Tests
             Assert.AreEqual(1, ex.InnerExceptions.Count);
             Assert.AreEqual(typeof(AuthenticationException), ex.InnerExceptions[0].GetType());
 
+        }
+
+        [Test]
+        public void DownloadFTP_LargeFiles()
+        {
+            FtpHelper.CreateLargeFileOnFTP(FtpDir, 5);
+            var source = new Source { Directory = FtpDir, FileName = "*.bin", Operation = SourceOperation.Delete };
+            var destination = new Destination { Directory = LocalDirFullPath, Action = DestinationAction.Overwrite };
+            var connection = new Connection
+            {
+                Address = FtpHelper.FtpHost,
+                UserName = FtpHelper.FtpUsername,
+                Password = FtpHelper.FtpPassword,
+                Port = FtpHelper.FtpPort
+            };
+
+            // Test and assert
+            var result = FTP.DownloadFiles(source, destination, connection, new Options(), new Info(), new CancellationToken());
+            Assert.IsTrue(result.Success, result.UserResultMessage);
+            Assert.AreEqual(5, result.SuccessfulTransferCount);
         }
     }
 }

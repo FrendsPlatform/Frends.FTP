@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using FluentFTP;
 using Frends.FTP.DownloadFiles.Enums;
@@ -63,6 +65,37 @@ public class FtpHelper : IDisposable
         Client.SetWorkingDirectory(subDir);
         Client.Upload(Encoding.UTF8.GetBytes(content), fileName);
         client.SetWorkingDirectory("/");
+    }
+
+    internal void CreateLargeFileOnFTP(string subDir, int count = 1)
+    {
+        Client.CreateDirectory(subDir);
+        Client.SetWorkingDirectory(subDir);
+        var files = CreateLargeDummyFiles(count);
+        foreach (var file in files)
+        {
+            Client.Upload(File.ReadAllBytes(file), Path.GetFileName(file));
+            File.Delete(file);
+        }
+        client.SetWorkingDirectory("/");
+    }
+
+    internal static List<string> CreateLargeDummyFiles(int count = 1)
+    {
+        var filePaths = new List<string>();
+        var name = "LargeTestFile";
+        var extension = ".bin";
+        for (var i = 1; i <= count; i++)
+        {
+            var path = Path.Combine(Path.GetTempPath(), name + i + extension);
+            var fs = new FileStream(path, FileMode.CreateNew);
+            fs.Seek(1024L * 1024 * 1024, SeekOrigin.Begin);
+            fs.WriteByte(0);
+            fs.Close();
+            filePaths.Add(path);
+        }
+
+        return filePaths;
     }
 
     internal void CreateDirectoryOnFTP(string subDir)
