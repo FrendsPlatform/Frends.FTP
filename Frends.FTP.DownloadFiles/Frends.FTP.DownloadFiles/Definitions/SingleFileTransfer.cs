@@ -58,6 +58,7 @@ internal class SingleFileTransfer
                         PutDestinationFile(removeExisting: true);
                         break;
                     case DestinationAction.Error:
+                        Trace(TransferState.CheckIfDestinationFileExists, "Checking if destination file {0} exists", SourceFile.Name);
                         throw new DestinationFileExistsException(DestinationFileNameWithMacrosExpanded);
                 }
             }
@@ -265,7 +266,7 @@ internal class SingleFileTransfer
     {
         _result.Success = false; // the routine instance should be marked as failed if even one transfer fails
         var errorMessage =
-            $"Failure in {_state}: File '{SourceFile.Name}' could not be transferred to '{_destinationDirectoryWithMacrosExpanded}'. Error: {exception.Message}";
+            $"Failure in {_state}: File '{SourceFile.Name}' could not be transferred to '{_destinationDirectoryWithMacrosExpanded}'. Error: {exception.Message}. InnerException: {exception.InnerException}";
         if (!string.IsNullOrEmpty(sourceFileRestoreMessage))
             errorMessage += " " + sourceFileRestoreMessage;
 
@@ -359,14 +360,11 @@ internal class SingleFileTransfer
             return true;
         }
 
-        switch (_batchContext.Source.Operation)
+        return _batchContext.Source.Operation switch
         {
-            case SourceOperation.Move:
-            case SourceOperation.Rename:
-                return true;
-            default:
-                return false;
-        }
+            SourceOperation.Move or SourceOperation.Rename => true,
+            _ => false,
+        };
     }
 
     private void Trace(TransferState state, string format, params object[] args)

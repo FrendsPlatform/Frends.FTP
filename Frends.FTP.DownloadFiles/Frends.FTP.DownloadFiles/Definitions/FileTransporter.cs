@@ -43,7 +43,7 @@ internal class FileTransporter
 
                 if (!client.IsConnected)
                 {
-                    _logger.NotifyError(null, "Error while connecting to FTP: ", new Exception(userResultMessage));
+                    _logger.NotifyError(_batchContext, "Error while connecting to FTP: ", new Exception(userResultMessage));
                     return FormFailedFileTransferResult(userResultMessage);
                 }
 
@@ -52,6 +52,7 @@ internal class FileTransporter
                 {
                     // If source directory doesn't exist, modify userResultMessage accordingly.
                     userResultMessage = $"FTP directory '{_sourceDirectoryWithMacrosExpanded}' doesn't exist.";
+                    _logger.NotifyError(_batchContext, userResultMessage, new Exception(userResultMessage));
                     return FormFailedFileTransferResult(userResultMessage);
                 }
 
@@ -72,6 +73,13 @@ internal class FileTransporter
 
                     foreach (var file in files)
                     {
+                        // Check that the connection is alive and if not try to connect again
+                        if (!client.IsConnected)
+                        {
+                            client.Connect();
+                            _logger.NotifyInformation(_batchContext, "Reconnected.");
+                        }
+
                         cancellationToken.ThrowIfCancellationRequested();
                         var singleTransfer =
                             new SingleFileTransfer(file, _batchContext, client, _renamingPolicy, _logger);
@@ -86,6 +94,7 @@ internal class FileTransporter
         catch (SocketException)
         {
             userResultMessage = $"Unable to establish the socket: No such host is known.";
+            _logger.NotifyError(_batchContext, userResultMessage, new Exception(userResultMessage));
             return FormFailedFileTransferResult(userResultMessage);
         }
 
@@ -105,12 +114,12 @@ internal class FileTransporter
                 }
                 catch (Exception ex)
                 {
-                    userResultMessage =
-                        $"Error while creating destination directory '{_destinationDirectoryWithMacrosExpanded}': {ex.Message}";
-                    {
-                        fileTransferResult = FormFailedFileTransferResult(userResultMessage);
-                        return false;
-                    }
+                    userResultMessage =$"Error while creating destination directory '{_destinationDirectoryWithMacrosExpanded}': {ex.Message}";
+                    
+                    fileTransferResult = FormFailedFileTransferResult(userResultMessage);
+                    _logger.NotifyError(_batchContext, userResultMessage, new Exception(userResultMessage));
+                    return false;
+                    
                 }
             }
             else
@@ -150,7 +159,7 @@ internal class FileTransporter
                     client.ClientCertificates.Add(new X509Certificate2(connect.ClientCertificatePath));
                 else
                 {
-                    using (X509Store store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
+                    using (var store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
                     {
                         try
                         {
