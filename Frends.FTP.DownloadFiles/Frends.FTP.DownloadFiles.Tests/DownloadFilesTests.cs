@@ -172,8 +172,7 @@ namespace Frends.FTP.DownloadFiles.Tests
             // Test and assert
             var ex = Assert.Throws<AggregateException>(() =>
             {
-                var result = FTP.DownloadFiles(source, destination, connection, new Options(), new Info(),
-                    new CancellationToken());
+                FTP.DownloadFiles(source, destination, connection, new Options(), new Info(), default);
 
             });
 
@@ -208,8 +207,7 @@ namespace Frends.FTP.DownloadFiles.Tests
 
             var ex = Assert.Throws<AggregateException>(() =>
             {
-                var result = FTP.DownloadFiles(source, destination, connection, new Options(), new Info(),
-                    new CancellationToken());
+                FTP.DownloadFiles(source, destination, connection, new Options(), new Info(), default);
 
             });
 
