@@ -125,7 +125,8 @@ internal class FtpLogger : IFtpLogger
         {
             sourceFile = transfer.SourceFile.Name;
             destinationFile = transfer.DestinationFileNameWithMacrosExpanded;
-            localFileName = context.Info != null ? context.Info.WorkDir : string.Empty;
+            if (context != null)
+                localFileName = context.Info != null ? context.Info.WorkDir : string.Empty;
         }
 
         var transferStarted = DateTime.UtcNow;
