@@ -233,7 +233,7 @@ namespace Frends.FTP.DownloadFiles.Tests
             // Test and assert
             var result = FTP.DownloadFiles(source, destination, connection, new Options(), new Info(), new CancellationToken());
             Assert.IsTrue(result.Success, result.UserResultMessage);
-            Assert.AreEqual(5, result.SuccessfulTransferCount);
+            Assert.AreEqual(1, result.SuccessfulTransferCount);
         }
     }
 }

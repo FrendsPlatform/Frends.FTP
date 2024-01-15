@@ -114,6 +114,7 @@ public class SourceOperationTests : DownloadFilesTestBase
 
         // Check that original file is still there
         Assert.IsTrue(FtpHelper.FileExistsOnFTP(FtpDir, "file1.txt"), result.UserResultMessage);
+        FtpHelper.DeleteDirectoryOnFTP(moveToSubDir);
     }
 
     [Test]

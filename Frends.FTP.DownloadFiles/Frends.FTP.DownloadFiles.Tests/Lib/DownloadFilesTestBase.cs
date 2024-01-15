@@ -20,6 +20,7 @@ public class DownloadFilesTestBase
     public void OneTimeTearDown()
     {
         FtpHelper.Dispose();
+        FtpHelper.RemoveLocalTestFiles();
     }
 
     protected bool LocalFileExists(string fileName, string subDir = null)
