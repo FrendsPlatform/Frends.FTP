@@ -186,11 +186,8 @@ internal class RenamingPolicy
     {
         if (s == null) return false;
 
-        foreach (var key in macroDictionary.Keys)
-        {
-            if (s.ToUpperInvariant().Contains(key.ToUpperInvariant()))
-                return true;
-        }
+        foreach (var key in macroDictionary.Keys.Where(e => s.ToUpperInvariant().Contains(e.ToUpperInvariant())))
+            return true;
 
         return false;
     }

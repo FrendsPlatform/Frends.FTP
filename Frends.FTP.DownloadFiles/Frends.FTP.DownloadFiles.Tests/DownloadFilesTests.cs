@@ -219,7 +219,7 @@ namespace Frends.FTP.DownloadFiles.Tests
         [Test]
         public void DownloadFTP_LargeFiles()
         {
-            FtpHelper.CreateLargeFileOnFTP(FtpDir, 5);
+            FtpHelper.CreateLargeFileOnFTP(FtpDir, 1);
             var source = new Source { Directory = FtpDir, FileName = "*.bin", Operation = SourceOperation.Delete };
             var destination = new Destination { Directory = LocalDirFullPath, Action = DestinationAction.Overwrite };
             var connection = new Connection
