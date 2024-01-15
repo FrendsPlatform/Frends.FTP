@@ -302,12 +302,11 @@ internal class FileTransporter
                 $"{errorMessages.Count} Errors: {string.Join(", ", errorMessages)}");
 
         var transferredFiles = results.Select(x => x.TransferredFile).Where(x => x != null).ToList();
-        if (transferredFiles.Any())
-            userResultMessage = MessageJoin(userResultMessage,
+        userResultMessage = transferredFiles.Any()
+            ? MessageJoin(userResultMessage,
                 string.Format("{0} files transferred: {1}", transferredFiles.Count,
-                    string.Join(", ", transferredFiles)));
-        else
-            userResultMessage = MessageJoin(userResultMessage, "No files transferred.");
+                    string.Join(", ", transferredFiles)))
+            : MessageJoin(userResultMessage, "No files transferred.");
 
         return userResultMessage;
     }
