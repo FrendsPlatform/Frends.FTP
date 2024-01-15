@@ -239,13 +239,11 @@ internal class FileTransporter
         var ftpFiles = client.GetListing(_sourceDirectoryWithMacrosExpanded);
 
         var list = new List<FileItem>();
-        foreach (var ftpFile in ftpFiles)
+        foreach (var ftpFile in ftpFiles
+            .Where(e => e.Type != FtpFileSystemObjectType.Directory
+            || e.Type != FtpFileSystemObjectType.Link
+            || !Util.FileMatchesMask(e.Name, _batchContext.Source.FileName)))
         {
-            if (ftpFile.Type == FtpFileSystemObjectType.Directory ||
-                ftpFile.Type == FtpFileSystemObjectType.Link)
-                continue; // skip directories and links
-
-            if (!Util.FileMatchesMask(ftpFile.Name, _batchContext.Source.FileName)) continue;
 
             var fItm = new FileItem(ftpFile);
             list.Add(fItm);
