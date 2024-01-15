@@ -114,12 +114,11 @@ internal class FileTransporter
                 }
                 catch (Exception ex)
                 {
-                    userResultMessage =$"Error while creating destination directory '{_destinationDirectoryWithMacrosExpanded}': {ex.Message}";
-                    
+                    userResultMessage = $"Error while creating destination directory '{_destinationDirectoryWithMacrosExpanded}': {ex.Message}";
+
                     fileTransferResult = FormFailedFileTransferResult(userResultMessage);
                     _logger.NotifyError(_batchContext, userResultMessage, new Exception(userResultMessage));
                     return false;
-                    
                 }
             }
             else
