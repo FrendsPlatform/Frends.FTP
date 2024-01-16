@@ -24,7 +24,6 @@ public class FtpHelper : IDisposable
         get
         {
             client ??= new FtpClient(FtpHost, FtpPort, FtpUsername, FtpPassword);
-            //client.connConnect();
             return client;
         }
     }
@@ -117,5 +116,14 @@ public class FtpHelper : IDisposable
     public void DeleteDirectoryOnFTP(string ftpDir)
     {
         client.DeleteDirectory(ftpDir, FtpListOption.Recursive);
+    }
+
+    public static void RemoveLocalTestFiles()
+    {
+        var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../DockerVolumes/", "data");
+        foreach (var dir in Directory.GetDirectories(path))
+        {
+            Directory.Delete(dir, true);
+        }
     }
 }

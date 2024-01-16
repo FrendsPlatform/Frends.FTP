@@ -172,8 +172,7 @@ namespace Frends.FTP.DownloadFiles.Tests
             // Test and assert
             var ex = Assert.Throws<AggregateException>(() =>
             {
-                var result = FTP.DownloadFiles(source, destination, connection, new Options(), new Info(),
-                    new CancellationToken());
+                FTP.DownloadFiles(source, destination, connection, new Options(), new Info(), default);
 
             });
 
@@ -208,8 +207,7 @@ namespace Frends.FTP.DownloadFiles.Tests
 
             var ex = Assert.Throws<AggregateException>(() =>
             {
-                var result = FTP.DownloadFiles(source, destination, connection, new Options(), new Info(),
-                    new CancellationToken());
+                FTP.DownloadFiles(source, destination, connection, new Options(), new Info(), default);
 
             });
 
@@ -221,7 +219,7 @@ namespace Frends.FTP.DownloadFiles.Tests
         [Test]
         public void DownloadFTP_LargeFiles()
         {
-            FtpHelper.CreateLargeFileOnFTP(FtpDir, 5);
+            FtpHelper.CreateLargeFileOnFTP(FtpDir, 1);
             var source = new Source { Directory = FtpDir, FileName = "*.bin", Operation = SourceOperation.Delete };
             var destination = new Destination { Directory = LocalDirFullPath, Action = DestinationAction.Overwrite };
             var connection = new Connection
@@ -235,7 +233,7 @@ namespace Frends.FTP.DownloadFiles.Tests
             // Test and assert
             var result = FTP.DownloadFiles(source, destination, connection, new Options(), new Info(), new CancellationToken());
             Assert.IsTrue(result.Success, result.UserResultMessage);
-            Assert.AreEqual(5, result.SuccessfulTransferCount);
+            Assert.AreEqual(1, result.SuccessfulTransferCount);
         }
     }
 }

@@ -11,7 +11,7 @@
     <IncludeSource>true</IncludeSource>
     <PackageTags>Frends</PackageTags>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
     <Description>Task for downloading files from FTP(S) servers.</Description>
   </PropertyGroup>
 

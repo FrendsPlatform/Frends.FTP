@@ -47,7 +47,7 @@ internal class FtpLogger : IFtpLogger
             var transferName = context.Info == null ? "unknown" : context.Info.TransferName;
             var transferNameForLog = transferName ?? string.Empty;
 
-            var errorMessage = $"\r\n\r\nFRENDS FTP file transfer '{transferNameForLog}' from '{sourceEndPointName}' to '{destinationEndPointName}': \r\n{msg}\r\n";
+            var errorMessage = $"\r\n\r\nFrends FTP file transfer '{transferNameForLog}' from '{sourceEndPointName}' to '{destinationEndPointName}': \r\n{msg}\r\n";
             _log.Error(errorMessage, e);
         }
         catch (Exception ex)
@@ -125,7 +125,8 @@ internal class FtpLogger : IFtpLogger
         {
             sourceFile = transfer.SourceFile.Name;
             destinationFile = transfer.DestinationFileNameWithMacrosExpanded;
-            localFileName = context.Info.WorkDir;
+            if (context != null)
+                localFileName = context.Info != null ? context.Info.WorkDir : string.Empty;
         }
 
         var transferStarted = DateTime.UtcNow;
