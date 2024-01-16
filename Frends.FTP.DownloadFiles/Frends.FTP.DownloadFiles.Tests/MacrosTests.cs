@@ -78,7 +78,7 @@ public class MacrosTests : DownloadFilesTestBase
         Assert.IsTrue(File.Exists(Path.Combine(LocalDirFullPath, destinationFileNameWithMacrosExpanded)), result.UserResultMessage);
     }
 
-    private Result CallDownloadFiles(
+    private static Result CallDownloadFiles(
         string sourceDirectory,
         string sourceFileName,
         string targetDirectory,

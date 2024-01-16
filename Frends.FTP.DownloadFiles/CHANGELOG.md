@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.1.2] - 2024-01-16
+### Improved
+- Improved Operations log by adding more logging steps.
+
 ## [1.1.1] - 2024-01-04
 ### Added
 - Added setup for FtpClient.ReadTimeout, FtpClient.DataConnectionConnectTimeout and FtpClient.DataConnectionReadTimeout which were all defaulting to 15 seconds.
