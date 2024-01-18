@@ -139,23 +139,14 @@ namespace Frends.FTP.UploadFiles.Definitions
         private static FtpClient CreateFtpClient(Connection connect)
         {
             var client = new FtpClient(connect.Address, connect.Port, connect.UserName, connect.Password);
-            switch (connect.SslMode)
+            client.EncryptionMode = connect.SslMode switch
             {
-                case FtpsSslMode.None:
-                    client.EncryptionMode = FtpEncryptionMode.None;
-                    break;
-                case FtpsSslMode.Implicit:
-                    client.EncryptionMode = FtpEncryptionMode.Implicit;
-                    break;
-                case FtpsSslMode.Explicit:
-                    client.EncryptionMode = FtpEncryptionMode.Explicit;
-                    break;
-                case FtpsSslMode.Auto:
-                    client.EncryptionMode = FtpEncryptionMode.Auto;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                FtpsSslMode.None => FtpEncryptionMode.None,
+                FtpsSslMode.Implicit => FtpEncryptionMode.Implicit,
+                FtpsSslMode.Explicit => FtpEncryptionMode.Explicit,
+                FtpsSslMode.Auto => FtpEncryptionMode.Auto,
+                _ => throw new ArgumentOutOfRangeException(),
+            };
 
             if (connect.UseFTPS)
             {
@@ -167,7 +158,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                     }
                     else
                     {
-                        using (X509Store store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
+                        using (var store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
                         {
                             try
                             {
@@ -232,17 +223,12 @@ namespace Frends.FTP.UploadFiles.Definitions
             }
 
             // Active/passive
-            switch (connect.Mode)
+            client.DataConnectionType = connect.Mode switch
             {
-                case FtpMode.Active:
-                    client.DataConnectionType = FtpDataConnectionType.AutoActive;
-                    break;
-                case FtpMode.Passive:
-                    client.DataConnectionType = FtpDataConnectionType.AutoPassive;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException($"Unknown FTP mode {connect.Mode}");
-            }
+                FtpMode.Active => FtpDataConnectionType.AutoActive,
+                FtpMode.Passive => FtpDataConnectionType.AutoPassive,
+                _ => throw new ArgumentOutOfRangeException($"Unknown FTP mode {connect.Mode}"),
+            };
 
             return client;
         }
@@ -275,7 +261,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             {
                 if (Util.FileMatchesMask(Path.GetFileName(file), _batchContext.Source.FileName))
                 {
-                    FileItem item = new FileItem(Path.GetFullPath(file));
+                    var item = new FileItem(Path.GetFullPath(file));
                     _logger.NotifyInformation(_batchContext, $"FILE LIST {item.FullPath}");
                     fileItems.Add(item);
                 }
@@ -360,12 +346,11 @@ namespace Frends.FTP.UploadFiles.Definitions
                     $"{errorMessages.Count} Errors: {string.Join(", ", errorMessages)}");
 
             var transferredFiles = results.Select(x => x.TransferredFile).Where(x => x != null).ToList();
-            if (transferredFiles.Any())
-                userResultMessage = MessageJoin(userResultMessage,
-                    string.Format("{0} files transferred: {1}", transferredFiles.Count,
-                        string.Join(", ", transferredFiles)));
-            else
-                userResultMessage = MessageJoin(userResultMessage, "No files transferred.");
+            userResultMessage = transferredFiles.Any()
+            ? MessageJoin(userResultMessage,
+                string.Format("{0} files transferred: {1}", transferredFiles.Count,
+                    string.Join(", ", transferredFiles)))
+            : MessageJoin(userResultMessage, "No files transferred.");
 
             return userResultMessage;
         }

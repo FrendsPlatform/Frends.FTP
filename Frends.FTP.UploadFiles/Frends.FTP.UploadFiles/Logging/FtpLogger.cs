@@ -159,7 +159,8 @@ namespace Frends.FTP.UploadFiles.Logging
             {
                 sourceFile = transfer.SourceFile.Name;
                 destinationFile = transfer.DestinationFileNameWithMacrosExpanded;
-                localFileName = context.Info.WorkDir;
+                if (context != null)
+                    localFileName = context.Info != null ? context.Info.WorkDir : string.Empty;
             }
 
             var transferStarted = DateTime.UtcNow;
