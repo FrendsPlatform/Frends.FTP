@@ -460,7 +460,7 @@ public class UploadFilesTests
     [TestMethod]
     public void UploadFTPS_ConnectionTimeout()
     {
-        var timeouts = new[] { 1, 100 };
+        var timeouts = new[] { 10, 15, 50, 100 };
 
         foreach (var timeout in timeouts)
         {
