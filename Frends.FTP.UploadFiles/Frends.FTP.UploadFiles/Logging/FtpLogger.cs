@@ -97,7 +97,7 @@ namespace Frends.FTP.UploadFiles.Logging
             {
                 var fileTransferInfoForSuccess = CreateFileTransferInfo(TransferResult.Success, transfer, context);
                 _fileTransfers.Add(fileTransferInfoForSuccess);
-                _log.Information("File transfer succeeded: " + transfer.SourceFile);
+                _log.Information("File transfer succeeded: " + transfer.SourceFile.Name);
             }
             catch (Exception ex)
             {

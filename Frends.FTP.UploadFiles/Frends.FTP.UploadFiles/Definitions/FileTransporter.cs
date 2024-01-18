@@ -257,14 +257,11 @@ namespace Frends.FTP.UploadFiles.Definitions
                 return new Tuple<List<FileItem>, bool>(fileItems, true);
 
             // create List of FileItems from found files.
-            foreach (var file in files)
+            foreach (var file in files.Where(e => Util.FileMatchesMask(Path.GetFileName(e), _batchContext.Source.FileName)))
             {
-                if (Util.FileMatchesMask(Path.GetFileName(file), _batchContext.Source.FileName))
-                {
-                    var item = new FileItem(Path.GetFullPath(file));
-                    _logger.NotifyInformation(_batchContext, $"FILE LIST {item.FullPath}");
-                    fileItems.Add(item);
-                }
+                var item = new FileItem(Path.GetFullPath(file));
+                _logger.NotifyInformation(_batchContext, $"FILE LIST {item.FullPath}");
+                fileItems.Add(item);
             }
 
             return new Tuple<List<FileItem>, bool>(fileItems, true);
@@ -274,17 +271,15 @@ namespace Frends.FTP.UploadFiles.Definitions
         {
             // Consistent forward slashes
             path = path.Replace(@"\", "/");
-            foreach (string dir in path.Split('/'))
+            // Ignoring leading/ending/multiple slashes
+            foreach (string dir in path.Split('/').Where(e => !string.IsNullOrWhiteSpace(e)))
             {
-                // Ignoring leading/ending/multiple slashes
-                if (!string.IsNullOrWhiteSpace(dir))
-                {
-                    if (!client.DirectoryExists(dir))
-                        client.CreateDirectory(dir);
+                if (!client.DirectoryExists(dir))
+                    client.CreateDirectory(dir);
 
-                    client.SetWorkingDirectory(dir);
-                }
+                client.SetWorkingDirectory(dir);
             }
+
             // Going back to default directory
             client.SetWorkingDirectory("/");
         }
