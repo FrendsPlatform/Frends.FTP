@@ -47,11 +47,10 @@ internal static class Helpers
 
     internal static string GetFileFromFtp(string subDir, string file)
     {
-        FtpClient client = null;
         try
         {
             var tmpFile = Path.GetTempFileName();
-            using (client = new FtpClient(FtpHost, FtpPort, FtpUsername, FtpPassword))
+            using (var client = new FtpClient(FtpHost, FtpPort, FtpUsername, FtpPassword))
             {
                 client.Connect();
                 client.SetWorkingDirectory(subDir);
@@ -62,10 +61,6 @@ internal static class Helpers
         catch (Exception ex)
         {
             throw new Exception(ex.Message);
-        }
-        finally
-        {
-            client.Dispose();
         }
     }
 }

@@ -39,7 +39,7 @@ namespace Frends.FTP.UploadFiles.Logging
     }
 
     /// <summary>
-    /// SFTP internal logger implementation
+    /// FTP internal logger implementation
     /// </summary>
     internal class FtpLogger : IFtpLogger
     {
@@ -54,10 +54,7 @@ namespace Frends.FTP.UploadFiles.Logging
             _log = log;
         }
 
-        ~FtpLogger()
-        {
-            Dispose(false);
-        }
+        ~FtpLogger() => Dispose(false);
 
         public void NotifyError(BatchContext context, string msg, Exception e)
         {
@@ -97,7 +94,7 @@ namespace Frends.FTP.UploadFiles.Logging
             {
                 var fileTransferInfoForSuccess = CreateFileTransferInfo(TransferResult.Success, transfer, context);
                 _fileTransfers.Add(fileTransferInfoForSuccess);
-                _log.Information("File transfer succeeded: " + transfer.SourceFile);
+                _log.Information("File transfer succeeded: " + transfer.SourceFile.Name);
             }
             catch (Exception ex)
             {
@@ -134,7 +131,7 @@ namespace Frends.FTP.UploadFiles.Logging
             _log.Debug(message);
         }
 
-        private string GetSourceEndPointName(BatchContext context)
+        private static string GetSourceEndPointName(BatchContext context)
         {
             if (context.Source.FilePaths != null)
                 return "Files:" + string.Join(", ", context.Source.FilePaths);
@@ -142,7 +139,7 @@ namespace Frends.FTP.UploadFiles.Logging
             return "File: " + context.Source.Directory + context.Source.FileName;
         }
 
-        private string GetDestinationEndPointName(BatchContext context)
+        private static string GetDestinationEndPointName(BatchContext context)
         {
             return $"FTP://{context.Connection.Address}/{context.Destination.Directory}/{context.Destination.FileName}";
         }
@@ -159,7 +156,8 @@ namespace Frends.FTP.UploadFiles.Logging
             {
                 sourceFile = transfer.SourceFile.Name;
                 destinationFile = transfer.DestinationFileNameWithMacrosExpanded;
-                localFileName = context.Info.WorkDir;
+                if (context != null)
+                    localFileName = context.Info != null ? context.Info.WorkDir : string.Empty;
             }
 
             var transferStarted = DateTime.UtcNow;

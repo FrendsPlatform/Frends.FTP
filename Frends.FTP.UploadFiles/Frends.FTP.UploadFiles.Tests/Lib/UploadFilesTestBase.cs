@@ -39,14 +39,14 @@ public class UploadFilesTestBase
     public void TearDown()
     {
         if (Directory.Exists(Dir)) Directory.Delete(Dir, true);
-        var client = new FtpClient(Helpers.FtpHost, Helpers.FtpPort, Helpers.FtpUsername, Helpers.FtpPassword)
+        using (var client = new FtpClient(Helpers.FtpHost, Helpers.FtpPort, Helpers.FtpUsername, Helpers.FtpPassword))
         {
-            ConnectTimeout = 10
-        };
-        client.Connect();
-        if (client.DirectoryExists("/"))
-            client.DeleteDirectory("/");
-        client.Disconnect();
-        client.Dispose();
+            client.ConnectTimeout = 10;
+            client.Connect();
+            if (client.DirectoryExists("/"))
+                client.DeleteDirectory("/");
+            client.Disconnect();
+            client.Dispose();
+        }
     }
 }

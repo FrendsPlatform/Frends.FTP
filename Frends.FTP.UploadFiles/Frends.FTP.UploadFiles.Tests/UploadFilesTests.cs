@@ -35,7 +35,7 @@ public class UploadFilesTests
             Directory = _tempDir,
             FileName = _file,
             DirectoryToMoveAfterTransfer = Path.Combine(_tempDir, "Done"),
-            FileNameAfterTransfer = _file + Guid.NewGuid().ToString(),
+            FileNameAfterTransfer = _file + Guid.NewGuid(),
             NotFoundAction = default,
             FilePaths = _tempDir,
             Operation = default,
@@ -94,15 +94,15 @@ public class UploadFilesTests
         if (Directory.Exists(_tempDir))
             Directory.Delete(_tempDir, true);
 
-        var client = new FtpClient(Helpers.FtpHost, Helpers.FtpPort, Helpers.FtpUsername, Helpers.FtpPassword)
+        using (var client = new FtpClient(Helpers.FtpHost, Helpers.FtpPort, Helpers.FtpUsername, Helpers.FtpPassword))
         {
-            ConnectTimeout = 10
-        };
-        client.Connect();
-        if (client.DirectoryExists("/"))
-            client.DeleteDirectory("/");
-        client.Disconnect();
-        client.Dispose();
+            client.ConnectTimeout = 10;
+            client.Connect();
+            if (client.DirectoryExists("/"))
+                client.DeleteDirectory("/");
+            client.Disconnect();
+            client.Dispose();
+        }
     }
 
     [TestMethod]
@@ -460,7 +460,7 @@ public class UploadFilesTests
     [TestMethod]
     public void UploadFTPS_ConnectionTimeout()
     {
-        var timeouts = new[] { 1, 100 };
+        var timeouts = new[] { 10, 15, 50, 100 };
 
         foreach (var timeout in timeouts)
         {
@@ -674,7 +674,7 @@ public class UploadFilesTests
 
         var ex = Assert.ThrowsException<AggregateException>(() =>
         {
-            var result = FTP.UploadFiles(_source, _destination, connection, new Options(), new Info(),
+            FTP.UploadFiles(_source, _destination, connection, new Options(), new Info(),
                 default);
 
         });

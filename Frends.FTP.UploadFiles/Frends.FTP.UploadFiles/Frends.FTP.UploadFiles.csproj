@@ -2,6 +2,7 @@
 
   <PropertyGroup>
 	<TargetFrameworks>net6.0;netstandard2.0;net471</TargetFrameworks>
+	<LangVersion>latest</LangVersion>
     <authors>Jefim Borissov</authors>
     <copyright>Frends</copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -9,7 +10,7 @@
     <IncludeSource>true</IncludeSource>
     <PackageTags>Frends</PackageTags>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <Description>Task for uploading files to FTP(S) servers.</Description>
   </PropertyGroup>
 

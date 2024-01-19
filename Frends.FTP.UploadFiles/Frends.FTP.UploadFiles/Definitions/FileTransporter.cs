@@ -132,30 +132,23 @@ namespace Frends.FTP.UploadFiles.Definitions
                 return FormFailedFileTransferResult(userResultMessage);
             }
 
-            return FileTransporter.FormResultFromSingleTransferResults(Result);
+            return FormResultFromSingleTransferResults(Result);
         }
 
         #region Helper methods
         private static FtpClient CreateFtpClient(Connection connect)
         {
-            var client = new FtpClient(connect.Address, connect.Port, connect.UserName, connect.Password);
-            switch (connect.SslMode)
+            var client = new FtpClient(connect.Address, connect.Port, connect.UserName, connect.Password)
             {
-                case FtpsSslMode.None:
-                    client.EncryptionMode = FtpEncryptionMode.None;
-                    break;
-                case FtpsSslMode.Implicit:
-                    client.EncryptionMode = FtpEncryptionMode.Implicit;
-                    break;
-                case FtpsSslMode.Explicit:
-                    client.EncryptionMode = FtpEncryptionMode.Explicit;
-                    break;
-                case FtpsSslMode.Auto:
-                    client.EncryptionMode = FtpEncryptionMode.Auto;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                EncryptionMode = connect.SslMode switch
+                {
+                    FtpsSslMode.None => FtpEncryptionMode.None,
+                    FtpsSslMode.Implicit => FtpEncryptionMode.Implicit,
+                    FtpsSslMode.Explicit => FtpEncryptionMode.Explicit,
+                    FtpsSslMode.Auto => FtpEncryptionMode.Auto,
+                    _ => FtpEncryptionMode.None,
+                }
+            };
 
             if (connect.UseFTPS)
             {
@@ -167,7 +160,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                     }
                     else
                     {
-                        using (X509Store store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
+                        using (var store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
                         {
                             try
                             {
@@ -210,6 +203,10 @@ namespace Frends.FTP.UploadFiles.Definitions
 
             // Client lib timeout is in milliseconds, ours is in seconds, thus *1000 conversion
             client.ConnectTimeout = connect.ConnectionTimeout * 1000;
+            client.ReadTimeout = connect.ConnectionTimeout * 1000;
+            client.DataConnectionConnectTimeout = connect.ConnectionTimeout * 1000;
+            client.DataConnectionReadTimeout = connect.ConnectionTimeout * 1000;
+
             client.LocalFileBufferSize = connect.BufferSize;
 
             // Transport type Binary / ASCII
@@ -228,17 +225,12 @@ namespace Frends.FTP.UploadFiles.Definitions
             }
 
             // Active/passive
-            switch (connect.Mode)
+            client.DataConnectionType = connect.Mode switch
             {
-                case FtpMode.Active:
-                    client.DataConnectionType = FtpDataConnectionType.AutoActive;
-                    break;
-                case FtpMode.Passive:
-                    client.DataConnectionType = FtpDataConnectionType.AutoPassive;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException($"Unknown FTP mode {connect.Mode}");
-            }
+                FtpMode.Active => FtpDataConnectionType.AutoActive,
+                FtpMode.Passive => FtpDataConnectionType.AutoPassive,
+                _ => throw new ArgumentOutOfRangeException($"Unknown FTP mode {connect.Mode}"),
+            };
 
             return client;
         }
@@ -266,15 +258,13 @@ namespace Frends.FTP.UploadFiles.Definitions
             if (!files.Any())
                 return new Tuple<List<FileItem>, bool>(fileItems, true);
 
-            // create List of FileItems from found files.
-            foreach (var file in files)
+            // create List of FileItems from found files.            
+            foreach (var item in files
+                .Where(e => Util.FileMatchesMask(Path.GetFileName(e), _batchContext.Source.FileName))
+                .Select(e => new FileItem(Path.GetFullPath(e))))
             {
-                if (Util.FileMatchesMask(Path.GetFileName(file), _batchContext.Source.FileName))
-                {
-                    FileItem item = new FileItem(Path.GetFullPath(file));
-                    _logger.NotifyInformation(_batchContext, $"FILE LIST {item.FullPath}");
-                    fileItems.Add(item);
-                }
+                _logger.NotifyInformation(_batchContext, $"FILE LIST {item.FullPath}");
+                fileItems.Add(item);
             }
 
             return new Tuple<List<FileItem>, bool>(fileItems, true);
@@ -284,17 +274,15 @@ namespace Frends.FTP.UploadFiles.Definitions
         {
             // Consistent forward slashes
             path = path.Replace(@"\", "/");
-            foreach (string dir in path.Split('/'))
+            // Ignoring leading/ending/multiple slashes
+            foreach (string dir in path.Split('/').Where(e => !string.IsNullOrWhiteSpace(e)))
             {
-                // Ignoring leading/ending/multiple slashes
-                if (!string.IsNullOrWhiteSpace(dir))
-                {
-                    if (!client.DirectoryExists(dir))
-                        client.CreateDirectory(dir);
+                if (!client.DirectoryExists(dir))
+                    client.CreateDirectory(dir);
 
-                    client.SetWorkingDirectory(dir);
-                }
+                client.SetWorkingDirectory(dir);
             }
+
             // Going back to default directory
             client.SetWorkingDirectory("/");
         }
@@ -356,12 +344,11 @@ namespace Frends.FTP.UploadFiles.Definitions
                     $"{errorMessages.Count} Errors: {string.Join(", ", errorMessages)}");
 
             var transferredFiles = results.Select(x => x.TransferredFile).Where(x => x != null).ToList();
-            if (transferredFiles.Any())
-                userResultMessage = MessageJoin(userResultMessage,
-                    string.Format("{0} files transferred: {1}", transferredFiles.Count,
-                        string.Join(", ", transferredFiles)));
-            else
-                userResultMessage = MessageJoin(userResultMessage, "No files transferred.");
+            userResultMessage = transferredFiles.Any()
+            ? MessageJoin(userResultMessage,
+                string.Format("{0} files transferred: {1}", transferredFiles.Count,
+                    string.Join(", ", transferredFiles)))
+            : MessageJoin(userResultMessage, "No files transferred.");
 
             return userResultMessage;
         }

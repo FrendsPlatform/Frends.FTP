@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Frends.FTP.UploadFiles.Definitions
@@ -191,14 +192,13 @@ namespace Frends.FTP.UploadFiles.Definitions
             return mask;
         }
 
-        private static bool IsFileMacro(string input, IDictionary<string, Func<string, string>> macroDictionary)
+        private static bool IsFileMacro(string s, IDictionary<string, Func<string, string>> macroDictionary)
         {
-            if (input == null)
+            if (s == null)
                 return false;
 
-            foreach (var key in macroDictionary.Keys)
-                if (input.ToUpperInvariant().Contains(key.ToUpperInvariant()))
-                    return true;
+            if (macroDictionary.Keys.Where(e => s.ToUpperInvariant().Contains(e.ToUpperInvariant())).Any())
+                return true;
 
             return false;
         }
