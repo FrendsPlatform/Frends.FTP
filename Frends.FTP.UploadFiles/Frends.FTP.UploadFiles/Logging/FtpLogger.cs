@@ -54,9 +54,7 @@ namespace Frends.FTP.UploadFiles.Logging
             _log = log;
         }
 
-#pragma warning disable
         ~FtpLogger() => Dispose(false);
-#pragma warning disable
 
         public void NotifyError(BatchContext context, string msg, Exception e)
         {
