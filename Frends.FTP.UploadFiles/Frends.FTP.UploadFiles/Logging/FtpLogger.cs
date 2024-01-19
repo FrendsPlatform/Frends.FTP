@@ -39,7 +39,7 @@ namespace Frends.FTP.UploadFiles.Logging
     }
 
     /// <summary>
-    /// SFTP internal logger implementation
+    /// FTP internal logger implementation
     /// </summary>
     internal class FtpLogger : IFtpLogger
     {
@@ -57,6 +57,7 @@ namespace Frends.FTP.UploadFiles.Logging
         ~FtpLogger()
         {
             Dispose(false);
+
         }
 
         public void NotifyError(BatchContext context, string msg, Exception e)
