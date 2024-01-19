@@ -54,11 +54,7 @@ namespace Frends.FTP.UploadFiles.Logging
             _log = log;
         }
 
-        ~FtpLogger()
-        {
-            Dispose(false);
-
-        }
+        ~FtpLogger() => Dispose(false);
 
         public void NotifyError(BatchContext context, string msg, Exception e)
         {
@@ -135,7 +131,7 @@ namespace Frends.FTP.UploadFiles.Logging
             _log.Debug(message);
         }
 
-        private string GetSourceEndPointName(BatchContext context)
+        private static string GetSourceEndPointName(BatchContext context)
         {
             if (context.Source.FilePaths != null)
                 return "Files:" + string.Join(", ", context.Source.FilePaths);
@@ -143,7 +139,7 @@ namespace Frends.FTP.UploadFiles.Logging
             return "File: " + context.Source.Directory + context.Source.FileName;
         }
 
-        private string GetDestinationEndPointName(BatchContext context)
+        private static string GetDestinationEndPointName(BatchContext context)
         {
             return $"FTP://{context.Connection.Address}/{context.Destination.Directory}/{context.Destination.FileName}";
         }

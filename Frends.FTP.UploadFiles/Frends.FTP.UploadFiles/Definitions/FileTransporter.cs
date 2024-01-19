@@ -138,14 +138,16 @@ namespace Frends.FTP.UploadFiles.Definitions
         #region Helper methods
         private static FtpClient CreateFtpClient(Connection connect)
         {
-            var client = new FtpClient(connect.Address, connect.Port, connect.UserName, connect.Password);
-            client.EncryptionMode = connect.SslMode switch
+            var client = new FtpClient(connect.Address, connect.Port, connect.UserName, connect.Password)
             {
-                FtpsSslMode.None => FtpEncryptionMode.None,
-                FtpsSslMode.Implicit => FtpEncryptionMode.Implicit,
-                FtpsSslMode.Explicit => FtpEncryptionMode.Explicit,
-                FtpsSslMode.Auto => FtpEncryptionMode.Auto,
-                _ => throw new ArgumentOutOfRangeException(),
+                EncryptionMode = connect.SslMode switch
+                {
+                    FtpsSslMode.None => FtpEncryptionMode.None,
+                    FtpsSslMode.Implicit => FtpEncryptionMode.Implicit,
+                    FtpsSslMode.Explicit => FtpEncryptionMode.Explicit,
+                    FtpsSslMode.Auto => FtpEncryptionMode.Auto,
+                    _ => FtpEncryptionMode.None,
+                }
             };
 
             if (connect.UseFTPS)
@@ -256,10 +258,11 @@ namespace Frends.FTP.UploadFiles.Definitions
             if (!files.Any())
                 return new Tuple<List<FileItem>, bool>(fileItems, true);
 
-            // create List of FileItems from found files.
-            foreach (var file in files.Where(e => Util.FileMatchesMask(Path.GetFileName(e), _batchContext.Source.FileName)))
+            // create List of FileItems from found files.            
+            foreach (var item in files
+                .Where(e => Util.FileMatchesMask(Path.GetFileName(e), _batchContext.Source.FileName))
+                .Select(e => new FileItem(Path.GetFullPath(e))))
             {
-                var item = new FileItem(Path.GetFullPath(file));
                 _logger.NotifyInformation(_batchContext, $"FILE LIST {item.FullPath}");
                 fileItems.Add(item);
             }
