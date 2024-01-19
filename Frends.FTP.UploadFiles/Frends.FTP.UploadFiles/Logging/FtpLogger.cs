@@ -54,7 +54,9 @@ namespace Frends.FTP.UploadFiles.Logging
             _log = log;
         }
 
+#pragma warning disable CodeQLFinalizer
         ~FtpLogger() => Dispose(false);
+#pragma warning restore CodeQLFinalizer
 
         public void NotifyError(BatchContext context, string msg, Exception e)
         {
