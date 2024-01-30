@@ -242,8 +242,9 @@ internal class FileTransporter
 
         list.AddRange(ftpFiles
             .Where(e => e.Type != FtpFileSystemObjectType.Directory
-            || e.Type != FtpFileSystemObjectType.Link
-            || !Util.FileMatchesMask(e.Name, _batchContext.Source.FileName)).Select(f => new FileItem(f)));
+            && e.Type != FtpFileSystemObjectType.Link
+            && Util.FileMatchesMask(e.Name, _batchContext.Source.FileName))
+            .Select(f => new FileItem(f)));
 
         return new Tuple<List<FileItem>, bool>(list, true);
     }
