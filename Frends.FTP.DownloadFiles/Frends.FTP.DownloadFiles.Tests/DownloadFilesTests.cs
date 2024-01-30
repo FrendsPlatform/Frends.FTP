@@ -241,7 +241,7 @@ namespace Frends.FTP.DownloadFiles.Tests
         {
             var sourceDir = "ftp";
             FtpHelper.CreateDirectoryOnFTP(sourceDir);
-            
+
             var source = new Source { Directory = sourceDir, FileName = "*", Operation = SourceOperation.Nothing, NotFoundAction = SourceNotFoundAction.Error };
             var destination = new Destination { Directory = LocalDirFullPath, Action = DestinationAction.Error };
             var connection = new Connection
