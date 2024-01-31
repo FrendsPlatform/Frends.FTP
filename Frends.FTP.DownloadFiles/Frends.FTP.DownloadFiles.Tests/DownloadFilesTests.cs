@@ -263,7 +263,6 @@ namespace Frends.FTP.DownloadFiles.Tests
             };
 
             var ex = Assert.Throws<Exception>(() => FTP.DownloadFiles(source, destination, connection, options, new Info(), new CancellationToken()));
-            Console.WriteLine(ex.Message);
             Assert.IsTrue(ex.Message.Contains("1 Errors: No source files found from directory"));
 
             FtpHelper.DeleteDirectoryOnFTP(sourceDir);
