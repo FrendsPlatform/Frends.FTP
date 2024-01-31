@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.1.3] - 2024-01-30
+### Fixed
+- Fixed bug when using wildcard filemask and no source files were found.
+
 ## [1.1.2] - 2024-01-16
 ### Improved
 - Improved Operations log by adding more logging steps.

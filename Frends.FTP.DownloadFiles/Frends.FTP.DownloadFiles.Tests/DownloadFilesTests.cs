@@ -235,5 +235,37 @@ namespace Frends.FTP.DownloadFiles.Tests
             Assert.IsTrue(result.Success, result.UserResultMessage);
             Assert.AreEqual(1, result.SuccessfulTransferCount);
         }
+
+        [Test]
+        public void DownloadFTP_NoSourceFiles()
+        {
+            var sourceDir = "ftp";
+            FtpHelper.CreateDirectoryOnFTP(sourceDir);
+
+            var source = new Source { Directory = sourceDir, FileName = "*", Operation = SourceOperation.Nothing, NotFoundAction = SourceNotFoundAction.Error };
+            var destination = new Destination { Directory = LocalDirFullPath, Action = DestinationAction.Error };
+            var connection = new Connection
+            {
+                Address = FtpHelper.FtpHost,
+                UserName = FtpHelper.FtpUsername,
+                Password = FtpHelper.FtpPassword,
+                Port = FtpHelper.FtpPort
+            };
+
+            var options = new Options
+            {
+                CreateDestinationDirectories = true,
+                OperationLog = true,
+                PreserveLastModified = true,
+                RenameDestinationFileDuringTransfer = true,
+                RenameSourceFileBeforeTransfer = true,
+                ThrowErrorOnFail = true
+            };
+
+            var ex = Assert.Throws<Exception>(() => FTP.DownloadFiles(source, destination, connection, options, new Info(), new CancellationToken()));
+            Assert.IsTrue(ex.Message.Contains("1 Errors: No source files found from directory"));
+
+            FtpHelper.DeleteDirectoryOnFTP(sourceDir);
+        }
     }
 }
