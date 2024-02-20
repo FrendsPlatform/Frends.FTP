@@ -167,14 +167,11 @@ public static class FTP
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (file.Type == FtpFileSystemObjectType.Link || file.Type == FtpFileSystemObjectType.Directory)
+            if (file.Name != "." && file.Name != ".." && file.Type != FtpFileSystemObjectType.File)
                 continue; // skip directories and links
 
-            if (file.Name != "." && file.Name != ".." && file.Type == FtpFileSystemObjectType.File)
-            {
-                if (Regex.IsMatch(file.Name, regexStr, RegexOptions.IgnoreCase) || FileMatchesMask(file.Name, input.FileMask))
-                    files.Add(new FileItem(file));
-            }
+            if (Regex.IsMatch(file.Name, regexStr, RegexOptions.IgnoreCase) || FileMatchesMask(file.Name, input.FileMask))
+                files.Add(new FileItem(file));
         }
 
         return files;
