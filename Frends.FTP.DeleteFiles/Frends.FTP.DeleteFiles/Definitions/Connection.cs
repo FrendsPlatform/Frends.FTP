@@ -8,7 +8,7 @@ using Frends.FTP.DeleteFiles.Enums;
 public class Connection
 {
     /// <summary>
-    /// FTP(S) host address
+    /// FTP(S) host address.
     /// </summary>
     /// <example>my.ftp.server.com</example>
     [DisplayFormat(DataFormatString = "Text")]
