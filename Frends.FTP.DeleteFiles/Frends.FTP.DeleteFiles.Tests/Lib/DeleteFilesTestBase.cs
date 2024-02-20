@@ -10,12 +10,6 @@ public class DeleteFilesTestBase
     protected Input input = new();
     protected string FtpDir = string.Empty;
 
-    [OneTimeSetUp]
-    public void OneTimeSetUp()
-    {
-        FtpHelper = new FtpHelper();
-    }
-
     [OneTimeTearDown]
     public void OneTimeTearDown()
     {
