@@ -30,10 +30,11 @@ public static class FTP
     public static async Task<Result> DeleteFiles([PropertyTab] Input input, [PropertyTab] Connection connection, CancellationToken cancellationToken)
     {
         var deleted = new List<string>();
-        using var client = CreateFtpClient(connection);
 
         try
         {
+            using var client = CreateFtpClient(connection);
+
             client.Connect();
 
             if (!client.IsConnected) throw new ArgumentException($"Error while connecting to destination: {connection.Address}");
@@ -55,11 +56,6 @@ public static class FTP
         catch (Exception ex)
         {
             throw new ArgumentException($"Error occured while deleting files: {ex.Message}\nDeleted files: {string.Join("\n", deleted)}");
-        }
-        finally
-        {
-            client.Disconnect();
-            client.Dispose();
         }
     }
 
@@ -174,13 +170,10 @@ public static class FTP
             if (file.Type == FtpFileSystemObjectType.Link || file.Type == FtpFileSystemObjectType.Directory)
                 continue; // skip directories and links
 
-            if (file.Name != "." && file.Name != "..")
+            if (file.Name != "." && file.Name != ".." && file.Type == FtpFileSystemObjectType.File)
             {
-                if (file.Type == FtpFileSystemObjectType.File)
-                {
-                    if (Regex.IsMatch(file.Name, regexStr, RegexOptions.IgnoreCase) || FileMatchesMask(file.Name, input.FileMask))
-                        files.Add(new FileItem(file));
-                }
+                if (Regex.IsMatch(file.Name, regexStr, RegexOptions.IgnoreCase) || FileMatchesMask(file.Name, input.FileMask))
+                    files.Add(new FileItem(file));
             }
         }
 
@@ -190,7 +183,7 @@ public static class FTP
     private static bool FileMatchesMask(string filename, string mask)
     {
         const string regexEscape = "<regex>";
-        string pattern;
+        string pattern = string.Empty;
 
         // Check is pure regex wished to be used for matching
         if (mask != null && mask.StartsWith(regexEscape))
@@ -198,7 +191,7 @@ public static class FTP
             // Use substring instead of string.replace just in case some has regex like '<regex>//File<regex>' or something else like that
             pattern = mask[regexEscape.Length..];
         }
-        else
+        else if (mask != null)
         {
             pattern = mask.Replace(".", "\\.");
             pattern = pattern.Replace("*", ".*");

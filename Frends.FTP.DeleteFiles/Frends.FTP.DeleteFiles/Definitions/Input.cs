@@ -2,7 +2,6 @@
 
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Frends.FTP.DeleteFiles.Enums;
 
 /// <summary>
 /// Input class usually contains parameters that are required.
@@ -19,6 +18,7 @@ public class Input
 
     /// <summary>
     /// Pattern to match (Optional).
+    /// If left empty, every file is deleted from given directory.
     /// </summary>
     /// <example>*.txt</example>
     [DisplayFormat(DataFormatString = "Text")]
