@@ -23,10 +23,10 @@ public static class FTP
     /// Frends Task for deleting files from FTP(S) server.
     /// [Documentation](https://tasks.frends.com/tasks/frends-tasks/Frends.FTP.DeleteFiles).
     /// </summary>
-    /// <param name="input">What to repeat.</param>
+    /// <param name="input">Input parameters.</param>
     /// <param name="connection">Connection parameters.</param>
     /// <param name="cancellationToken">Cancellation token given by Frends.</param>
-    /// <returns>Object { string Output }.</returns>
+    /// <returns>Object { List&lt;string&gt; Files }.</returns>
     public static async Task<Result> DeleteFiles([PropertyTab] Input input, [PropertyTab] Connection connection, CancellationToken cancellationToken)
     {
         var deleted = new List<string>();

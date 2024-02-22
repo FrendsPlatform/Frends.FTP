@@ -3,7 +3,6 @@ namespace Frends.FTP.DeleteFiles.Tests;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentFTP;
 using Frends.FTP.DeleteFiles.Definitions;
 using Frends.FTP.DeleteFiles.Enums;
 using Frends.FTP.DeleteFiles.Tests.Lib;
