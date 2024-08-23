@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.2.0] - 2024-08-23
+### Changed
+- Updated the Newtonsoft.Json package to version 13.0.3.
+
 ## [1.1.3] - 2024-01-30
 ### Fixed
 - Fixed bug when using wildcard filemask and no source files were found.
