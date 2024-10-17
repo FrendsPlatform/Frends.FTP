@@ -89,7 +89,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             {
                 CleanUpFiles();
             }
-            
+
             return _result;
         }
 
