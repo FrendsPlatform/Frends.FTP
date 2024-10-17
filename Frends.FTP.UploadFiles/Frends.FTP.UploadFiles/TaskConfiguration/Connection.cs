@@ -116,9 +116,9 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
 
         /// <summary>
         /// If set, Task will do checksum check for the transferred file after the transfer. If the checksum fails Task can be configured to retry the transfer.
-        /// If Checksumn fails the transferred file is removed and Task will throw an error, because the content is most likely corrupted.
+        /// If Checksum fails the transferred file is removed and Task will throw an error, because the content is most likely corrupted.
         /// </summary>
-        /// <example>false</example>
+        /// <example>VerifyOptions.None</example>
         [DefaultValue(VerifyOptions.None)]
         public VerifyOptions VerifyOption { get; set; }
 
@@ -128,7 +128,7 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         /// </summary>
         /// <example>5</example>
         [UIHint(nameof(VerifyOptions), "", VerifyOptions.Retry)]
-        [DefaultValue(0)]
+        [DefaultValue(3)]
         public int RetryAttempts { get; set; }
 
         #region FTPS settings

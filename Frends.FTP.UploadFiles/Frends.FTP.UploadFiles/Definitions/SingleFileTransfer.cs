@@ -169,7 +169,11 @@ namespace Frends.FTP.UploadFiles.Definitions
                 doRename ? "temporary " : string.Empty,
                 _destinationFileDuringTransfer);
 
-            var verifyOption = (FtpVerify)Enum.Parse(typeof(FtpVerify), verifyOptions.ToString());
+            if (!Enum.TryParse<FtpVerify>(verifyOptions.ToString(), out var verifyOption))
+            {
+                // Handle the parsing failure, perhaps set a default value or log an error
+                verifyOption = FtpVerify.None; // or choose an appropriate default
+            }
 
             _client.UploadFile(
                 _sourceFileDuringTransfer,
@@ -179,8 +183,16 @@ namespace Frends.FTP.UploadFiles.Definitions
 
             if ((verifyOptions == VerifyOptions.Retry || verifyOptions == VerifyOptions.Throw) && _client.CompareFile(_sourceFileDuringTransfer, _destinationFileDuringTransfer, FtpCompareOption.Auto) == FtpCompareResult.NotEqual)
             {
-                _client.DeleteFile(_destinationFileDuringTransfer);
-                throw new ArgumentException($"Transferred file size or Checksum was different from the source file. File {Path.GetFileName(_sourceFileDuringTransfer)} was most likely corrupted during transfer.");
+                try
+                {
+                    _client.DeleteFile(_destinationFileDuringTransfer);
+                    throw new ArgumentException($"Transferred file size or Checksum was different from the source file. File {Path.GetFileName(_sourceFileDuringTransfer)} was most likely corrupted during transfer.");
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception and decide whether to proceed or rethrow
+                    _logger.NotifyError(_batchContext, $"Failed to delete corrupted file '{_destinationFileDuringTransfer}': {ex.Message}", ex);
+                }
             }
 
             if (!doRename) return;
