@@ -2,6 +2,7 @@
 using Frends.FTP.UploadFiles.TaskConfiguration;
 using Frends.FTP.UploadFiles.TaskResult;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 using System.Threading;
 
 namespace Frends.FTP.UploadFiles.Tests;
@@ -22,7 +23,7 @@ public class DestinationActionTests : UploadFilesTestBase
         Assert.IsTrue(result1.Success, result1.UserResultMessage);
         Assert.IsTrue(result2.Success, result2.UserResultMessage);
         Assert.AreEqual(1, result2.SuccessfulTransferCount);
-        Assert.AreEqual("mycontentmycontent", Helpers.GetFileFromFtp(nameof(DestinationAction_Append_NoRenameInTransfer), "file1.txt"));
+        Assert.AreEqual("mycontentmycontent", File.ReadAllText(Helpers.GetFileFromFtp(nameof(DestinationAction_Append_NoRenameInTransfer), "file1.txt")));
     }
 
     [TestMethod]
@@ -38,7 +39,7 @@ public class DestinationActionTests : UploadFilesTestBase
         Assert.IsTrue(result1.Success, result1.UserResultMessage);
         Assert.IsTrue(result2.Success, result2.UserResultMessage);
         Assert.AreEqual(1, result2.SuccessfulTransferCount);
-        Assert.AreEqual("mycontentmycontent", Helpers.GetFileFromFtp(nameof(DestinationAction_Append_WithRenameInTransfer), "file1.txt"));
+        Assert.AreEqual("mycontentmycontent", File.ReadAllText(Helpers.GetFileFromFtp(nameof(DestinationAction_Append_WithRenameInTransfer), "file1.txt")));
     }
 
     private Result CallUploadFiles(

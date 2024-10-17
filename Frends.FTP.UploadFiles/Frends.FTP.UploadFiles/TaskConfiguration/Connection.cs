@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Frends.FTP.UploadFiles.Enums;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Frends.FTP.UploadFiles.TaskConfiguration
@@ -112,6 +113,23 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         /// <example>4096</example>
         [DefaultValue(4096)]
         public int BufferSize { get; set; }
+
+        /// <summary>
+        /// If set, Task will do checksum check for the transferred file after the transfer. If the checksum fails Task can be configured to retry the transfer.
+        /// If Checksumn fails the transferred file is removed and Task will throw an error, because the content is most likely corrupted.
+        /// </summary>
+        /// <example>false</example>
+        [DefaultValue(VerifyOptions.None)]
+        public VerifyOptions VerifyOption { get; set; }
+
+        /// <summary>
+        /// Value for how many retries the Task will do while uploading the file.
+        /// Task will check the checksum of the file and based on that retries if necessary.
+        /// </summary>
+        /// <example>5</example>
+        [UIHint(nameof(VerifyOptions), "", VerifyOptions.Retry)]
+        [DefaultValue(0)]
+        public int RetryAttempts { get; set; }
 
         #region FTPS settings
 
