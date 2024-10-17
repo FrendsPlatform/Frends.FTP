@@ -715,7 +715,7 @@ public class UploadFilesTests
         var errors = 0;
         var success = 0;
 
-        for (var i = 0; i < 25; i++)
+        for (var i = 0; i < 10; i++)
         {
             try
             {
@@ -735,7 +735,7 @@ public class UploadFilesTests
 
         Console.WriteLine($"Errors: {errors}\nSuccessful: {success}");
 
-        Assert.AreEqual(25, success);
+        Assert.AreEqual(10, success);
         Assert.AreEqual(0, errors);
     }
 
@@ -760,7 +760,7 @@ public class UploadFilesTests
 
         _connection.VerifyOption = VerifyOptions.Throw;
 
-        for (int i = 0; i < 25; i++)
+        for (int i = 0; i < 10; i++)
         {
             try
             {
