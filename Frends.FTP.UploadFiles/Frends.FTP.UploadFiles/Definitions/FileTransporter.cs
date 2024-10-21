@@ -197,7 +197,8 @@ namespace Frends.FTP.UploadFiles.Definitions
                 client.DataConnectionEncryption = connect.SecureDataChannel;
             }
 
-            client.NoopInterval = connect.KeepConnectionAliveInterval;
+            if (connect.KeepConnectionAliveInterval > 0)
+                client.NoopInterval = connect.KeepConnectionAliveInterval;
 
             if (!string.IsNullOrWhiteSpace(connect.Encoding)) client.Encoding = Encoding.GetEncoding(connect.Encoding);
 
@@ -206,6 +207,9 @@ namespace Frends.FTP.UploadFiles.Definitions
             client.ReadTimeout = connect.ConnectionTimeout * 1000;
             client.DataConnectionConnectTimeout = connect.ConnectionTimeout * 1000;
             client.DataConnectionReadTimeout = connect.ConnectionTimeout * 1000;
+
+            if (connect.VerifyOption == VerifyOptions.Retry)
+                client.RetryAttempts = connect.RetryAttempts > 0 ? connect.RetryAttempts : 0;
 
             client.LocalFileBufferSize = connect.BufferSize;
 
@@ -313,7 +317,7 @@ namespace Frends.FTP.UploadFiles.Definitions
         {
             var success = singleResults.All(x => x.Success);
             var actionSkipped = success && singleResults.All(x => x.ActionSkipped);
-            var userResultMessage = FileTransporter.GetUserResultMessage(singleResults.ToList());
+            var userResultMessage = GetUserResultMessage(singleResults.ToList());
 
             var transferErrors = singleResults.Where(r => !r.Success).GroupBy(r => r.TransferredFile ?? "--unknown--")
                     .ToDictionary(rg => rg.Key, rg => (IList<string>)rg.SelectMany(r => r.ErrorMessages).ToList());

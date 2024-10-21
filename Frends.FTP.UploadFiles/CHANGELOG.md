@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.2.0]
+### Added
+- Added check for file checksum and size.
+- Added retry attempts parameter to retry the transfer if checksum or file size differs.
+
 ## [1.1.1] - 2024-01-18
 ### Added
 - Added setup for FtpClient.ReadTimeout, FtpClient.DataConnectionConnectTimeout and FtpClient.DataConnectionReadTimeout which were all defaulting to 15 seconds.
