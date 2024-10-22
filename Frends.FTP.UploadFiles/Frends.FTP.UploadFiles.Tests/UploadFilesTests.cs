@@ -688,7 +688,7 @@ public class UploadFilesTests
         Assert.IsTrue(ex.Message.Contains("The remote certificate was rejected by the provided RemoteCertificateValidationCallback."));
     }
 
-    //[Test]
+    [Test]
     public void UploadFTP_TestVerifyOptionsRetry()
     {
         var path = Helpers.CreateLargeDummyZipFiles(_tempDir, 10);
@@ -737,7 +737,7 @@ public class UploadFilesTests
         Assert.AreEqual(0, errors);
     }
 
-    //[Test]
+    [Test]
     public void UploadFTP_TestVerifyOptionsThrow()
     {
         var path = Helpers.CreateLargeDummyZipFiles(_tempDir, 10);
