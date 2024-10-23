@@ -1,4 +1,5 @@
 ﻿using FluentFTP;
+using FluentFTP.Helpers;
 using Frends.FTP.UploadFiles.Enums;
 using Frends.FTP.UploadFiles.Logging;
 using System;
@@ -61,7 +62,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                             AppendDestinationFile();
                             break;
                         case DestinationAction.Overwrite:
-                            PutDestinationFile(removeExisting: true);
+                            PutDestinationFile(_batchContext.Connection.VerifyOption, removeExisting: true);
                             break;
                         case DestinationAction.Error:
                             Trace(TransferState.CheckIfDestinationFileExists, "Checking if destination file {0} exists", SourceFile.Name);
@@ -70,7 +71,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                 }
                 else
                 {
-                    PutDestinationFile();
+                    PutDestinationFile(_batchContext.Connection.VerifyOption);
                 }
 
                 if (_batchContext.Options.PreserveLastModified)
@@ -78,14 +79,17 @@ namespace Frends.FTP.UploadFiles.Definitions
 
                 ExecuteSourceOperation();
                 _logger.LogTransferSuccess(this, _batchContext);
-                CleanUpFiles();
             }
             catch (Exception ex)
             {
                 var sourceFileRestoreMessage = RestoreSourceFileAfterErrorIfItWasRenamed();
                 HandleTransferError(ex, sourceFileRestoreMessage);
             }
-            CleanUpFiles();
+            finally
+            {
+                CleanUpFiles();
+            }
+
             return _result;
         }
 
@@ -153,19 +157,43 @@ namespace Frends.FTP.UploadFiles.Definitions
             }
         }
 
-        private void PutDestinationFile(bool removeExisting = false)
+        private void PutDestinationFile(VerifyOptions verifyOptions, bool removeExisting = false)
         {
             var doRename = _batchContext.Options.RenameDestinationFileDuringTransfer;
 
             _destinationFileDuringTransfer = doRename ? Util.CreateUniqueFileName() : DestinationFileNameWithMacrosExpanded;
+
             Trace(
                 TransferState.PutFile,
                 "Uploading {0}destination file {1}",
                 doRename ? "temporary " : string.Empty,
                 _destinationFileDuringTransfer);
 
+            if (!Enum.TryParse<FtpVerify>(verifyOptions.ToString(), out var verifyOption))
+            {
+                // Handle the parsing failure, perhaps set a default value or log an error
+                verifyOption = FtpVerify.None; // or choose an appropriate default
+            }
+
             _client.UploadFile(
-                _sourceFileDuringTransfer, _destinationFileDuringTransfer, FtpRemoteExists.Overwrite);
+                _sourceFileDuringTransfer,
+                _destinationFileDuringTransfer,
+                existsMode: FtpRemoteExists.Overwrite,
+                verifyOptions: verifyOption);
+
+            if ((verifyOptions == VerifyOptions.Retry || verifyOptions == VerifyOptions.Throw) && _client.CompareFile(_sourceFileDuringTransfer, _destinationFileDuringTransfer, FtpCompareOption.Auto) == FtpCompareResult.NotEqual)
+            {
+                try
+                {
+                    _client.DeleteFile(_destinationFileDuringTransfer);
+                    throw new ArgumentException($"Transferred file size or Checksum was different from the source file. File {Path.GetFileName(_sourceFileDuringTransfer)} was most likely corrupted during transfer.");
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception and decide whether to proceed or rethrow
+                    _logger.NotifyError(_batchContext, $"Failed to delete corrupted file '{_destinationFileDuringTransfer}': {ex.Message}", ex);
+                }
+            }
 
             if (!doRename) return;
 
@@ -193,6 +221,11 @@ namespace Frends.FTP.UploadFiles.Definitions
         /// </summary>
         private void RestoreModified()
         {
+            Trace(
+                TransferState.RestoreModified,
+                "Restoring the modified timestamp on transferred file {0}",
+                _destinationFileDuringTransfer);
+
             _client.SetModifiedTime(DestinationFileNameWithMacrosExpanded, SourceFile.Modified);
         }
 

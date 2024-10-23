@@ -14,6 +14,8 @@
         RenameDestinationFile,
         CleanUpFiles,
         CheckIfDestinationFileExists,
-        DestinationFileExists
+        DestinationFileExists,
+        Checksum,
+        RestoreModified
     }
 }
