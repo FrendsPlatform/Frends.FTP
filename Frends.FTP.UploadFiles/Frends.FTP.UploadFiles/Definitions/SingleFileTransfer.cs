@@ -191,7 +191,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                 {
                     // Log the exception and decide whether to proceed or rethrow
                     _logger.NotifyError(_batchContext, $"Failed to delete corrupted file '{_destinationFileDuringTransfer}': {ex.Message}", ex);
-                    throw ex;
+                    throw;
                 }
             }
 
