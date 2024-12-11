@@ -407,12 +407,14 @@ namespace Frends.FTP.UploadFiles.Definitions
         /// <summary>
         /// Exception class for more specific Exception name.
         /// </summary>
-        /// <remarks>
-        /// Exception message.
-        /// </remarks>
-        /// <param name="fileName"></param>
-        public class DestinationFileExistsException(string fileName) : Exception($"Unable to transfer file. Destination file already exists: {fileName}")
+        public class DestinationFileExistsException : Exception
         {
+            /// <summary>
+            /// Exception message.
+            /// </summary>
+            /// <param name="fileName"></param>
+            public DestinationFileExistsException(string fileName)
+                : base($"Unable to transfer file. Destination file already exists: {fileName}") { }
         }
     }
 }
