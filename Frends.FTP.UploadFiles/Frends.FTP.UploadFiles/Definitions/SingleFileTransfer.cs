@@ -188,10 +188,11 @@ namespace Frends.FTP.UploadFiles.Definitions
                     _client.DeleteFile(_destinationFileDuringTransfer);
                     throw new ArgumentException($"Transferred file size or Checksum was different from the source file. File {Path.GetFileName(_sourceFileDuringTransfer)} was most likely corrupted during transfer.");
                 }
-                catch (Exception ex)
+                catch (FtpCommandException ex)
                 {
                     // Log the exception and decide whether to proceed or rethrow
                     _logger.NotifyError(_batchContext, $"Failed to delete corrupted file '{_destinationFileDuringTransfer}': {ex.Message}", ex);
+                    throw ex;
                 }
             }
 

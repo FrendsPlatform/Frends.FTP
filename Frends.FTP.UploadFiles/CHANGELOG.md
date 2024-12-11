@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.3.0] - 2024-12-11
+### Fixed
+- Fixed issue with Task not throwing even when retry failed.
+
 ## [1.2.0]
 ### Added
 - Added check for file checksum and size.
