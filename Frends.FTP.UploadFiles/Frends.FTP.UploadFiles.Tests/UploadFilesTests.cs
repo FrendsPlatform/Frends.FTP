@@ -2,12 +2,9 @@ using FluentFTP;
 using Frends.FTP.UploadFiles.Enums;
 using Frends.FTP.UploadFiles.TaskConfiguration;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Authentication;
 using System.Threading;
 
 namespace Frends.FTP.UploadFiles.Tests;

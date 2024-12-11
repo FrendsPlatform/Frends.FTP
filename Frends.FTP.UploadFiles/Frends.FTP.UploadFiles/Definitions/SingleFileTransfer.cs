@@ -1,5 +1,4 @@
 ﻿using FluentFTP;
-using FluentFTP.Helpers;
 using Frends.FTP.UploadFiles.Enums;
 using Frends.FTP.UploadFiles.Logging;
 using System;
@@ -392,16 +391,11 @@ namespace Frends.FTP.UploadFiles.Definitions
                 return true;
             }
 
-            switch (_batchContext.Source.Operation)
+            return _batchContext.Source.Operation switch
             {
-                case SourceOperation.Move:
-                case SourceOperation.Rename:
-                    return true;
-                case SourceOperation.Delete:
-                case SourceOperation.Nothing:
-                default:
-                    return false;
-            }
+                SourceOperation.Move or SourceOperation.Rename => true,
+                _ => false,
+            };
         }
 
         private void Trace(TransferState state, string format, params object[] args)
@@ -413,14 +407,12 @@ namespace Frends.FTP.UploadFiles.Definitions
         /// <summary>
         /// Exception class for more specific Exception name.
         /// </summary>
-        public class DestinationFileExistsException : Exception
+        /// <remarks>
+        /// Exception message.
+        /// </remarks>
+        /// <param name="fileName"></param>
+        public class DestinationFileExistsException(string fileName) : Exception($"Unable to transfer file. Destination file already exists: {fileName}")
         {
-            /// <summary>
-            /// Exception message.
-            /// </summary>
-            /// <param name="fileName"></param>
-            public DestinationFileExistsException(string fileName)
-                : base($"Unable to transfer file. Destination file already exists: {fileName}") { }
         }
     }
 }
