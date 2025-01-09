@@ -111,7 +111,7 @@ namespace Frends.FTP.UploadFiles.Definitions
 
         private static char[] GetInvalidChars()
         {
-            List<char> invalidCharacters = new List<char>(Path.GetInvalidFileNameChars());
+            List<char> invalidCharacters = new(Path.GetInvalidFileNameChars());
             invalidCharacters.Remove('/'); // remove the forward slash, as it is supported
             invalidCharacters.Remove(':'); // also the colon is supported
             return invalidCharacters.ToArray();

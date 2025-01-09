@@ -3,10 +3,8 @@ using Frends.FTP.UploadFiles.Enums;
 using Frends.FTP.UploadFiles.TaskConfiguration;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Authentication;
 using System.Threading;
 
 namespace Frends.FTP.UploadFiles.Tests;
@@ -719,7 +717,6 @@ public class UploadFilesTests
             {
                 var result = FTP.UploadFiles(source, destination, _connection, _options, _info, default);
                 var sourcePath = Path.Combine(destination.Directory, destination.FileName);
-
                 var testfile = Helpers.GetFileFromFtp(Path.GetDirectoryName(sourcePath), Path.GetFileName(sourcePath));
                 Assert.IsTrue(Helpers.ExtractLargeZipFile(testfile, _tempDir));
                 success++;
