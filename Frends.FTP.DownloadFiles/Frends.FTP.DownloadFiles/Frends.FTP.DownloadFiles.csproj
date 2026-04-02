@@ -23,7 +23,7 @@
 	<None Include="../../ApacheLicense.txt" Pack="true" PackagePath="/">
 		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</None>
-	<None Include="CHANGELOG.md" Pack="true" PackagePath="/"/>
+	<None Include="../CHANGELOG.md" Pack="true" PackagePath="/"/>
   </ItemGroup>
 
   <ItemGroup>
