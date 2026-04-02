@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.3.0] - 2026-04-02
+### Fixed
+- Fixed: Added missing changelog and restored redirection to source code.
+
 ## [1.2.0] - 2024-08-23
 ### Changed
 - Updated the Newtonsoft.Json package to version 13.0.3.

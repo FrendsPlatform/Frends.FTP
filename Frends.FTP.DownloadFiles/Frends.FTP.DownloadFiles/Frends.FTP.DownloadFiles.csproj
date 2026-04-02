@@ -11,8 +11,9 @@
     <IncludeSource>true</IncludeSource>
     <PackageTags>Frends</PackageTags>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.2.0</Version>
+    <Version>1.3.0</Version>
     <Description>Task for downloading files from FTP(S) servers.</Description>
+	<RepositoryUrl>https://github.com/FrendsPlatform/Frends.FTP/tree/main/Frends.FTP.DownloadFiles</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
