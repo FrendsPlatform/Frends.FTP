@@ -73,8 +73,9 @@ public class SourceFilesNotFoundActionTests : DownloadFilesTestBase
         var connection = FtpHelper.GetFtpConnection();
 
         var result = FTP.DownloadFiles(
-            source, destination, connection,
-            new Options { OperationLog = true }, new Info(), new CancellationToken());
+            new Input { Source = source, Destination = destination, Info = new Info() },
+            connection,
+            new Options { OperationLog = true }, new CancellationToken());
         return result;
     }
 }

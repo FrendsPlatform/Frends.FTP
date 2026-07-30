@@ -68,6 +68,13 @@ public class Result
     /// }</example>
     public IDictionary<string, string> OperationsLog { get; }
 
+    /// <summary>
+    /// Error details when the transfer fails and ThrowErrorOnFailure is false.
+    /// Null when the transfer succeeds.
+    /// </summary>
+    /// <example>null</example>
+    public Error Error { get; private set; }
+
     internal Result(FileTransferResult result)
     {
         ActionSkipped = result.ActionSkipped;
@@ -79,5 +86,7 @@ public class Result
         TransferErrors = result.TransferErrors;
         TransferredFilePaths = result.TransferredFilePaths;
         OperationsLog = result.OperationsLog;
+        if (!result.Success && result.Error != null)
+            Error = result.Error;
     }
 }

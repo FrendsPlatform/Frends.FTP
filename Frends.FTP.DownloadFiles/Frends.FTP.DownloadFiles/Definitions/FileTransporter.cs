@@ -32,6 +32,9 @@ internal class FileTransporter
 
     private List<SingleFileTransferResult> Result { get; }
 
+    /// <summary>
+    /// Executes the FTP file transfer for all matching source files and returns the transfer result.
+    /// </summary>
     public FileTransferResult Run(CancellationToken cancellationToken)
     {
         var userResultMessage = "";

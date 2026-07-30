@@ -32,10 +32,21 @@ internal class SingleFileTransfer
         _result = new SingleFileTransferResult { Success = true };
     }
 
+    /// <summary>
+    /// The source file being transferred.
+    /// </summary>
+    /// <example>new FileItem { Name = "file1.txt" }</example>
     public FileItem SourceFile { get; set; }
 
+    /// <summary>
+    /// The destination file name with all macros expanded to their actual values.
+    /// </summary>
+    /// <example>file1_2024-01-15.txt</example>
     public string DestinationFileNameWithMacrosExpanded { get; set; }
 
+    /// <summary>
+    /// Transfers a single file from the FTP source to the local destination and returns the transfer result.
+    /// </summary>
     public SingleFileTransferResult TransferSingleFile()
     {
         try

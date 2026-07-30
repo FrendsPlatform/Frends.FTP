@@ -12,7 +12,14 @@ public class Options
     /// </summary>
     /// <example>true</example>
     [DefaultValue(true)]
-    public bool ThrowErrorOnFail { get; set; }
+    public bool ThrowErrorOnFailure { get; set; }
+
+    /// <summary>
+    /// Optional custom error message to include when the task fails.
+    /// </summary>
+    /// <example>FTP download failed</example>
+    [DefaultValue("")]
+    public string ErrorMessageOnFailure { get; set; } = string.Empty;
 
     /// <summary>
     /// Should the destination file be renamed with temporary file name during file transfer as a locking mechanism.

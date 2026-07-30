@@ -70,7 +70,7 @@ public class DestinationActionTests : DownloadFilesTestBase
         var options = new Options { CreateDestinationDirectories = true, RenameDestinationFileDuringTransfer = renameDestinationFilesDuringTransfer };
         var connection = FtpHelper.GetFtpsConnection();
 
-        var result = FTP.DownloadFiles(source, destination, connection, options, new Info(), new CancellationToken());
+        var result = FTP.DownloadFiles(new Input { Source = source, Destination = destination, Info = new Info() }, connection, options, new CancellationToken());
         return result;
     }
 }

@@ -91,21 +91,21 @@ public static class FTP
     /// - %SourceFileName% = will be replaced with source file name without extension.
     /// - %SourceFileExtension% = will be replaced with source file's extension, with the dot '.' included, i.e. if the source file is named 'foo.txt', the %SourceFileExtension% will be expanded as '.txt'. If the source file name does not have an extension, the macro result will be empty, i.e. for original file name "foo", "bar%SourceFileExtension%" will result in "bar"
     /// </frendsdocs>
-    /// <param name="info">Transfer info parameters</param>
+    /// <param name="input">Source file location, destination directory, and transfer info</param>
     /// <param name="connection">Transfer connection parameters</param>
-    /// <param name="source">Source file location</param>
-    /// <param name="destination">Destination directory location</param>
     /// <param name="options">Transfer options</param>
     /// <param name="cancellationToken">CancellationToken is given by Frends</param>
     /// <returns>Result object {bool ActionSkipped, bool Success, string UserResultMessage, int SuccessfulTransferCount, int FailedTransferCount, string FileName, string SourcePath, string DestinationPath, bool Success} </returns>
     public static Result DownloadFiles(
-        [PropertyTab] Source source,
-        [PropertyTab] Destination destination,
+        [PropertyTab] Input input,
         [PropertyTab] Connection connection,
         [PropertyTab] Options options,
-        [PropertyTab] Info info,
         CancellationToken cancellationToken)
     {
+        var source = input.Source ?? new Source();
+        var destination = input.Destination ?? new Destination();
+        var info = input.Info ?? new Info();
+
         var maxLogEntries = options.OperationLog ? (int?)null : 100;
         var transferSink = new TransferLogSink(maxLogEntries);
         var operationsLogger = new LoggerConfiguration()
@@ -139,7 +139,7 @@ public static class FTP
             var fileTransporter = new FileTransporter(logger, batchContext, executionId);
             var result = fileTransporter.Run(cancellationToken);
 
-            if (options.ThrowErrorOnFail && !result.Success)
+            if (options.ThrowErrorOnFailure && !result.Success)
                 throw new Exception($"FTP transfer failed: {result.UserResultMessage}. " +
                                     $"Latest operations: \n{GetLogLines(transferSink.GetBufferedLogMessages())}");
 

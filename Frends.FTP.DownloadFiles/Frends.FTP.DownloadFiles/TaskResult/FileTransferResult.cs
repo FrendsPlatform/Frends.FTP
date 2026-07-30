@@ -11,4 +11,5 @@ internal class FileTransferResult
     public Dictionary<string, IList<string>> TransferErrors { get; set; }
     public IEnumerable<string> TransferredFilePaths { get; set; }
     public IDictionary<string, string> OperationsLog { get; set; }
+    public Error Error { get; set; }
 }
