@@ -95,7 +95,7 @@ public static class FTP
     /// <param name="connection">Transfer connection parameters</param>
     /// <param name="options">Transfer options</param>
     /// <param name="cancellationToken">CancellationToken is given by Frends</param>
-    /// <returns>Result object {bool ActionSkipped, bool Success, string UserResultMessage, int SuccessfulTransferCount, int FailedTransferCount, string FileName, string SourcePath, string DestinationPath, bool Success} </returns>
+    /// <returns>Result object containing: ActionSkipped, Success, UserResultMessage, SuccessfulTransferCount, FailedTransferCount, FileName, SourcePath, DestinationPath, and Error (populated on failure when ThrowErrorOnFailure is false).</returns>
     public static Result DownloadFiles(
         [PropertyTab] Input input,
         [PropertyTab] Connection connection,
