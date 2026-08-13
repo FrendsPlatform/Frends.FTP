@@ -171,14 +171,15 @@ namespace Frends.FTP.DownloadFiles.Tests
 
 
             // Test and assert
-            var ex = Assert.Throws<AggregateException>(() =>
+            var ex = Assert.Throws<Exception>(() =>
             {
                 FTP.DownloadFiles(new Input { Source = source, Destination = destination, Info = new Info() }, connection, new Options(), default);
 
             });
 
-            Assert.AreEqual(1, ex.InnerExceptions.Count);
-            Assert.AreEqual(typeof(AuthenticationException), ex.InnerExceptions[0].GetType());
+            AggregateException exceptions = ex.InnerException as AggregateException;
+            Assert.AreEqual(1, exceptions?.InnerExceptions.Count);
+            Assert.AreEqual(typeof(AuthenticationException), exceptions.InnerExceptions[0].GetType());
         }
 
         [Test]
@@ -206,14 +207,14 @@ namespace Frends.FTP.DownloadFiles.Tests
                 ClientCertificatePath = ""
             };
 
-            var ex = Assert.Throws<AggregateException>(() =>
+            var ex = Assert.Throws<Exception>(() =>
             {
                 FTP.DownloadFiles(new Input { Source = source, Destination = destination, Info = new Info() }, connection, new Options(), default);
 
             });
-
-            Assert.AreEqual(1, ex.InnerExceptions.Count);
-            Assert.AreEqual(typeof(AuthenticationException), ex.InnerExceptions[0].GetType());
+            AggregateException exceptions = ex.InnerException as AggregateException;
+            Assert.AreEqual(1, exceptions?.InnerExceptions.Count);
+            Assert.AreEqual(typeof(AuthenticationException), exceptions.InnerExceptions[0].GetType());
 
         }
 

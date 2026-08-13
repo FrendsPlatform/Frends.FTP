@@ -1,6 +1,7 @@
 ﻿using Serilog;
 using System.ComponentModel;
 using Frends.FTP.DownloadFiles.Definitions;
+using Frends.FTP.DownloadFiles.Helpers;
 using Frends.FTP.DownloadFiles.Logging;
 using Frends.FTP.DownloadFiles.TaskConfiguration;
 using Frends.FTP.DownloadFiles.TaskResult;
@@ -21,11 +22,11 @@ public static class FTP
     /// The file transfer progress has the following steps:
     ///
     /// 1. Initialize
-    ///     
+    ///
     ///     Initializes the transfer and opens the source connection.
     ///
     /// 1. ListFiles
-    ///     
+    ///
     ///     Get a list of files from the source endpoint according to the filename/mask. If there are no files to transfer, the source connections are closed, and the transfer finishes. The result of the task will then depend on what the option `NoSourceAction` was set to. If it was set to Error, either the #result.Success property will be set to false, or if the `ThrowErrorOnFail` option was also set, an exception is thrown. If the `NoSourceAction` was set to `Info` or `Ignore`, the `#result.Success` will be set to true and `#result.ActionSkipped` also set to true.
     ///
     /// 1. Transfer files
@@ -33,11 +34,11 @@ public static class FTP
     ///     If there are files to transfer, they are then transferred individually. For every file in the list returned from the source endpoint, the following process is repeated:
     ///
     ///     1. GetFile
-    ///     
+    ///
     ///         Get a file from the source endpoint to the local work directory. If the parameter `RenameSourceFileBeforeTransfer` is set to `true`, the file is first renamed with a temporary filename before transfer.
     ///
     ///     1. Rename or move the source file.
-    ///         
+    ///
     ///         This is done before transferring the file to the destination, this means that possible errors in the renaming or moving that would cause the transfer to fail will happen as early as possible - before we actually try to transfer files onward.
     ///
     ///     1. Download the file.
@@ -47,7 +48,7 @@ public static class FTP
     ///         If the parameter `RenameDestinationFileDuringTransfer` is `true`, the file is first transferred with a temporary file name and afterwards renamed to intended filename, otherwise the file is transferred with the intended filename. The intended filename has its possible file masks expanded.
     ///
     ///     1. Do the source file operation.
-    ///         
+    ///
     ///         Perform the operation defined by the `SourceOperation`.
     ///
     /// 1. Finish
@@ -95,58 +96,67 @@ public static class FTP
     /// <param name="connection">Transfer connection parameters</param>
     /// <param name="options">Transfer options</param>
     /// <param name="cancellationToken">CancellationToken is given by Frends</param>
-    /// <returns>Result object containing: ActionSkipped, Success, UserResultMessage, SuccessfulTransferCount, FailedTransferCount, FileName, SourcePath, DestinationPath, and Error (populated on failure when ThrowErrorOnFailure is false).</returns>
+    /// <returns>Result object {bool ActionSkipped, bool Success, string UserResultMessage, int SuccessfulTransferCount, int FailedTransferCount, string FileName, string SourcePath, string DestinationPath, bool Success, object Error { string Message, Exception AdditionalInfo } } </returns>
     public static Result DownloadFiles(
         [PropertyTab] Input input,
         [PropertyTab] Connection connection,
         [PropertyTab] Options options,
         CancellationToken cancellationToken)
     {
-        var source = input.Source ?? new Source();
-        var destination = input.Destination ?? new Destination();
-        var info = input.Info ?? new Info();
-
-        var maxLogEntries = options.OperationLog ? (int?)null : 100;
-        var transferSink = new TransferLogSink(maxLogEntries);
-        var operationsLogger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
-            .WriteTo.Sink(transferSink)
-            .CreateLogger();
-        var fileTransferLog = Log.Logger;
-
-        using (var logger = InitializeFtpLogger(operationsLogger))
+        try
         {
-            if (string.IsNullOrEmpty(info.ProcessUri))
-                fileTransferLog.Warning("ProcessUri is empty. This means the transfer view cannot link to the correct page");
+            var source = input.Source ?? new Source();
+            var destination = input.Destination ?? new Destination();
+            var info = input.Info ?? new Info();
 
-            if (!Guid.TryParse(info.TaskExecutionID, out var executionId))
+            var maxLogEntries = options.OperationLog ? (int?)null : 100;
+            var transferSink = new TransferLogSink(maxLogEntries);
+            var operationsLogger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Sink(transferSink)
+                .CreateLogger();
+            var fileTransferLog = Log.Logger;
+
+            using (var logger = InitializeFtpLogger(operationsLogger))
             {
-                fileTransferLog.Warning("'{0}' is not a valid task execution ID, will default to random Guid", info.TaskExecutionID);
-                executionId = Guid.NewGuid();
+                if (string.IsNullOrEmpty(info.ProcessUri))
+                    fileTransferLog.Warning(
+                        "ProcessUri is empty. This means the transfer view cannot link to the correct page");
+
+                if (!Guid.TryParse(info.TaskExecutionID, out var executionId))
+                {
+                    fileTransferLog.Warning("'{0}' is not a valid task execution ID, will default to random Guid",
+                        info.TaskExecutionID);
+                    executionId = Guid.NewGuid();
+                }
+
+                var batchContext = new BatchContext
+                {
+                    Info = info,
+                    Options = options,
+                    InstanceId = executionId,
+                    BatchTransferStartTime = DateTime.Now,
+                    Source = source,
+                    Destination = destination,
+                    Connection = connection
+                };
+
+                var fileTransporter = new FileTransporter(logger, batchContext, executionId);
+                var result = fileTransporter.Run(cancellationToken);
+
+                if (options.ThrowErrorOnFailure && !result.Success)
+                    throw new Exception($"FTP transfer failed: {result.UserResultMessage}. " +
+                                        $"Latest operations: \n{GetLogLines(transferSink.GetBufferedLogMessages())}");
+
+                if (options.OperationLog)
+                    result.OperationsLog = GetLogDictionary(transferSink.GetBufferedLogMessages());
+
+                return new Result(result);
             }
-
-            var batchContext = new BatchContext
-            {
-                Info = info,
-                Options = options,
-                InstanceId = executionId,
-                BatchTransferStartTime = DateTime.Now,
-                Source = source,
-                Destination = destination,
-                Connection = connection
-            };
-
-            var fileTransporter = new FileTransporter(logger, batchContext, executionId);
-            var result = fileTransporter.Run(cancellationToken);
-
-            if (options.ThrowErrorOnFailure && !result.Success)
-                throw new Exception($"FTP transfer failed: {result.UserResultMessage}. " +
-                                    $"Latest operations: \n{GetLogLines(transferSink.GetBufferedLogMessages())}");
-
-            if (options.OperationLog)
-                result.OperationsLog = GetLogDictionary(transferSink.GetBufferedLogMessages());
-
-            return new Result(result);
+        }
+        catch (Exception ex)
+        {
+            return ex.Handle(options);
         }
     }
 
@@ -154,7 +164,8 @@ public static class FTP
     {
         try
         {
-            return string.Join("\n", buffer.Select(x => x.Item1 == DateTimeOffset.MinValue ? "..." : $"{x.Item1:HH:mm:ssZ}: {x.Item2}"));
+            return string.Join("\n",
+                buffer.Select(x => x.Item1 == DateTimeOffset.MinValue ? "..." : $"{x.Item1:HH:mm:ssZ}: {x.Item2}"));
         }
         catch (Exception e)
         {
@@ -165,6 +176,7 @@ public static class FTP
     private static FtpLogger InitializeFtpLogger(ILogger notificationLogger)
     {
         var logger = new FtpLogger(notificationLogger);
+
         return logger;
     }
 
@@ -176,8 +188,7 @@ public static class FTP
         {
             return entries
                 .Where(e => e?.Item2 != null) // Filter out nulls
-                .ToLookup(
-                    x => x.Item1.ToString(dateFormat))
+                .ToLookup(x => x.Item1.ToString(dateFormat))
                 .ToDictionary(
                     x => x.Key,
                     x => string.Join("\n", x.Select(k => k.Item2)));
@@ -186,7 +197,9 @@ public static class FTP
         {
             return new Dictionary<string, string>
             {
-                { DateTimeOffset.Now.ToString(dateFormat), $"Error while creating operation log: \n{e}" }
+                {
+                    DateTimeOffset.Now.ToString(dateFormat), $"Error while creating operation log: \n{e}"
+                }
             };
         }
     }

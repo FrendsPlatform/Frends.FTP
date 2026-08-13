@@ -15,7 +15,7 @@ public class Result
     /// True if the transfer was successful, otherwise false.
     /// </summary>
     /// <example>false</example>
-    public bool Success { get; }
+    public bool Success { get; internal set; }
 
     /// <summary>
     /// Message of the transfer operations containing a simple representation of what happened in the task.
@@ -73,7 +73,9 @@ public class Result
     /// Null when the transfer succeeds.
     /// </summary>
     /// <example>null</example>
-    public Error Error { get; private set; }
+    public Error Error { get; internal set; }
+
+    internal Result() { }
 
     internal Result(FileTransferResult result)
     {

@@ -6,7 +6,7 @@
 public class Error
 {
     /// <summary>
-    /// Human-readable error message describing the failure.
+    /// Error message describing the failure.
     /// </summary>
     /// <example>FTP transfer failed: Connection refused.</example>
     public string Message { get; set; }

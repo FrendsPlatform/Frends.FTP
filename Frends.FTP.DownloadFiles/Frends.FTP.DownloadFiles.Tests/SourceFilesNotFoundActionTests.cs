@@ -75,7 +75,7 @@ public class SourceFilesNotFoundActionTests : DownloadFilesTestBase
         var result = FTP.DownloadFiles(
             new Input { Source = source, Destination = destination, Info = new Info() },
             connection,
-            new Options { OperationLog = true }, new CancellationToken());
+            new Options { OperationLog = true, ThrowErrorOnFailure = false}, new CancellationToken());
         return result;
     }
 }

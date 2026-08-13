@@ -12,7 +12,7 @@ public class Options
     /// </summary>
     /// <example>true</example>
     [DefaultValue(true)]
-    public bool ThrowErrorOnFailure { get; set; }
+    public bool ThrowErrorOnFailure { get; set; } = true;
 
     /// <summary>
     /// Optional custom error message to include when the task fails.
@@ -36,7 +36,7 @@ public class Options
     public bool RenameDestinationFileDuringTransfer { get; set; }
 
     /// <summary>
-    /// Should the destination directories be created if they do not exist. May not work on all servers. 
+    /// Should the destination directories be created if they do not exist. May not work on all servers.
     /// </summary>
     /// <example>true</example>
     [DefaultValue(false)]
