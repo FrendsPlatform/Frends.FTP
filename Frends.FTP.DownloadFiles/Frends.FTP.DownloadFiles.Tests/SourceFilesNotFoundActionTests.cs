@@ -69,13 +69,26 @@ public class SourceFilesNotFoundActionTests : DownloadFilesTestBase
             NotFoundAction = sourceNotFoundAction
         };
         var destination = new Destination
-        { Directory = targetDir, Action = DestinationAction.Overwrite };
+        {
+            Directory = targetDir,
+            Action = DestinationAction.Overwrite
+        };
         var connection = FtpHelper.GetFtpConnection();
 
         var result = FTP.DownloadFiles(
-            new Input { Source = source, Destination = destination, Info = new Info() },
+            new Input
+            {
+                Source = source,
+                Destination = destination,
+                Info = new Info()
+            },
             connection,
-            new Options { OperationLog = true, ThrowErrorOnFailure = false}, new CancellationToken());
+            new Options
+            {
+                OperationLog = true,
+                ThrowErrorOnFailure = false
+            }, new CancellationToken());
+
         return result;
     }
 }
