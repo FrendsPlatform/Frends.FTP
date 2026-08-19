@@ -12,7 +12,14 @@ public class Options
     /// </summary>
     /// <example>true</example>
     [DefaultValue(true)]
-    public bool ThrowErrorOnFail { get; set; }
+    public bool ThrowErrorOnFailure { get; set; } = true;
+
+    /// <summary>
+    /// Optional custom error message to include when the task fails.
+    /// </summary>
+    /// <example>FTP download failed</example>
+    [DefaultValue("")]
+    public string ErrorMessageOnFailure { get; set; } = string.Empty;
 
     /// <summary>
     /// Should the destination file be renamed with temporary file name during file transfer as a locking mechanism.
@@ -29,7 +36,7 @@ public class Options
     public bool RenameDestinationFileDuringTransfer { get; set; }
 
     /// <summary>
-    /// Should the destination directories be created if they do not exist. May not work on all servers. 
+    /// Should the destination directories be created if they do not exist. May not work on all servers.
     /// </summary>
     /// <example>true</example>
     [DefaultValue(false)]

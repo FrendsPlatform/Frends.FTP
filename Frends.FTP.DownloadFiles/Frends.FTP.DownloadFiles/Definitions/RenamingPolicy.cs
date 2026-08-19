@@ -113,6 +113,9 @@ internal class RenamingPolicy
     }
 
 
+    /// <summary>
+    /// Creates the full file path for a renamed source file by expanding macros and combining with the original directory.
+    /// </summary>
     public string CreateFilePathForRename(string originalFilePath, string sourceOperationTo)
     {
         if (string.IsNullOrEmpty(sourceOperationTo))

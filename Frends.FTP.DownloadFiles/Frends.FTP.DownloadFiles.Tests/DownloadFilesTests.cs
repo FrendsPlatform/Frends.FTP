@@ -28,7 +28,7 @@ namespace Frends.FTP.DownloadFiles.Tests
             };
 
             // Test and assert
-            var result = FTP.DownloadFiles(source, destination, connection, new Options(), new Info(), new CancellationToken());
+            var result = FTP.DownloadFiles(new Input { Source = source, Destination = destination, Info = new Info() }, connection, new Options(), new CancellationToken());
             Assert.IsTrue(result.Success, result.UserResultMessage);
             Assert.AreEqual(1, result.SuccessfulTransferCount);
             Assert.IsTrue(LocalFileExists("file1.txt"), result.UserResultMessage);
@@ -51,13 +51,13 @@ namespace Frends.FTP.DownloadFiles.Tests
 
             var options = new Options
             {
-                ThrowErrorOnFail = false
+                ThrowErrorOnFailure = false
             };
 
             File.WriteAllText(Path.Combine(destination.Directory, source.FileName), "Hello");
 
             // Test and assert
-            var result = FTP.DownloadFiles(source, destination, connection, options, new Info(), new CancellationToken());
+            var result = FTP.DownloadFiles(new Input { Source = source, Destination = destination, Info = new Info() }, connection, options, new CancellationToken());
             Assert.IsFalse(result.Success);
             Assert.AreEqual(1, result.FailedTransferCount);
         }
@@ -79,13 +79,13 @@ namespace Frends.FTP.DownloadFiles.Tests
 
             var options = new Options
             {
-                ThrowErrorOnFail = true
+                ThrowErrorOnFailure = true
             };
 
             File.WriteAllText(Path.Combine(destination.Directory, source.FileName), "Hello");
 
             // Test and assert
-            var ex = Assert.Throws<Exception>(() => FTP.DownloadFiles(source, destination, connection, options, new Info(), new CancellationToken()));
+            var ex = Assert.Throws<Exception>(() => FTP.DownloadFiles(new Input { Source = source, Destination = destination, Info = new Info() }, connection, options, new CancellationToken()));
             Assert.IsTrue(ex.Message.Contains($"Error: Unable to transfer file. Destination file already exists: {destination.FileName}"));
         }
 
@@ -106,8 +106,9 @@ namespace Frends.FTP.DownloadFiles.Tests
 
             // Test and assert
             var result = FTP.DownloadFiles(
-                source, destination, connection, new Options { RenameSourceFileBeforeTransfer = true },
-                new Info(), new CancellationToken());
+                new Input { Source = source, Destination = destination, Info = new Info() },
+                connection, new Options { RenameSourceFileBeforeTransfer = true },
+                new CancellationToken());
             Assert.IsTrue(result.Success, result.UserResultMessage);
             Assert.AreEqual(1, result.SuccessfulTransferCount);
             Assert.IsTrue(LocalFileExists("file1.txt"), result.UserResultMessage);
@@ -140,7 +141,7 @@ namespace Frends.FTP.DownloadFiles.Tests
 
 
             // Test and assert
-            var result = FTP.DownloadFiles(source, destination, connection, new Options(), new Info(), new CancellationToken());
+            var result = FTP.DownloadFiles(new Input { Source = source, Destination = destination, Info = new Info() }, connection, new Options(), new CancellationToken());
             Assert.IsTrue(result.Success);
             Assert.AreEqual(1, result.SuccessfulTransferCount);
             Assert.IsTrue(LocalFileExists("file1.txt"));
@@ -170,14 +171,15 @@ namespace Frends.FTP.DownloadFiles.Tests
 
 
             // Test and assert
-            var ex = Assert.Throws<AggregateException>(() =>
+            var ex = Assert.Throws<Exception>(() =>
             {
-                FTP.DownloadFiles(source, destination, connection, new Options(), new Info(), default);
+                FTP.DownloadFiles(new Input { Source = source, Destination = destination, Info = new Info() }, connection, new Options(), default);
 
             });
 
-            Assert.AreEqual(1, ex.InnerExceptions.Count);
-            Assert.AreEqual(typeof(AuthenticationException), ex.InnerExceptions[0].GetType());
+            AggregateException exceptions = ex.InnerException as AggregateException;
+            Assert.AreEqual(1, exceptions?.InnerExceptions.Count);
+            Assert.AreEqual(typeof(AuthenticationException), exceptions.InnerExceptions[0].GetType());
         }
 
         [Test]
@@ -205,14 +207,14 @@ namespace Frends.FTP.DownloadFiles.Tests
                 ClientCertificatePath = ""
             };
 
-            var ex = Assert.Throws<AggregateException>(() =>
+            var ex = Assert.Throws<Exception>(() =>
             {
-                FTP.DownloadFiles(source, destination, connection, new Options(), new Info(), default);
+                FTP.DownloadFiles(new Input { Source = source, Destination = destination, Info = new Info() }, connection, new Options(), default);
 
             });
-
-            Assert.AreEqual(1, ex.InnerExceptions.Count);
-            Assert.AreEqual(typeof(AuthenticationException), ex.InnerExceptions[0].GetType());
+            AggregateException exceptions = ex.InnerException as AggregateException;
+            Assert.AreEqual(1, exceptions?.InnerExceptions.Count);
+            Assert.AreEqual(typeof(AuthenticationException), exceptions.InnerExceptions[0].GetType());
 
         }
 
@@ -231,7 +233,7 @@ namespace Frends.FTP.DownloadFiles.Tests
             };
 
             // Test and assert
-            var result = FTP.DownloadFiles(source, destination, connection, new Options(), new Info(), new CancellationToken());
+            var result = FTP.DownloadFiles(new Input { Source = source, Destination = destination, Info = new Info() }, connection, new Options(), new CancellationToken());
             Assert.IsTrue(result.Success, result.UserResultMessage);
             Assert.AreEqual(1, result.SuccessfulTransferCount);
         }
@@ -259,10 +261,10 @@ namespace Frends.FTP.DownloadFiles.Tests
                 PreserveLastModified = true,
                 RenameDestinationFileDuringTransfer = true,
                 RenameSourceFileBeforeTransfer = true,
-                ThrowErrorOnFail = true
+                ThrowErrorOnFailure = true
             };
 
-            var ex = Assert.Throws<Exception>(() => FTP.DownloadFiles(source, destination, connection, options, new Info(), new CancellationToken()));
+            var ex = Assert.Throws<Exception>(() => FTP.DownloadFiles(new Input { Source = source, Destination = destination, Info = new Info() }, connection, options, new CancellationToken()));
             Assert.IsTrue(ex.Message.Contains("1 Errors: No source files found from directory"));
 
             FtpHelper.DeleteDirectoryOnFTP(sourceDir);

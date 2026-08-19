@@ -190,10 +190,10 @@ public class SourceOperationTests : DownloadFilesTestBase
         };
         var destination = new Destination
         { Directory = targetDir, Action = DestinationAction.Overwrite };
-        var options = new Options { ThrowErrorOnFail = throwError, CreateDestinationDirectories = true, RenameSourceFileBeforeTransfer = true, OperationLog = operationslog };
+        var options = new Options { ThrowErrorOnFailure = throwError, CreateDestinationDirectories = true, RenameSourceFileBeforeTransfer = true, OperationLog = operationslog };
         var connection = FtpHelper.GetFtpsConnection();
 
-        var result = FTP.DownloadFiles(source, destination, connection, options, new Info(), new CancellationToken());
+        var result = FTP.DownloadFiles(new Input { Source = source, Destination = destination, Info = new Info() }, connection, options, new CancellationToken());
         return result;
     }
 }

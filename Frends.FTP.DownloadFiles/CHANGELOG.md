@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.0.0] - 2026-07-30
+### Changed
+- **Breaking change**: The task method signature has been updated to consolidate the Source, Destination, and Info parameters into a single `Input` parameter tab. Existing flows using this task will need to be updated to use the new `Input` parameter structure.
+- Upgraded target framework from net6.0/netstandard2.0/net471 to net8.0.
+- Renamed `ThrowErrorOnFail` option to `ThrowErrorOnFailure` for consistency with Frends standards.
+- Added `ErrorMessageOnFailure` option for a custom error message when the task fails.
+- Added `Error` property to the task result, containing error details when the transfer fails and `ThrowErrorOnFailure` is disabled.
+- Updated package metadata: added Company, Product, and updated PackageProjectUrl to https://frends.com/.
+
 ## [1.3.0] - 2026-04-02
 ### Fixed
 - Fixed: Added missing changelog and restored redirection to source code.
