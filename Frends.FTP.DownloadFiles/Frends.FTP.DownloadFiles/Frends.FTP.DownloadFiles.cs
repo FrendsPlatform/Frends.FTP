@@ -27,7 +27,7 @@ public static class FTP
     ///
     /// 1. ListFiles
     ///
-    ///     Get a list of files from the source endpoint according to the filename/mask. If there are no files to transfer, the source connections are closed, and the transfer finishes. The result of the task will then depend on what the option `NoSourceAction` was set to. If it was set to Error, either the #result.Success property will be set to false, or if the `ThrowErrorOnFail` option was also set, an exception is thrown. If the `NoSourceAction` was set to `Info` or `Ignore`, the `#result.Success` will be set to true and `#result.ActionSkipped` also set to true.
+    ///     Get a list of files from the source endpoint according to the filename/mask. If there are no files to transfer, the source connections are closed, and the transfer finishes. The result of the task will then depend on what the option `Source.NotFoundAction` was set to. If it was set to Error, either the #result.Success property will be set to false, or if the `ThrowErrorOnFailure` option was also set, an exception is thrown. If the `Source.NotFoundAction` was set to `Info` or `Ignore`, the `#result.Success` will be set to true and `#result.ActionSkipped` also set to true.
     ///
     /// 1. Transfer files
     ///
@@ -43,7 +43,7 @@ public static class FTP
     ///
     ///     1. Download the file.
     ///
-    ///         If destination file already exists, depending on the parameter `DestinationFileExistsAction` either an exception is thrown, the destination file is overwritten or the source file is appended to the destination file.
+    ///         If destination file already exists, depending on the parameter `Destination.Action` either an exception is thrown, the destination file is overwritten or the source file is appended to the destination file.
     ///
     ///         If the parameter `RenameDestinationFileDuringTransfer` is `true`, the file is first transferred with a temporary file name and afterwards renamed to intended filename, otherwise the file is transferred with the intended filename. The intended filename has its possible file masks expanded.
     ///
@@ -93,10 +93,10 @@ public static class FTP
     /// - %SourceFileExtension% = will be replaced with source file's extension, with the dot '.' included, i.e. if the source file is named 'foo.txt', the %SourceFileExtension% will be expanded as '.txt'. If the source file name does not have an extension, the macro result will be empty, i.e. for original file name "foo", "bar%SourceFileExtension%" will result in "bar"
     /// </frendsdocs>
     /// <param name="input">Source file location, destination directory, and transfer info</param>
-    /// <param name="connection">Transfer connection parameters</param>
-    /// <param name="options">Transfer options</param>
+    /// <param name="connection">FTP/FTPS connection parameters such as address, port, credentials, and encryption settings</param>
+    /// <param name="options">Transfer options such as error handling, file renaming during transfer, and operation logging</param>
     /// <param name="cancellationToken">CancellationToken is given by Frends</param>
-    /// <returns>Result object {bool ActionSkipped, bool Success, string UserResultMessage, int SuccessfulTransferCount, int FailedTransferCount, string FileName, string SourcePath, string DestinationPath, bool Success, object Error { string Message, Exception AdditionalInfo } } </returns>
+    /// <returns>Result object { bool ActionSkipped, bool Success, string UserResultMessage, int SuccessfulTransferCount, int FailedTransferCount, IEnumerable&lt;string&gt; TransferredFileNames, Dictionary&lt;string, IList&lt;string&gt;&gt; TransferErrors, IEnumerable&lt;string&gt; TransferredFilePaths, IDictionary&lt;string, string&gt; OperationsLog, Error Error { string Message, Exception AdditionalInfo } }</returns>
     public static Result DownloadFiles(
         [PropertyTab] Input input,
         [PropertyTab] Connection connection,
