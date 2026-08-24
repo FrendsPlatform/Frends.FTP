@@ -1,5 +1,11 @@
 # Changelog
 
+
+
+## [2.1.0] - 2026-08-24
+### Fixed
+- Fixed XML documentation: corrected `<returns>` tag to match actual `Result` class properties, fixed incorrect parameter references in `<frendsdocs>` and improved `<param>` descriptions.
+
 ## [2.0.0] - 2026-07-30
 ### Changed
 - **Breaking change**: The task method signature has been updated to consolidate the Source, Destination, and Info parameters into a single `Input` parameter tab. Existing flows using this task will need to be updated to use the new `Input` parameter structure.
