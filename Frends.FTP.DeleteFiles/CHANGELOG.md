@@ -2,6 +2,7 @@
 
 ## [2.0.0] - 2026-09-29
 ### Changed
+- [Breaking Change] Changed the error structure when deleting files: the original exception is now rethrown instead of being wrapped.
 - Target framework changed to .NET 8.
 - Added `Options` parameter with `ThrowErrorOnFailure` and `ErrorMessageOnFailure` properties for controlling error handling behavior.
 - `Result` now includes `Success` and `Error` properties. On failure, if `ThrowErrorOnFailure` is set to `false`, the Task returns a failed `Result` instead of throwing an exception.
