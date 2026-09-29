@@ -1,7 +1,7 @@
-﻿namespace Frends.FTP.DeleteFiles.Definitions;
-
+﻿using System.IO;
 using FluentFTP;
-using System.IO;
+
+namespace Frends.FTP.DeleteFiles.Definitions;
 
 /// <summary>
 /// Single file data.

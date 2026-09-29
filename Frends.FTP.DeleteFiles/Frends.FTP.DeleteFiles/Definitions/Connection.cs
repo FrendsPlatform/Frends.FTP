@@ -72,8 +72,6 @@ public class Connection
     [DefaultValue(4096)]
     public int BufferSize { get; set; }
 
-    #region FTPS settings
-
     /// <summary>
     /// Whether to use FTPS or not.
     /// </summary>
@@ -144,6 +142,4 @@ public class Connection
     [DefaultValue("")]
     [UIHint(nameof(UseFTPS), "", true)]
     public string CertificateHashStringSHA1 { get; set; }
-
-    #endregion
 }
