@@ -7,14 +7,28 @@ using System.Collections.Generic;
 /// </summary>
 public class Result
 {
-    internal Result(List<string> files)
+    internal Result(bool success, List<string> files = null, Error error = null)
     {
-        Files = files;
+        Success = success;
+        Files = files ?? new List<string>();
+        Error = error;
     }
 
     /// <summary>
-    /// Contains the input repeated the specified number of times.
+    /// Indicates whether the operation completed successfully.
     /// </summary>
-    /// <example>Example of the output</example>
+    /// <example>true</example>
+    public bool Success { get; private set; }
+
+    /// <summary>
+    /// List of full paths of the deleted files.
+    /// </summary>
+    /// <example>["/destination/Test1.txt", "/destination/Test2.txt"]</example>
     public List<string> Files { get; private set; }
+
+    /// <summary>
+    /// Error details. Null when Success is true.
+    /// </summary>
+    /// <example>null</example>
+    public Error Error { get; private set; }
 }

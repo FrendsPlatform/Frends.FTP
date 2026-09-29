@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using FluentFTP;
 using Frends.FTP.DeleteFiles.Definitions;
 using Frends.FTP.DeleteFiles.Enums;
+using Frends.FTP.DeleteFiles.Helpers;
 
 /// <summary>
 /// Main class of the Task.
@@ -25,9 +26,10 @@ public static class FTP
     /// </summary>
     /// <param name="input">Input parameters.</param>
     /// <param name="connection">Connection parameters.</param>
+    /// <param name="options">Additional parameters.</param>
     /// <param name="cancellationToken">Cancellation token given by Frends.</param>
-    /// <returns>Object { List&lt;string&gt; Files }.</returns>
-    public static async Task<Result> DeleteFiles([PropertyTab] Input input, [PropertyTab] Connection connection, CancellationToken cancellationToken)
+    /// <returns>Object { bool Success, List&lt;string&gt; Files, Error Error }.</returns>
+    public static async Task<Result> DeleteFiles([PropertyTab] Input input, [PropertyTab] Connection connection, [PropertyTab] Options options, CancellationToken cancellationToken)
     {
         var deleted = new List<string>();
 
@@ -51,11 +53,11 @@ public static class FTP
                 deleted.Add(file.FullPath);
             }
 
-            return new Result(deleted);
+            return new Result(true, deleted);
         }
         catch (Exception ex)
         {
-            throw new ArgumentException($"Error occured while deleting files: {ex.Message}\nDeleted files: {string.Join("\n", deleted)}");
+            return ex.Handle(options);
         }
     }
 

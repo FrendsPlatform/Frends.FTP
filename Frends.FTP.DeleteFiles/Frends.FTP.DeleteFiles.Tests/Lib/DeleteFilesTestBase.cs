@@ -8,6 +8,7 @@ public class DeleteFilesTestBase
 {
     protected static FtpHelper FtpHelper = new();
     protected Input input = new();
+    protected Options options = new();
     protected string FtpDir = string.Empty;
 
     [OneTimeTearDown]
@@ -40,6 +41,8 @@ public class DeleteFilesTestBase
             FileMask = "*",
             Directory = FtpDir,
         };
+
+        options = new Options();
     }
 
     [TearDown]
