@@ -96,7 +96,7 @@ public static class FTP
     /// <param name="connection">FTP/FTPS connection parameters such as address, port, credentials, and encryption settings</param>
     /// <param name="options">Transfer options such as error handling, file renaming during transfer, and operation logging</param>
     /// <param name="cancellationToken">CancellationToken is given by Frends</param>
-    /// <returns>Result object { bool ActionSkipped, bool Success, string UserResultMessage, int SuccessfulTransferCount, int FailedTransferCount, IEnumerable&lt;string&gt; TransferredFileNames, Dictionary&lt;string, IList&lt;string&gt;&gt; TransferErrors, IEnumerable&lt;string&gt; TransferredFilePaths, IDictionary&lt;string, string&gt; OperationsLog, Error Error { string Message, Exception AdditionalInfo } }</returns>
+    /// <returns>object { bool ActionSkipped, bool Success, string UserResultMessage, int SuccessfulTransferCount, int FailedTransferCount, IEnumerable&lt;string&gt; TransferredFileNames, Dictionary&lt;string, IList&lt;string&gt;&gt; TransferErrors, IEnumerable&lt;string&gt; TransferredFilePaths, IDictionary&lt;string, string&gt; OperationsLog, object Error { string Message, Exception AdditionalInfo } }</returns>
     public static Result DownloadFiles(
         [PropertyTab] Input input,
         [PropertyTab] Connection connection,

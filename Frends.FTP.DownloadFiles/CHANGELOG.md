@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.2.0] - 2026-10-14
+### Changed
+- Updated documentation
+
 ## [2.1.0] - 2026-08-24
 ### Fixed
 - Fixed XML documentation: corrected `<returns>` tag to match actual `Result` class properties, fixed incorrect parameter references in `<frendsdocs>` and improved `<param>` descriptions.
