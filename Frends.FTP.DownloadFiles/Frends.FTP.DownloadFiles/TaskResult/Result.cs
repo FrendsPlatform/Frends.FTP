@@ -20,7 +20,7 @@ public class Result
     /// <summary>
     /// Message of the transfer operations containing a simple representation of what happened in the task.
     /// </summary>
-    /// <example>1 files transferred: file1.txt</example>
+    /// <example>1 file(s) transferred: file1.txt</example>
     public string UserResultMessage { get; }
 
     /// <summary>
