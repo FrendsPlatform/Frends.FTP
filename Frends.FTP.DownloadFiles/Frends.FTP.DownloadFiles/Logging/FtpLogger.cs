@@ -7,14 +7,29 @@ namespace Frends.FTP.DownloadFiles.Logging;
 
 internal interface IFtpLogger : IDisposable
 {
+    /// <summary>
+    /// Notify Error.
+    /// </summary>
     void NotifyError(BatchContext context, string msg, Exception e);
 
+    /// <summary>
+    /// Notify Information.
+    /// </summary>
     void NotifyInformation(BatchContext context, string msg);
 
+    /// <summary>
+    /// Notify Trace.
+    /// </summary>
     void NotifyTrace(string message);
 
+    /// <summary>
+    /// Log Transfer Success.
+    /// </summary>
     void LogTransferSuccess(SingleFileTransfer transfer, BatchContext context);
 
+    /// <summary>
+    /// Log Transfer Failed.
+    /// </summary>
     void LogTransferFailed(SingleFileTransfer transfer, BatchContext context, string errorMessage, Exception exception);
 }
 
@@ -36,6 +51,9 @@ internal class FtpLogger : IFtpLogger
         Dispose(false);
     }
 
+    /// <summary>
+    /// Notify Error.
+    /// </summary>
     public void NotifyError(BatchContext context, string msg, Exception e)
     {
         try
@@ -56,6 +74,9 @@ internal class FtpLogger : IFtpLogger
         }
     }
 
+    /// <summary>
+    /// Notify Information.
+    /// </summary>
     public void NotifyInformation(BatchContext context, string msg)
     {
         try
@@ -68,6 +89,9 @@ internal class FtpLogger : IFtpLogger
         }
     }
 
+    /// <summary>
+    /// Log Transfer Success.
+    /// </summary>
     public void LogTransferSuccess(SingleFileTransfer transfer, BatchContext context)
     {
         try
@@ -82,6 +106,9 @@ internal class FtpLogger : IFtpLogger
         }
     }
 
+    /// <summary>
+    /// Log Transfer Failed.
+    /// </summary>
     public void LogTransferFailed(SingleFileTransfer transfer, BatchContext context, string errorMessage, Exception exception)
     {
         try
@@ -97,6 +124,9 @@ internal class FtpLogger : IFtpLogger
         }
     }
 
+    /// <summary>
+    /// Notify Trace.
+    /// </summary>
     public void NotifyTrace(string message)
     {
         // only log to debug trace
@@ -113,6 +143,9 @@ internal class FtpLogger : IFtpLogger
         return $"FTP://{context.Connection.Address}/{context.Destination.Directory}/{context.Destination.FileName}";
     }
 
+    /// <summary>
+    /// Create File Transfer Info.
+    /// </summary>
     public static FileTransferInfo CreateFileTransferInfo(TransferResult result, SingleFileTransfer transfer, BatchContext context, string errorMessage = null)
     {
         // Create 2 dummy endpoints and initialize some local variables which are needed in case if cobalt config is not
@@ -160,6 +193,9 @@ internal class FtpLogger : IFtpLogger
         return File.Exists(filepath) ? new FileInfo(filepath).Length : 0;
     }
 
+    /// <summary>
+    /// Dispose.
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
