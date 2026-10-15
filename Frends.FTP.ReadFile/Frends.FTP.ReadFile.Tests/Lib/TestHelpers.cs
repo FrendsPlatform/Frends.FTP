@@ -2,7 +2,7 @@
 using Frends.FTP.ReadFile.Enums;
 
 namespace Frends.FTP.ReadFile.Tests.Lib;
-internal static class Helpers
+internal static class TestHelpers
 {
     // Those values are taken directly from docker compose (see docker-compose.yml)
     internal static readonly string FtpHost = "localhost";
