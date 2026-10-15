@@ -2,7 +2,7 @@
 
 ## [2.3.0] - 2026-10-15
 ### Changed
-- Improved internal code documentation. No change in Task behavior.
+- Improved internal code documentation.
 
 ## [2.2.0] - 2026-10-14
 ### Changed

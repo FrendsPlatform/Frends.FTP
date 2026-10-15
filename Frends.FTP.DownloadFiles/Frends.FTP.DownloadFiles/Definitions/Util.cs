@@ -4,18 +4,12 @@ namespace Frends.FTP.DownloadFiles.Definitions;
 
 internal static class Util
 {
-    /// <summary>
-    /// Helper: CreateUniqueFileName.
-    /// </summary>
-    public static string CreateUniqueFileName()
+    internal static string CreateUniqueFileName()
     {
         return Path.ChangeExtension("frends_" + DateTime.Now.Ticks + Path.GetRandomFileName(), "8CO");
     }
 
-    /// <summary>
-    /// Helper: FileMatchesMask.
-    /// </summary>
-    public static bool FileMatchesMask(string filename, string mask)
+    internal static bool FileMatchesMask(string filename, string mask)
     {
         const string regexEscape = "<regex>";
         string pattern;

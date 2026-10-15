@@ -12,25 +12,19 @@ internal class CircularBuffer<T>
     private readonly ReaderWriterLockSlim _lock = new();
     private readonly int _size;
 
-    public CircularBuffer(int size)
+    internal CircularBuffer(int size)
     {
         if (size < 1) throw new ArgumentException($"{nameof(size)} cannot be negative or zero");
         _data = new ConcurrentQueue<T>();
         _size = size;
     }
 
-    /// <summary>
-    /// Latest.
-    /// </summary>
-    public IReadOnlyList<T> Latest()
+    internal IReadOnlyList<T> Latest()
     {
         return _data.ToArray();
     }
 
-    /// <summary>
-    /// Add.
-    /// </summary>
-    public void Add(T t)
+    internal void Add(T t)
     {
         _lock.EnterWriteLock();
         try
