@@ -19,11 +19,17 @@ internal class CircularBuffer<T>
         _size = size;
     }
 
+    /// <summary>
+    /// Latest.
+    /// </summary>
     public IReadOnlyList<T> Latest()
     {
         return _data.ToArray();
     }
 
+    /// <summary>
+    /// Add.
+    /// </summary>
     public void Add(T t)
     {
         _lock.EnterWriteLock();
