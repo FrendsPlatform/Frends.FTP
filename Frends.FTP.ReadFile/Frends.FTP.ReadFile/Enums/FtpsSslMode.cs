@@ -25,4 +25,3 @@ public enum FtpsSslMode
     /// </summary>
     Auto,
 }
-

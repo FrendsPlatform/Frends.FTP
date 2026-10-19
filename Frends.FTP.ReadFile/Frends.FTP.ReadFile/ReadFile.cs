@@ -1,17 +1,17 @@
-﻿using Frends.FTP.ReadFile.Definitions;
-using Frends.FTP.ReadFile.Enums;
-using Frends.FTP.ReadFile.Helpers;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using FluentFTP;
+using Frends.FTP.ReadFile.Definitions;
+using Frends.FTP.ReadFile.Enums;
+using Frends.FTP.ReadFile.Helpers;
 
 namespace Frends.FTP.ReadFile;
 
-///<summary>
+/// <summary>
 /// Main Task class.
 /// </summary>
 public static class FTP

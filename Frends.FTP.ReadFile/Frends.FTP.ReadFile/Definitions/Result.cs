@@ -1,5 +1,5 @@
-﻿using FluentFTP;
-using System;
+﻿using System;
+using FluentFTP;
 
 namespace Frends.FTP.ReadFile.Definitions;
 
@@ -8,6 +8,16 @@ namespace Frends.FTP.ReadFile.Definitions;
 /// </summary>
 public class Result
 {
+    internal Result(bool success, string content = null, FtpListItem file = null, Error error = null)
+    {
+        Success = success;
+        Content = content;
+        Path = file?.FullName;
+        SizeInMegaBytes = file == null ? 0 : Math.Round(file.Size / 1024d / 1024d, 3);
+        LastWriteTime = file?.Modified ?? default;
+        Error = error;
+    }
+
     /// <summary>
     /// Indicates whether the operation completed successfully.
     /// </summary>
@@ -24,7 +34,7 @@ public class Result
     /// Full name of the file.
     /// </summary>
     /// <example>c:\source\Test.txt</example>
-	public string Path { get; private set; }
+    public string Path { get; private set; }
 
     /// <summary>
     /// Size of the read file.
@@ -43,14 +53,4 @@ public class Result
     /// </summary>
     /// <example>null</example>
     public Error Error { get; private set; }
-
-    internal Result(bool success, string content = null, FtpListItem file = null, Error error = null)
-    {
-        Success = success;
-        Content = content;
-        Path = file?.FullName;
-        SizeInMegaBytes = file == null ? 0 : Math.Round(file.Size / 1024d / 1024d, 3);
-        LastWriteTime = file?.Modified ?? default;
-        Error = error;
-    }
 }
