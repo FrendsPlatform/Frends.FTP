@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.3.0] - 2026-10-15
+### Changed
+- Improved internal code documentation.
+
 ## [2.2.0] - 2026-10-14
 ### Changed
 - Updated documentation

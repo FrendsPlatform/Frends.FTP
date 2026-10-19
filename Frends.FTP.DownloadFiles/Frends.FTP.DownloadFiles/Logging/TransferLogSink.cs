@@ -26,6 +26,9 @@ internal class TransferLogSink : ILogEventSink
         else _allMsgsBuffer = new List<Tuple<DateTimeOffset, string>>();
     }
 
+    /// <summary>
+    /// Emit.
+    /// </summary>
     public void Emit(LogEvent logEvent)
     {
         if (_allMsgsBuffer != null)
@@ -41,6 +44,9 @@ internal class TransferLogSink : ILogEventSink
         }
     }
 
+    /// <summary>
+    /// Get Buffered Log Messages.
+    /// </summary>
     public IList<Tuple<DateTimeOffset, string>> GetBufferedLogMessages()
     {
         if (_allMsgsBuffer != null) return _allMsgsBuffer;
