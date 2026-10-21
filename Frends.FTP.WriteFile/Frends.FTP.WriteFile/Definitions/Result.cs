@@ -1,6 +1,6 @@
-using FluentFTP;
 using System;
 using System.ComponentModel.DataAnnotations;
+using FluentFTP;
 
 namespace Frends.FTP.WriteFile.Definitions;
 
@@ -9,6 +9,15 @@ namespace Frends.FTP.WriteFile.Definitions;
 /// </summary>
 public class Result
 {
+    internal Result(bool success, Error error = null, FtpListItem file = null)
+    {
+        Success = success;
+        Error = error;
+        if (file == null) return;
+        Path = file.FullName;
+        SizeInMegaBytes = Math.Round(file.Size / 1024d / 1024d, 3);
+    }
+
     /// <summary>
     /// Indicates whether the operation completed successfully.
     /// </summary>
@@ -33,13 +42,4 @@ public class Result
     /// </summary>
     /// <example>null</example>
     public Error Error { get; private set; }
-
-    internal Result(bool success, Error error = null, FtpListItem file = null)
-    {
-        Success = success;
-        Error = error;
-        if (file == null) return;
-        Path = file.FullName;
-        SizeInMegaBytes = Math.Round(file.Size / 1024d / 1024d, 3);
-    }
 }

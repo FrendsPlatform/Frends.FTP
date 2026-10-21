@@ -1,5 +1,3 @@
-using Frends.FTP.WriteFile.Definitions;
-using Frends.FTP.WriteFile.Enums;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -8,11 +6,13 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using FluentFTP;
+using Frends.FTP.WriteFile.Definitions;
+using Frends.FTP.WriteFile.Enums;
 using Frends.FTP.WriteFile.Helpers;
 
 namespace Frends.FTP.WriteFile;
 
-///<summary>
+/// <summary>
 /// Main Task class.
 /// </summary>
 public static class FTP
@@ -36,51 +36,6 @@ public static class FTP
         {
             return ex.Handle(options);
         }
-    }
-
-    private static Result Execute(Input input, Connection connection, CancellationToken cancellationToken)
-    {
-        var encoding = GetEncoding(input.FileEncoding, input.EnableBom, input.EncodingInString);
-
-        var byteContent = input.WriteBehaviour == WriteOperation.Append && input.AddNewLine ? encoding.GetBytes(string.Concat(Environment.NewLine, input.Content)) : encoding.GetBytes(input.Content);
-
-        cancellationToken.ThrowIfCancellationRequested();
-
-        using var client = CreateFtpClient(connection);
-        client.Connect();
-
-        if (!client.IsConnected) throw new ArgumentException($"Error while connecting to destination: {connection.Address}");
-
-        if (!client.DirectoryExists(Path.GetDirectoryName(input.Path)) && input.CreateDestinationDirectories)
-            client.CreateDirectory(Path.GetDirectoryName(input.Path));
-
-        if (client.FileExists(input.Path))
-        {
-            switch (input.WriteBehaviour)
-            {
-                case WriteOperation.Append:
-                    client.Upload(byteContent, input.Path, FtpRemoteExists.AddToEnd);
-                    break;
-                case WriteOperation.Overwrite:
-                    client.Upload(byteContent, input.Path, FtpRemoteExists.Overwrite);
-                    break;
-                case WriteOperation.Error:
-                    throw new ArgumentException($"File already exists: {input.Path}");
-                default:
-                    throw new ArgumentException($"Unknown WriteBehaviour type: '{input.WriteBehaviour}'.");
-            }
-        }
-        else
-        {
-            client.Upload(byteContent, input.Path);
-        }
-
-        var file = client.GetObjectInfo(input.Path);
-
-        client.Disconnect();
-        client.Dispose();
-
-        return new Result(true, file: file);
     }
 
     internal static FtpClient CreateFtpClient(Connection connect)
@@ -163,6 +118,51 @@ public static class FTP
         }
 
         return client;
+    }
+
+    private static Result Execute(Input input, Connection connection, CancellationToken cancellationToken)
+    {
+        var encoding = GetEncoding(input.FileEncoding, input.EnableBom, input.EncodingInString);
+
+        var byteContent = input.WriteBehaviour == WriteOperation.Append && input.AddNewLine ? encoding.GetBytes(string.Concat(Environment.NewLine, input.Content)) : encoding.GetBytes(input.Content);
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        using var client = CreateFtpClient(connection);
+        client.Connect();
+
+        if (!client.IsConnected) throw new ArgumentException($"Error while connecting to destination: {connection.Address}");
+
+        if (!client.DirectoryExists(Path.GetDirectoryName(input.Path)) && input.CreateDestinationDirectories)
+            client.CreateDirectory(Path.GetDirectoryName(input.Path));
+
+        if (client.FileExists(input.Path))
+        {
+            switch (input.WriteBehaviour)
+            {
+                case WriteOperation.Append:
+                    client.Upload(byteContent, input.Path, FtpRemoteExists.AddToEnd);
+                    break;
+                case WriteOperation.Overwrite:
+                    client.Upload(byteContent, input.Path, FtpRemoteExists.Overwrite);
+                    break;
+                case WriteOperation.Error:
+                    throw new ArgumentException($"File already exists: {input.Path}");
+                default:
+                    throw new ArgumentException($"Unknown WriteBehaviour type: '{input.WriteBehaviour}'.");
+            }
+        }
+        else
+        {
+            client.Upload(byteContent, input.Path);
+        }
+
+        var file = client.GetObjectInfo(input.Path);
+
+        client.Disconnect();
+        client.Dispose();
+
+        return new Result(true, file: file);
     }
 
     private static Encoding GetEncoding(FileEncoding encoding, bool enableBom, string encodingString = null)
