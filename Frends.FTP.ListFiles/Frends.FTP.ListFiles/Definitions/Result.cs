@@ -7,6 +7,13 @@ namespace Frends.FTP.ListFiles.Definitions;
 /// </summary>
 public class Result
 {
+    internal Result(bool success, List<FileItem> files, Error error = null)
+    {
+        Success = success;
+        Files = files;
+        Error = error;
+    }
+
     /// <summary>
     /// Indicates whether the operation completed successfully.
     /// </summary>
@@ -24,11 +31,4 @@ public class Result
     /// </summary>
     /// <example>null</example>
     public Error Error { get; private set; }
-
-    internal Result(bool success, List<FileItem> files, Error error = null)
-    {
-        Success = success;
-        Files = files;
-        Error = error;
-    }
 }

@@ -1,19 +1,19 @@
-using Frends.FTP.ListFiles.Definitions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentFTP;
+using Frends.FTP.ListFiles.Definitions;
 using Frends.FTP.ListFiles.Helpers;
-using System.Text.RegularExpressions;
 
 namespace Frends.FTP.ListFiles;
 
-///<summary>
+/// <summary>
 /// Files task.
 /// </summary>
 public static class FTP
@@ -43,8 +43,10 @@ public static class FTP
             var files = await GetSourceFilesAsync(client, regexStr, input.Directory, input, cancellationToken);
 
             if (files == null)
+            {
                 throw new ArgumentException(
                     "Source end point returned null list for file list. If there are no files to transfer, the result should be an empty list.");
+            }
 
             client.Disconnect();
             client.Dispose();
@@ -78,7 +80,9 @@ public static class FTP
             if (connect.EnableClientAuth)
             {
                 if (!string.IsNullOrEmpty(connect.ClientCertificatePath))
+                {
                     client.ClientCertificates.Add(new X509Certificate2(connect.ClientCertificatePath));
+                }
                 else
                 {
                     using var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
@@ -165,10 +169,12 @@ public static class FTP
         const string regexEscape = "<regex>";
         string pattern;
 
-        //check is pure regex wished to be used for matching
+        // check is pure regex wished to be used for matching
         if (mask != null && mask.StartsWith(regexEscape))
-            //use substring instead of string.replace just in case some has regex like '<regex>//File<regex>' or something else like that
+        {
+            // use substring instead of string.replace just in case some has regex like '<regex>//File<regex>' or something else like that
             pattern = mask.Substring(regexEscape.Length);
+        }
         else
         {
             pattern = mask.Replace(".", "\\.");

@@ -1,9 +1,8 @@
 # Changelog
 
-## [3.0.0] - 2026-10-15
+## [2.2.0] - 2026-10-15
 ### Changed
 - Updated the Task to target .NET 8.
-- The Task now requires an Options parameter. Existing processes must be updated to provide it.
 - The Task result now includes Success and Error properties.
 
 ### Added

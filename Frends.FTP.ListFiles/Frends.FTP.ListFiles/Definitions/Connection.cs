@@ -56,8 +56,6 @@ public class Connection
     [DefaultValue(60)]
     public int ConnectionTimeout { get; set; } = 60;
 
-    #region FTPS settings
-
     /// <summary>
     /// Whether to use FTPS or not.
     /// </summary>
@@ -128,6 +126,4 @@ public class Connection
     [DefaultValue("")]
     [UIHint(nameof(UseFTPS), "", true)]
     public string CertificateHashStringSHA1 { get; set; }
-
-    #endregion
 }
