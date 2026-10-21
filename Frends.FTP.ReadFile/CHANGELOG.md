@@ -1,9 +1,9 @@
 # Changelog
 
-## [2.0.0] - 2026-10-15
+## [1.2.0] - 2026-10-15
 ### Changed
 - The Task now targets .NET 8.
-- [Breaking Change] Parameter order changed to Input, Connection, Options. Existing Task usages need to be reconfigured.
+- Parameter order changed to Input, Connection, Options.
 - The Task result now includes `Success` and `Error` properties.
 
 ### Added
