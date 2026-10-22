@@ -77,7 +77,7 @@ public class UploadFilesTests
             PreserveLastModified = true,
             RenameDestinationFileDuringTransfer = true,
             RenameSourceFileBeforeTransfer = true,
-            ThrowErrorOnFail = true,
+            ThrowErrorOnFailure = true,
         };
 
         _info = new()
@@ -115,7 +115,7 @@ public class UploadFilesTests
         connection.CertificateHashStringSHA1 = "incorrect";
 
         // Test and assert
-        var ex = Assert.Throws<AggregateException>(() => FTP.UploadFiles(_source, _destination, connection, _options, _info, new CancellationToken()));
+        var ex = Assert.Throws<AggregateException>(() => FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connection, _options, new CancellationToken()));
         Assert.IsTrue(ex.Message.Contains("The remote certificate was rejected by the provided RemoteCertificateValidationCallback."));
     }
 
@@ -134,23 +134,23 @@ public class UploadFilesTests
         var connectionD = _connection;
         connectionD.UserName = null;
 
-        var ex1 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(_source, _destination, connectionA, _options, _info, new CancellationToken()));
+        var ex1 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connectionA, _options, new CancellationToken()));
         Assert.AreEqual(typeof(NullReferenceException), ex1.GetType());
 
-        var ex2 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(_source, _destination, connectionB, _options, _info, new CancellationToken()));
+        var ex2 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connectionB, _options, new CancellationToken()));
         Assert.AreEqual(typeof(NullReferenceException), ex2.GetType());
 
-        var ex3 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(_source, _destination, connectionC, _options, _info, new CancellationToken()));
+        var ex3 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connectionC, _options, new CancellationToken()));
         Assert.AreEqual(typeof(NullReferenceException), ex3.GetType());
 
-        var ex4 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(_source, _destination, connectionD, _options, _info, new CancellationToken()));
+        var ex4 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connectionD, _options, new CancellationToken()));
         Assert.AreEqual(typeof(NullReferenceException), ex4.GetType());
     }
 
     [Test]
     public void UploadFTP_UploadFile()
     {
-        var result = FTP.UploadFiles(_source, _destination, _connection, _options, _info, new CancellationToken());
+        var result = FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, _connection, _options, new CancellationToken());
         Assert.IsTrue(result.Success);
         Assert.AreEqual(1, result.SuccessfulTransferCount);
     }
@@ -165,7 +165,7 @@ public class UploadFilesTests
             var destination = _destination;
             destination.Action = destinationAction;
 
-            var result = FTP.UploadFiles(_source, destination, _connection, _options, _info, new CancellationToken());
+            var result = FTP.UploadFiles(new Input { Source = _source, Destination = destination, Info = _info }, _connection, _options, new CancellationToken());
             Assert.IsTrue(result.Success, $"DestinationAction: {destinationAction}");
             Assert.IsFalse(result.ActionSkipped, $"DestinationAction: {destinationAction}");
             Assert.AreEqual(1, result.SuccessfulTransferCount, $"DestinationAction: {destinationAction}");
@@ -185,14 +185,14 @@ public class UploadFilesTests
     {
         var ftpModes = new[] { FtpMode.Active, FtpMode.Passive };
 
-        _options.ThrowErrorOnFail = false;
+        _options.ThrowErrorOnFailure = false;
 
         foreach (var ftpMode in ftpModes)
         {
             var connection = _connection;
             connection.Mode = ftpMode;
 
-            var result = FTP.UploadFiles(_source, _destination, connection, _options, _info, new CancellationToken());
+            var result = FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connection, _options, new CancellationToken());
             if (ftpMode is FtpMode.Active)
             {
                 Assert.IsFalse(result.Success);
@@ -231,7 +231,7 @@ public class UploadFilesTests
             connection.SslMode = ftpsSslMode;
             connection.UseFTPS = true;
 
-            var result = FTP.UploadFiles(_source, _destination, connection, _options, _info, new CancellationToken());
+            var result = FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connection, _options, new CancellationToken());
             Assert.IsTrue(result.Success, $"FtpsSslMode: {ftpsSslMode}");
             Assert.IsFalse(result.ActionSkipped, $"FtpsSslMode: {ftpsSslMode}");
             Assert.AreEqual(1, result.SuccessfulTransferCount, $"FtpsSslMode: {ftpsSslMode}");
@@ -256,7 +256,7 @@ public class UploadFilesTests
             var connection = _connection;
             connection.SecureDataChannel = bo;
 
-            var result = FTP.UploadFiles(_source, _destination, connection, _options, _info, new CancellationToken());
+            var result = FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connection, _options, new CancellationToken());
             Assert.IsTrue(result.Success, $"Bo: {bo}");
             Assert.IsFalse(result.ActionSkipped, $"Bo: {bo}");
             Assert.AreEqual(1, result.SuccessfulTransferCount, $"Bo: {bo}");
@@ -281,7 +281,7 @@ public class UploadFilesTests
             var connection = _connection;
             connection.TransportType = ftpTransportType;
 
-            var result = FTP.UploadFiles(_source, _destination, connection, _options, _info, new CancellationToken());
+            var result = FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connection, _options, new CancellationToken());
             Assert.IsTrue(result.Success, $"FtpTransportType: {ftpTransportType}");
             Assert.IsFalse(result.ActionSkipped, $"FtpTransportType: {ftpTransportType}");
             Assert.AreEqual(1, result.SuccessfulTransferCount, $"FtpTransportType: {ftpTransportType}");
@@ -303,12 +303,12 @@ public class UploadFilesTests
 
         foreach (var notFoundAction in notFoundActions)
         {
-            _options.ThrowErrorOnFail = false;
+            _options.ThrowErrorOnFailure = false;
             var source = _source;
             source.NotFoundAction = notFoundAction;
             source.FileName = "";
 
-            var result = FTP.UploadFiles(source, _destination, _connection, _options, _info, new CancellationToken());
+            var result = FTP.UploadFiles(new Input { Source = source, Destination = _destination, Info = _info }, _connection, _options, new CancellationToken());
 
             if (notFoundAction is SourceNotFoundAction.Error)
             {
@@ -348,7 +348,7 @@ public class UploadFilesTests
             var source = _source;
             source.Operation = sourceOperation;
 
-            var result = FTP.UploadFiles(source, _destination, _connection, _options, _info, new CancellationToken());
+            var result = FTP.UploadFiles(new Input { Source = source, Destination = _destination, Info = _info }, _connection, _options, new CancellationToken());
             Assert.IsTrue(result.Success, $"SourceOperation: {sourceOperation}");
             Assert.IsFalse(result.ActionSkipped, $"SourceOperation: {sourceOperation}");
             Assert.AreEqual(1, result.SuccessfulTransferCount, $"SourceOperation: {sourceOperation}");
@@ -375,12 +375,12 @@ public class UploadFilesTests
 
             if (connection.Encoding.Equals("foobar123"))
             {
-                var ex = Assert.Throws<ArgumentException>(() => FTP.UploadFiles(_source, _destination, connection, _options, _info, new CancellationToken()));
+                var ex = Assert.Throws<ArgumentException>(() => FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connection, _options, new CancellationToken()));
                 Assert.IsTrue(ex.Message.Contains("is not a supported encoding name"), $"FileEncoding: {fileEncoding}");
             }
             else
             {
-                var result = FTP.UploadFiles(_source, _destination, connection, _options, _info, new CancellationToken());
+                var result = FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connection, _options, new CancellationToken());
                 Assert.IsTrue(result.Success, $"FileEncoding: {fileEncoding}");
                 Assert.IsFalse(result.ActionSkipped, $"FileEncoding: {fileEncoding}");
                 Assert.AreEqual(1, result.SuccessfulTransferCount, $"FileEncoding: {fileEncoding}");
@@ -403,11 +403,11 @@ public class UploadFilesTests
 
         foreach (var port in ports)
         {
-            _options.ThrowErrorOnFail = false;
+            _options.ThrowErrorOnFailure = false;
             var connection = _connection;
             connection.Port = port;
 
-            var result = FTP.UploadFiles(_source, _destination, connection, _options, _info, new CancellationToken());
+            var result = FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connection, _options, new CancellationToken());
             if (port == 210)
             {
                 Assert.IsFalse(result.Success, $"Port: {port}");
@@ -441,11 +441,11 @@ public class UploadFilesTests
 
         foreach (var interval in intervals)
         {
-            _options.ThrowErrorOnFail = true;
+            _options.ThrowErrorOnFailure = true;
             var connection = _connection;
             connection.KeepConnectionAliveInterval = interval;
 
-            var result = FTP.UploadFiles(_source, _destination, connection, _options, _info, new CancellationToken());
+            var result = FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connection, _options, new CancellationToken());
             Assert.IsTrue(result.Success, $"Interval: {interval}");
             Assert.IsFalse(result.ActionSkipped, $"Interval: {interval}");
             Assert.AreEqual(1, result.SuccessfulTransferCount, $"Interval: {interval}");
@@ -469,7 +469,7 @@ public class UploadFilesTests
             var connection = _connection;
             connection.ConnectionTimeout = timeout;
 
-            var result = FTP.UploadFiles(_source, _destination, connection, _options, _info, new CancellationToken());
+            var result = FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connection, _options, new CancellationToken());
             Assert.IsTrue(result.Success, $"Timeout: {timeout}");
             Assert.IsFalse(result.ActionSkipped, $"Timeout: {timeout}");
             Assert.AreEqual(1, result.SuccessfulTransferCount, $"Timeout: {timeout}");
@@ -494,7 +494,7 @@ public class UploadFilesTests
             var connection = _connection;
             connection.BufferSize = size;
 
-            var result = FTP.UploadFiles(_source, _destination, connection, _options, _info, new CancellationToken());
+            var result = FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connection, _options, new CancellationToken());
             Assert.IsTrue(result.Success, $"Size: {size}");
             Assert.IsFalse(result.ActionSkipped, $"Size: {size}");
             Assert.AreEqual(1, result.SuccessfulTransferCount, $"Size: {size}");
@@ -519,7 +519,7 @@ public class UploadFilesTests
             var connection = _connection;
             connection.ValidateAnyCertificate = bo;
 
-            var result = FTP.UploadFiles(_source, _destination, connection, _options, _info, new CancellationToken());
+            var result = FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connection, _options, new CancellationToken());
             Assert.IsTrue(result.Success, $"bo: {bo}");
             Assert.IsFalse(result.ActionSkipped, $"bo: {bo}");
             Assert.AreEqual(1, result.SuccessfulTransferCount, $"bo: {bo}");
@@ -540,7 +540,7 @@ public class UploadFilesTests
         var source = _source;
         source.FileNameAfterTransfer = "";
 
-        var result = FTP.UploadFiles(source, _destination, _connection, _options, _info, new CancellationToken());
+        var result = FTP.UploadFiles(new Input { Source = source, Destination = _destination, Info = _info }, _connection, _options, new CancellationToken());
 
         Assert.IsTrue(result.Success);
         Assert.IsTrue(result.UserResultMessage.Contains("files transferred"));
@@ -557,7 +557,7 @@ public class UploadFilesTests
     {
         var sourceOperations = new[] { SourceOperation.Move, SourceOperation.Delete, SourceOperation.Rename, SourceOperation.Nothing };
 
-        _options.ThrowErrorOnFail = false;
+        _options.ThrowErrorOnFailure = false;
 
         foreach (var sourceOperation in sourceOperations)
         {
@@ -565,7 +565,7 @@ public class UploadFilesTests
             source.DirectoryToMoveAfterTransfer = "DoesntExists";
             source.Operation = sourceOperation;
 
-            var result = FTP.UploadFiles(source, _destination, _connection, _options, _info, new CancellationToken());
+            var result = FTP.UploadFiles(new Input { Source = source, Destination = _destination, Info = _info }, _connection, _options, new CancellationToken());
 
             if (sourceOperation is SourceOperation.Move)
             {
@@ -595,15 +595,15 @@ public class UploadFilesTests
     }
 
     [Test]
-    public void UploadFTPS_ThrowErrorOnFail()
+    public void UploadFTPS_ThrowErrorOnFailure()
     {
         var source = _source;
         source.FileName = "DoesntExists";
 
         var options = _options;
-        options.ThrowErrorOnFail = true;
+        options.ThrowErrorOnFailure = true;
 
-        var ex = Assert.Throws<Exception>(() => FTP.UploadFiles(source, _destination, _connection, options, _info, new CancellationToken()));
+        var ex = Assert.Throws<Exception>(() => FTP.UploadFiles(new Input { Source = source, Destination = _destination, Info = _info }, _connection, options, new CancellationToken()));
         Assert.AreEqual(typeof(Exception), ex.GetType());
     }
 
@@ -617,7 +617,7 @@ public class UploadFilesTests
             var options = _options;
             options.PreserveLastModified = bo;
 
-            var result = FTP.UploadFiles(_source, _destination, _connection, options, _info, new CancellationToken());
+            var result = FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, _connection, options, new CancellationToken());
             Assert.IsTrue(result.Success, $"bo: {bo}");
             Assert.IsFalse(result.ActionSkipped, $"bo: {bo}");
             Assert.AreEqual(1, result.SuccessfulTransferCount, $"bo: {bo}");
@@ -642,7 +642,7 @@ public class UploadFilesTests
             var options = _options;
             options.OperationLog = bo;
 
-            var result = FTP.UploadFiles(_source, _destination, _connection, options, _info, new CancellationToken());
+            var result = FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, _connection, options, new CancellationToken());
             Assert.IsTrue(result.Success, $"bo: {bo}");
             Assert.IsFalse(result.ActionSkipped, $"bo: {bo}");
             Assert.AreEqual(1, result.SuccessfulTransferCount, $"bo: {bo}");
@@ -678,7 +678,7 @@ public class UploadFilesTests
 
         var ex = Assert.Throws<AggregateException>(() =>
         {
-            FTP.UploadFiles(_source, _destination, connection, new Options(), new Info(),
+            FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = new Info() }, connection, new Options(),
                 default);
 
         });
@@ -715,7 +715,7 @@ public class UploadFilesTests
         {
             try
             {
-                var result = FTP.UploadFiles(source, destination, _connection, _options, _info, default);
+                var result = FTP.UploadFiles(new Input { Source = source, Destination = destination, Info = _info }, _connection, _options, default);
                 var sourcePath = Path.Combine(destination.Directory, destination.FileName);
                 var testfile = Helpers.GetFileFromFtp(Path.GetDirectoryName(sourcePath), Path.GetFileName(sourcePath));
                 Assert.IsTrue(Helpers.ExtractLargeZipFile(testfile, _tempDir));
@@ -759,7 +759,7 @@ public class UploadFilesTests
         {
             try
             {
-                var result = FTP.UploadFiles(source, destination, _connection, _options, _info, default);
+                var result = FTP.UploadFiles(new Input { Source = source, Destination = destination, Info = _info }, _connection, _options, default);
                 Assert.IsTrue(result.Success);
                 var sourcePath = Path.Combine(destination.Directory, destination.FileName);
                 var testfile = Helpers.GetFileFromFtp(Path.GetDirectoryName(sourcePath), Path.GetFileName(sourcePath));

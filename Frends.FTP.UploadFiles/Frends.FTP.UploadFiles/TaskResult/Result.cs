@@ -70,7 +70,13 @@ namespace Frends.FTP.UploadFiles.TaskResult
         /// }</example>
         public IDictionary<string, string> OperationsLog { get; }
 
-        internal Result(FileTransferResult result)
+        /// <summary>
+        /// Error information, set when the transfer failed and ThrowErrorOnFailure is false.
+        /// </summary>
+        /// <example>{ "Message": "FTP transfer failed", "AdditionalInfo": null }</example>
+        public Error Error { get; }
+
+        internal Result(FileTransferResult result, Error error = null)
         {
             ActionSkipped = result.ActionSkipped;
             Success = result.Success;
@@ -81,6 +87,7 @@ namespace Frends.FTP.UploadFiles.TaskResult
             TransferErrors = result.TransferErrors;
             TransferredFilePaths = result.TransferredFilePaths;
             OperationsLog = result.OperationsLog;
+            Error = error;
         }
     }
 }

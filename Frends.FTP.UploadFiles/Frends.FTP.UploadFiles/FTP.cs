@@ -89,21 +89,20 @@ namespace Frends.FTP.UploadFiles
         /// - %SourceFileName% = will be replaced with source file name without extension.
         /// - %SourceFileExtension% = will be replaced with source file's extension, with the dot '.' included, i.e. if the source file is named 'foo.txt', the %SourceFileExtension% will be expanded as '.txt'. If the source file name does not have an extension, the macro result will be empty, i.e. for original file name "foo", "bar%SourceFileExtension%" will result in "bar"
         /// </frendsdocs>
-        /// <param name="info">Transfer info parameters</param>
+        /// <param name="input">Transfer input parameters: source, destination and info</param>
         /// <param name="connection">Transfer connection parameters</param>
-        /// <param name="source">Source file location</param>
-        /// <param name="destination">Destination directory location</param>
         /// <param name="options">Transfer options</param>
         /// <param name="cancellationToken">CancellationToken is given by Frends</param>
-        /// <returns>Result object {bool ActionSkipped, bool Success, string UserResultMessage, int SuccessfulTransferCount, int FailedTransferCount, IEnumerable&lt;string&gt; TransferredFileNames, Dictionary&lt;string, IList&lt;string&gt;&gt; TransferErrors, IEnumerable&lt;string&gt; TransferredFilePaths, IDictionary&lt;string, string&gt; OperationsLog} </returns>
+        /// <returns>Result object {bool ActionSkipped, bool Success, string UserResultMessage, int SuccessfulTransferCount, int FailedTransferCount, IEnumerable&lt;string&gt; TransferredFileNames, Dictionary&lt;string, IList&lt;string&gt;&gt; TransferErrors, IEnumerable&lt;string&gt; TransferredFilePaths, IDictionary&lt;string, string&gt; OperationsLog, Error Error} </returns>
         public static Result UploadFiles(
-            [PropertyTab] Source source,
-            [PropertyTab] Destination destination,
+            [PropertyTab] Input input,
             [PropertyTab] Connection connection,
             [PropertyTab] Options options,
-            [PropertyTab] Info info,
             CancellationToken cancellationToken)
         {
+            var source = input.Source;
+            var destination = input.Destination;
+            var info = input.Info;
             var maxLogEntries = options.OperationLog ? (int?)null : 100;
             var transferSink = new TransferLogSink(maxLogEntries);
             var operationsLogger = new LoggerConfiguration()
@@ -137,14 +136,18 @@ namespace Frends.FTP.UploadFiles
                 var fileTransporter = new FileTransporter(logger, batchContext, executionId);
                 var result = fileTransporter.Run(cancellationToken);
 
-                if (options.ThrowErrorOnFail && !result.Success)
-                    throw new Exception($"SFTP transfer failed: {result.UserResultMessage}. " +
+                var failureMessage = string.IsNullOrEmpty(options.ErrorMessageOnFailure)
+                    ? $"FTP transfer failed: {result.UserResultMessage}"
+                    : $"{options.ErrorMessageOnFailure}: {result.UserResultMessage}";
+
+                if (options.ThrowErrorOnFailure && !result.Success)
+                    throw new Exception($"{failureMessage}. " +
                                         $"Latest operations: \n{GetLogLines(transferSink.GetBufferedLogMessages())}");
 
                 if (options.OperationLog)
                     result.OperationsLog = GetLogDictionary(transferSink.GetBufferedLogMessages());
 
-                return new Result(result);
+                return new Result(result, result.Success ? null : new Error { Message = failureMessage });
             }
         }
 

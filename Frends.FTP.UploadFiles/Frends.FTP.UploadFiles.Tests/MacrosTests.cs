@@ -135,7 +135,7 @@ public class MacrosTests
         var options = new Options { CreateDestinationDirectories = true };
         var connection = Helpers.GetFtpsConnection();
 
-        var result = FTP.UploadFiles(source, destination, connection, options, new Info(), new CancellationToken());
+        var result = FTP.UploadFiles(new Input { Source = source, Destination = destination, Info = new Info() }, connection, options, new CancellationToken());
         return result;
     }
 }
