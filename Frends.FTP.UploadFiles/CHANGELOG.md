@@ -6,6 +6,7 @@
 - **BREAKING:** Task signature changed to `UploadFiles(Input input, Connection connection, Options options, CancellationToken cancellationToken)`. The former `Source`, `Destination` and `Info` parameters are now properties of the new `Input` class (`Input.Source`, `Input.Destination`, `Input.Info`).
 - **BREAKING:** `Options.ThrowErrorOnFail` renamed to `Options.ThrowErrorOnFailure`. It now defaults to `true`.
 - **BREAKING:** Thrown error message prefix changed from "SFTP transfer failed" to "FTP transfer failed" (or the custom `ErrorMessageOnFailure`).
+- **BREAKING:** Errors are now handled by a common error handler. Exceptions thrown during the transfer are wrapped in a generic `Exception` (original available as `InnerException`) when `ThrowErrorOnFailure` is true, and returned as `Result.Error` when false.
 - Fixed project metadata (Company, Product, PackageProjectUrl) and added missing XML documentation.
 
 ### Added

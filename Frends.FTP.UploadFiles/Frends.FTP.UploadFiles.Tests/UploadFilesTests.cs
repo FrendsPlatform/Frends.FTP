@@ -115,7 +115,7 @@ public class UploadFilesTests
         connection.CertificateHashStringSHA1 = "incorrect";
 
         // Test and assert
-        var ex = Assert.Throws<AggregateException>(() => FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connection, _options, new CancellationToken()));
+        var ex = Assert.Throws<Exception>(() => FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connection, _options, new CancellationToken()));
         Assert.IsTrue(ex.Message.Contains("The remote certificate was rejected by the provided RemoteCertificateValidationCallback."));
     }
 
@@ -134,17 +134,17 @@ public class UploadFilesTests
         var connectionD = _connection;
         connectionD.UserName = null;
 
-        var ex1 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connectionA, _options, new CancellationToken()));
-        Assert.AreEqual(typeof(NullReferenceException), ex1.GetType());
+        var ex1 = Assert.Throws<Exception>(() => FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connectionA, _options, new CancellationToken()));
+        Assert.AreEqual(typeof(NullReferenceException), ex1.InnerException.GetType());
 
-        var ex2 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connectionB, _options, new CancellationToken()));
-        Assert.AreEqual(typeof(NullReferenceException), ex2.GetType());
+        var ex2 = Assert.Throws<Exception>(() => FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connectionB, _options, new CancellationToken()));
+        Assert.AreEqual(typeof(NullReferenceException), ex2.InnerException.GetType());
 
-        var ex3 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connectionC, _options, new CancellationToken()));
-        Assert.AreEqual(typeof(NullReferenceException), ex3.GetType());
+        var ex3 = Assert.Throws<Exception>(() => FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connectionC, _options, new CancellationToken()));
+        Assert.AreEqual(typeof(NullReferenceException), ex3.InnerException.GetType());
 
-        var ex4 = Assert.Throws<NullReferenceException>(() => FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connectionD, _options, new CancellationToken()));
-        Assert.AreEqual(typeof(NullReferenceException), ex4.GetType());
+        var ex4 = Assert.Throws<Exception>(() => FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connectionD, _options, new CancellationToken()));
+        Assert.AreEqual(typeof(NullReferenceException), ex4.InnerException.GetType());
     }
 
     [Test]
@@ -375,7 +375,7 @@ public class UploadFilesTests
 
             if (connection.Encoding.Equals("foobar123"))
             {
-                var ex = Assert.Throws<ArgumentException>(() => FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connection, _options, new CancellationToken()));
+                var ex = Assert.Throws<Exception>(() => FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = _info }, connection, _options, new CancellationToken()));
                 Assert.IsTrue(ex.Message.Contains("is not a supported encoding name"), $"FileEncoding: {fileEncoding}");
             }
             else
@@ -676,7 +676,7 @@ public class UploadFilesTests
             ClientCertificateThumbprint = ""
         };
 
-        var ex = Assert.Throws<AggregateException>(() =>
+        var ex = Assert.Throws<Exception>(() =>
         {
             FTP.UploadFiles(new Input { Source = _source, Destination = _destination, Info = new Info() }, connection, new Options(),
                 default);

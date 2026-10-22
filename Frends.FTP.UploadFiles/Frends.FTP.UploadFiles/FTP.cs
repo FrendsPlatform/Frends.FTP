@@ -1,4 +1,5 @@
 ﻿using Frends.FTP.UploadFiles.Definitions;
+using Frends.FTP.UploadFiles.Helpers;
 using Frends.FTP.UploadFiles.Logging;
 using Frends.FTP.UploadFiles.TaskConfiguration;
 using Frends.FTP.UploadFiles.TaskResult;
@@ -100,54 +101,58 @@ namespace Frends.FTP.UploadFiles
             [PropertyTab] Options options,
             CancellationToken cancellationToken)
         {
-            var source = input.Source;
-            var destination = input.Destination;
-            var info = input.Info;
-            var maxLogEntries = options.OperationLog ? (int?)null : 100;
-            var transferSink = new TransferLogSink(maxLogEntries);
-            var operationsLogger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.Sink(transferSink)
-                .CreateLogger();
-            var fileTransferLog = Log.Logger;
-
-            using (var logger = InitializeFtpLogger(operationsLogger))
+            try
             {
-                if (string.IsNullOrWhiteSpace(info.ProcessUri))
-                    fileTransferLog.Warning("ProcessUri is empty. This means the transfer view cannot link to the correct page");
+                var source = input.Source;
+                var destination = input.Destination;
+                var info = input.Info;
+                var maxLogEntries = options.OperationLog ? (int?)null : 100;
+                var transferSink = new TransferLogSink(maxLogEntries);
+                var operationsLogger = new LoggerConfiguration()
+                    .MinimumLevel.Debug()
+                    .WriteTo.Sink(transferSink)
+                    .CreateLogger();
+                var fileTransferLog = Log.Logger;
 
-                if (!Guid.TryParse(info.TaskExecutionID, out var executionId))
+                using (var logger = InitializeFtpLogger(operationsLogger))
                 {
-                    fileTransferLog.Warning("'{0}' is not a valid task execution ID, will default to random Guid", info.TaskExecutionID);
-                    executionId = Guid.NewGuid();
+                    if (string.IsNullOrWhiteSpace(info.ProcessUri))
+                        fileTransferLog.Warning("ProcessUri is empty. This means the transfer view cannot link to the correct page");
+
+                    if (!Guid.TryParse(info.TaskExecutionID, out var executionId))
+                    {
+                        fileTransferLog.Warning("'{0}' is not a valid task execution ID, will default to random Guid", info.TaskExecutionID);
+                        executionId = Guid.NewGuid();
+                    }
+
+                    var batchContext = new BatchContext
+                    {
+                        Info = info,
+                        Options = options,
+                        InstanceId = executionId,
+                        BatchTransferStartTime = DateTime.Now,
+                        Source = source,
+                        Destination = destination,
+                        Connection = connection
+                    };
+
+                    var fileTransporter = new FileTransporter(logger, batchContext, executionId);
+                    var result = fileTransporter.Run(cancellationToken);
+
+                    if (options.OperationLog)
+                        result.OperationsLog = GetLogDictionary(transferSink.GetBufferedLogMessages());
+
+                    if (result.Success)
+                        return new Result(result);
+
+                    return new Exception($"FTP transfer failed: {result.UserResultMessage}. " +
+                                         $"Latest operations: \n{GetLogLines(transferSink.GetBufferedLogMessages())}")
+                        .Handle(options, result);
                 }
-
-                var batchContext = new BatchContext
-                {
-                    Info = info,
-                    Options = options,
-                    InstanceId = executionId,
-                    BatchTransferStartTime = DateTime.Now,
-                    Source = source,
-                    Destination = destination,
-                    Connection = connection
-                };
-
-                var fileTransporter = new FileTransporter(logger, batchContext, executionId);
-                var result = fileTransporter.Run(cancellationToken);
-
-                var failureMessage = string.IsNullOrEmpty(options.ErrorMessageOnFailure)
-                    ? $"FTP transfer failed: {result.UserResultMessage}"
-                    : $"{options.ErrorMessageOnFailure}: {result.UserResultMessage}";
-
-                if (options.ThrowErrorOnFailure && !result.Success)
-                    throw new Exception($"{failureMessage}. " +
-                                        $"Latest operations: \n{GetLogLines(transferSink.GetBufferedLogMessages())}");
-
-                if (options.OperationLog)
-                    result.OperationsLog = GetLogDictionary(transferSink.GetBufferedLogMessages());
-
-                return new Result(result, result.Success ? null : new Error { Message = failureMessage });
+            }
+            catch (Exception ex)
+            {
+                return ex.Handle(options);
             }
         }
 
