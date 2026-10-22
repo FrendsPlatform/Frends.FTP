@@ -44,6 +44,9 @@ namespace Frends.FTP.UploadFiles.Definitions
 
         private List<SingleFileTransferResult> Result { get; }
 
+        /// <summary>
+        /// Runs the file transfer for all source files.
+        /// </summary>
         public FileTransferResult Run(CancellationToken cancellationToken)
         {
             var userResultMessage = "";

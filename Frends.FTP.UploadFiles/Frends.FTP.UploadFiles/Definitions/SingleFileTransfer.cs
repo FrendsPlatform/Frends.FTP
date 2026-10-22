@@ -38,10 +38,21 @@ namespace Frends.FTP.UploadFiles.Definitions
             _result = new SingleFileTransferResult { Success = true };
         }
 
+        /// <summary>
+        /// Gets or sets the source file.
+        /// </summary>
+        /// <example>SourceFile</example>
         public FileItem SourceFile { get; set; }
 
+        /// <summary>
+        /// Gets or sets the destination file name with macros expanded.
+        /// </summary>
+        /// <example>file.txt</example>
         public string DestinationFileNameWithMacrosExpanded { get; set; }
 
+        /// <summary>
+        /// Transfers the source file to the destination.
+        /// </summary>
         public SingleFileTransferResult TransferSingleFile()
         {
             try

@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.0.0] - 2026-10-22
+### Changed
+- Target framework changed to net8.0.
+- Fixed project metadata (Company, Product, PackageProjectUrl) and added missing XML documentation.
+
 ## [1.3.0] - 2024-12-11
 ### Fixed
 - Fixed issue with Task not throwing even when retry failed.
