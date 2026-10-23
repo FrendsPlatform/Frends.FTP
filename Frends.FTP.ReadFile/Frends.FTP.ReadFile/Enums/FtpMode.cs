@@ -9,9 +9,9 @@ public enum FtpMode
     /// Passive mode
     /// </summary>
     Passive,
+
     /// <summary>
     /// Active mode.
     /// </summary>
     Active,
 }
-

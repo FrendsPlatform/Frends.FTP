@@ -15,4 +15,3 @@ public enum FtpTransportType
     /// </summary>
     Ascii,
 }
-

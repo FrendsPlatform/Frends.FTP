@@ -1,6 +1,6 @@
-﻿using Frends.FTP.ReadFile.Enums;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Frends.FTP.ReadFile.Enums;
 
 namespace Frends.FTP.ReadFile.Definitions;
 
@@ -81,8 +81,6 @@ public class Connection
     [DefaultValue(4096)]
     public int BufferSize { get; set; }
 
-    #region FTPS settings
-
     /// <summary>
     /// Whether to use FTPS or not.
     /// </summary>
@@ -137,8 +135,4 @@ public class Connection
     [DefaultValue("")]
     [UIHint(nameof(UseFTPS), "", true)]
     public string CertificateHashStringSHA1 { get; set; }
-
-    #endregion
 }
-
-
