@@ -1,9 +1,9 @@
-﻿using Frends.FTP.UploadFiles.Definitions;
-using Frends.FTP.UploadFiles.Enums;
-using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
+using Frends.FTP.UploadFiles.Definitions;
+using Frends.FTP.UploadFiles.Enums;
+using Serilog;
 
 namespace Frends.FTP.UploadFiles.Logging
 {
@@ -15,26 +15,38 @@ namespace Frends.FTP.UploadFiles.Logging
         /// <summary>
         /// Notifies of errors
         /// </summary>
+        /// <param name="context">The batch context.</param>
+        /// <param name="msg">Error message.</param>
+        /// <param name="e">Exception that caused the error.</param>
         void NotifyError(BatchContext context, string msg, Exception e);
 
         /// <summary>
         /// Notifies of info-level messages
         /// </summary>
+        /// <param name="context">The batch context.</param>
+        /// <param name="msg">Information message.</param>
         void NotifyInformation(BatchContext context, string msg);
 
         /// <summary>
         /// Notifies of debug trace messages
         /// </summary>
+        /// <param name="message">Trace message.</param>
         void NotifyTrace(string message);
 
         /// <summary>
         /// Logs a single successful file transfer
         /// </summary>
+        /// <param name="transfer">The successful transfer.</param>
+        /// <param name="context">The batch context.</param>
         void LogTransferSuccess(SingleFileTransfer transfer, BatchContext context);
 
         /// <summary>
         /// Logs a single failed file transfer
         /// </summary>
+        /// <param name="transfer">The failed transfer.</param>
+        /// <param name="context">The batch context.</param>
+        /// <param name="errorMessage">Error message of the failure.</param>
+        /// <param name="exception">Exception that caused the failure.</param>
         void LogTransferFailed(SingleFileTransfer transfer, BatchContext context, string errorMessage, Exception exception);
     }
 
@@ -43,19 +55,25 @@ namespace Frends.FTP.UploadFiles.Logging
     /// </summary>
     internal class FtpLogger : IFtpLogger
     {
-        private ConcurrentBag<FileTransferInfo> _fileTransfers;
-        private ILogger _log;
+        private ConcurrentBag<FileTransferInfo> fileTransfers;
+        private ILogger log;
 
-        private bool _disposed;
+        private bool disposed;
 
         public FtpLogger(ILogger log)
         {
-            _fileTransfers = new ConcurrentBag<FileTransferInfo>();
-            _log = log;
+            fileTransfers = new ConcurrentBag<FileTransferInfo>();
+            this.log = log;
         }
 
         ~FtpLogger() => Dispose(false);
 
+        /// <summary>
+        /// Notifies about an error.
+        /// </summary>
+        /// <param name="context">The batch context.</param>
+        /// <param name="msg">Error message.</param>
+        /// <param name="e">Exception that caused the error.</param>
         public void NotifyError(BatchContext context, string msg, Exception e)
         {
             try
@@ -68,67 +86,103 @@ namespace Frends.FTP.UploadFiles.Logging
                 var transferNameForLog = transferName ?? string.Empty;
 
                 var errorMessage = $"\r\n\r\nFrends FTP file transfer '{transferNameForLog}' from '{sourceEndPointName}' to '{destinationEndPointName}': \r\n{msg}\r\n";
-                _log.Error(errorMessage, e);
+                log.Error(errorMessage, e);
             }
             catch (Exception ex)
             {
-                _log.Error("Error when logging error message: " + ex.Message, ex);
+                log.Error("Error when logging error message: " + ex.Message, ex);
             }
         }
 
+        /// <summary>
+        /// Notifies about information.
+        /// </summary>
+        /// <param name="context">The batch context.</param>
+        /// <param name="msg">Information message.</param>
         public void NotifyInformation(BatchContext context, string msg)
         {
             try
             {
-                _log.Information(msg);
+                log.Information(msg);
             }
             catch (Exception ex)
             {
-                _log.Error("Error when logging information message: " + ex.Message, ex);
+                log.Error("Error when logging information message: " + ex.Message, ex);
             }
         }
 
+        /// <summary>
+        /// Logs a successful transfer.
+        /// </summary>
+        /// <param name="transfer">The successful transfer.</param>
+        /// <param name="context">The batch context.</param>
         public void LogTransferSuccess(SingleFileTransfer transfer, BatchContext context)
         {
             try
             {
                 var fileTransferInfoForSuccess = CreateFileTransferInfo(TransferResult.Success, transfer, context);
-                _fileTransfers.Add(fileTransferInfoForSuccess);
-                _log.Information("File transfer succeeded: " + transfer.SourceFile.Name);
+                fileTransfers.Add(fileTransferInfoForSuccess);
+                log.Information("File transfer succeeded: " + transfer.SourceFile.Name);
             }
             catch (Exception ex)
             {
-                _log.Error("Error when logging success message: " + ex.Message, ex);
+                log.Error("Error when logging success message: " + ex.Message, ex);
             }
         }
 
-
         /// <summary>
-        /// Logs failed transfer.
+        /// Logs a failed transfer.
         /// </summary>
-        /// <param name="transfer"></param>
-        /// <param name="context"></param>
-        /// <param name="errorMessage"></param>
-        /// <param name="exception"></param>
+        /// <param name="transfer">The failed transfer.</param>
+        /// <param name="context">The batch context.</param>
+        /// <param name="errorMessage">Error message of the failure.</param>
+        /// <param name="exception">Exception that caused the failure.</param>
         public void LogTransferFailed(SingleFileTransfer transfer, BatchContext context, string errorMessage, Exception exception)
         {
             try
             {
                 var fileTransferInfoForFailure = CreateFileTransferInfo(TransferResult.Fail, transfer, context, errorMessage);
-                _fileTransfers.Add(fileTransferInfoForFailure);
+                fileTransfers.Add(fileTransferInfoForFailure);
 
-                _log.Error("File transfer failed: " + fileTransferInfoForFailure.ErrorInfo, exception);
+                log.Error("File transfer failed: " + fileTransferInfoForFailure.ErrorInfo, exception);
             }
             catch (Exception ex)
             {
-                _log.Error("Error when logging failure: " + ex.Message, ex);
+                log.Error("Error when logging failure: " + ex.Message, ex);
             }
         }
 
+        /// <summary>
+        /// Notifies a trace message.
+        /// </summary>
+        /// <param name="message">Trace message.</param>
         public void NotifyTrace(string message)
         {
             // only log to debug trace
-            _log.Debug(message);
+            log.Debug(message);
+        }
+
+        /// <summary>
+        /// Method starts dispose.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Virtual method dispose for SFTPLogger
+        /// </summary>
+        /// <param name="disposing">True when called from Dispose, false when called from the finalizer.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed) return;
+
+            fileTransfers = null;
+            log = null;
+
+            disposed = true;
         }
 
         private static string GetSourceEndPointName(BatchContext context)
@@ -182,36 +236,13 @@ namespace Frends.FTP.UploadFiles.Logging
                 TransferEnded = DateTime.UtcNow,
                 BatchId = batchId,
                 TransferName = transferName ?? string.Empty,
-                ErrorInfo = errorMessage ?? string.Empty
+                ErrorInfo = errorMessage ?? string.Empty,
             };
         }
 
         private static long GetFileSize(string filepath)
         {
             return File.Exists(filepath) ? new FileInfo(filepath).Length : 0;
-        }
-
-        /// <summary>
-        /// Method starts dispose.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Virtual method dispose for SFTPLogger
-        /// </summary>
-        /// <param name="disposing"></param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_disposed) return;
-
-            _fileTransfers = null;
-            _log = null;
-
-            _disposed = true;
         }
     }
 }

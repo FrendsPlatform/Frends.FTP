@@ -1,6 +1,6 @@
-﻿using Frends.FTP.UploadFiles.Enums;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Frends.FTP.UploadFiles.Enums;
 
 namespace Frends.FTP.UploadFiles.TaskConfiguration
 {
@@ -19,6 +19,7 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
     {
         /// <summary>Passive mode</summary>
         Passive,
+
         /// <summary>Active mode.</summary>
         Active,
     }
@@ -131,8 +132,6 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         [DefaultValue(3)]
         public int RetryAttempts { get; set; }
 
-        #region FTPS settings
-
         /// <summary>
         /// Whether to use FTPS or not.
         /// </summary>
@@ -203,7 +202,5 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         [DefaultValue("")]
         [UIHint(nameof(UseFTPS), "", true)]
         public string CertificateHashStringSHA1 { get; set; }
-
-        #endregion
     }
 }

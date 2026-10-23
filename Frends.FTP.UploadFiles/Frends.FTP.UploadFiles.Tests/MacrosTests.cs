@@ -1,10 +1,10 @@
-﻿using Frends.FTP.UploadFiles.Enums;
-using Frends.FTP.UploadFiles.TaskConfiguration;
-using Frends.FTP.UploadFiles.TaskResult;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Threading;
+using Frends.FTP.UploadFiles.Enums;
+using Frends.FTP.UploadFiles.TaskConfiguration;
+using Frends.FTP.UploadFiles.TaskResult;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Frends.FTP.UploadFiles.Tests;
 
@@ -14,32 +14,18 @@ namespace Frends.FTP.UploadFiles.Tests;
 /// - destination dir
 /// - destination file name
 ///
-/// NOTE: 
+/// NOTE:
 /// - source file name does not support macros for some reason in Cobalt, currently not implementing because
-///   need to understand reasoning better
+///   need to understand reasoning better.
 /// </summary>
 [TestClass]
 public class MacrosTests
 {
-    private readonly string _dockerDataVolumePath = Path.GetFullPath("../../../DockerVolumes/data");
+    private readonly string dockerDataVolumePath = Path.GetFullPath("../../../DockerVolumes/data");
 
-    private static string CreateLocalDir(string name)
+    public bool FtpFileExists(string fileName, string subDir)
     {
-        var path = Path.Combine(Path.GetTempPath(), name);
-        Directory.CreateDirectory(path);
-        return path;
-    }
-
-    private static string CreateLocalFile(string dir, string file)
-    {
-        var path = Path.Combine(Path.GetTempPath(), dir, file);
-        File.WriteAllText(path, "hello");
-        return path;
-    }
-
-    protected bool FtpFileExists(string fileName, string subDir)
-    {
-        return File.Exists(Path.Combine(_dockerDataVolumePath, subDir, fileName));
+        return File.Exists(Path.Combine(dockerDataVolumePath, subDir, fileName));
     }
 
     [TestMethod]
@@ -62,9 +48,11 @@ public class MacrosTests
 
         Assert.IsTrue(result.Success, result.UserResultMessage);
         Assert.AreEqual(1, result.SuccessfulTransferCount);
-        Assert.IsTrue(FtpFileExists("file1.txt", nameof(MacrosWorkInSourceDirectory)),
-            string.Join(",", Directory.EnumerateDirectories(_dockerDataVolumePath)) + "| " +
-            string.Join(",", Directory.EnumerateFiles(Path.Combine(_dockerDataVolumePath, nameof(MacrosWorkInSourceDirectory)))));
+        var failureMessage = string.Join(",", Directory.EnumerateDirectories(dockerDataVolumePath)) + "| " +
+            string.Join(",", Directory.EnumerateFiles(Path.Combine(dockerDataVolumePath, nameof(MacrosWorkInSourceDirectory))));
+        Assert.IsTrue(
+            FtpFileExists("file1.txt", nameof(MacrosWorkInSourceDirectory)),
+            failureMessage);
     }
 
     [TestMethod]
@@ -124,18 +112,32 @@ public class MacrosTests
         {
             Directory = sourceDirectory,
             FileName = sourceFileName,
-            Operation = SourceOperation.Delete
+            Operation = SourceOperation.Delete,
         };
         var destination = new Destination
         {
             Directory = targetDirectory,
             Action = DestinationAction.Overwrite,
-            FileName = targetFileName
+            FileName = targetFileName,
         };
         var options = new Options { CreateDestinationDirectories = true };
         var connection = Helpers.GetFtpsConnection();
 
-        var result = FTP.UploadFiles(source, destination, connection, options, new Info(), new CancellationToken());
+        var result = FTP.UploadFiles(new Input { Source = source, Destination = destination, Info = new Info() }, connection, options, CancellationToken.None);
         return result;
+    }
+
+    private static string CreateLocalDir(string name)
+    {
+        var path = Path.Combine(Path.GetTempPath(), name);
+        Directory.CreateDirectory(path);
+        return path;
+    }
+
+    private static string CreateLocalFile(string dir, string file)
+    {
+        var path = Path.Combine(Path.GetTempPath(), dir, file);
+        File.WriteAllText(path, "hello");
+        return path;
     }
 }

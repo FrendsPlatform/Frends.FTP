@@ -1,8 +1,15 @@
-﻿namespace Frends.FTP.UploadFiles.Enums
+namespace Frends.FTP.UploadFiles.Enums
 {
     internal enum TransferResult
     {
+        /// <summary>
+        /// Transfer succeeded.
+        /// </summary>
         Success,
-        Fail
+
+        /// <summary>
+        /// Transfer failed.
+        /// </summary>
+        Fail,
     }
 }

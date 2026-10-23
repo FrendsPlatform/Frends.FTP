@@ -1,9 +1,9 @@
-﻿using Frends.FTP.UploadFiles.Enums;
+using System;
+using System.Threading;
+using Frends.FTP.UploadFiles.Enums;
 using Frends.FTP.UploadFiles.TaskConfiguration;
 using Frends.FTP.UploadFiles.TaskResult;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Threading;
 
 namespace Frends.FTP.UploadFiles.Tests;
 
@@ -103,7 +103,9 @@ public class SourceOperationTests : UploadFilesTestBase
     }
 
     private Result CallUploadFiles(
-        SourceOperation sourceOperation, string sourceFileName, string targetDir,
+        SourceOperation sourceOperation,
+        string sourceFileName,
+        string targetDir,
         string moveToDir = null,
         string renameTo = null)
     {
@@ -113,14 +115,14 @@ public class SourceOperationTests : UploadFilesTestBase
             FileName = sourceFileName,
             Operation = sourceOperation,
             DirectoryToMoveAfterTransfer = moveToDir,
-            FileNameAfterTransfer = renameTo
+            FileNameAfterTransfer = renameTo,
         };
         var destination = new Destination
         { Directory = targetDir, Action = DestinationAction.Overwrite };
         var options = new Options { CreateDestinationDirectories = true };
         var connection = Helpers.GetFtpsConnection();
 
-        var result = FTP.UploadFiles(source, destination, connection, options, new Info(), new CancellationToken());
+        var result = FTP.UploadFiles(new Input { Source = source, Destination = destination, Info = new Info() }, connection, options, CancellationToken.None);
         return result;
     }
 }
