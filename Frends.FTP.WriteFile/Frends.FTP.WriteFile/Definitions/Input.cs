@@ -32,8 +32,8 @@ public class Input
     public bool CreateDestinationDirectories { get; set; }
 
     /// <summary>
-    /// If set, this ecoding will be used to encode and decode command 
-    /// parameters and server responses, such as file names. 
+    /// If set, this ecoding will be used to encode and decode command
+    /// parameters and server responses, such as file names.
     /// By selecting 'Other' you can use any encoding.
     /// </summary>
     /// <example>FileEncoding.ANSI</example>
@@ -50,7 +50,7 @@ public class Input
 
     /// <summary>
     /// File encoding to be used.
-    /// Encoding don't support any unicode encoding. It only support the code page encodings. 
+    /// Encoding don't support any unicode encoding. It only support the code page encodings.
     /// A partial list of possible encodings: https://learn.microsoft.com/en-us/dotnet/api/system.text.encoding.getencodings?view=net-6.0#examples.
     /// </summary>
     /// <example>iso-8859-1</example>
@@ -71,5 +71,3 @@ public class Input
     [UIHint(nameof(WriteBehaviour), "", WriteOperation.Append)]
     public bool AddNewLine { get; set; }
 }
-
-
