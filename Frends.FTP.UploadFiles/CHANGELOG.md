@@ -2,8 +2,8 @@
 
 ## [2.0.0] - 2026-10-23
 ### Changed
-- **[Breaking Change]** Upgraded the Task to target .NET 8 only; .NET 6, .NET Standard 2.0 and .NET Framework 4.7.1 are no longer supported.
-- **[Breaking Change]** The `Source`, `Destination` and `Info` parameters are now grouped under a single `Input` parameter.
+- Upgraded the Task to target .NET 8.
+- **[Breaking Change]** The `Source`, `Destination` and `Info` parameters are now grouped under a single `Input` tab.
 - **[Breaking Change]** Renamed the `ThrowErrorOnFail` option to `ThrowErrorOnFailure`.
 - **[Breaking Change]** When `ThrowErrorOnFailure` is disabled, any error is now returned in the new `Error` property of the result instead of being thrown.
 
