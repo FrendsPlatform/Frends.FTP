@@ -1,14 +1,14 @@
-﻿using Frends.FTP.UploadFiles.Enums;
+using System.IO;
+using System.Threading;
+using Frends.FTP.UploadFiles.Enums;
 using Frends.FTP.UploadFiles.TaskConfiguration;
 using Frends.FTP.UploadFiles.TaskResult;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
-using System.Threading;
 
 namespace Frends.FTP.UploadFiles.Tests;
 
 [TestClass]
-public class DestinationActionTests : UploadFilesTestBase
+public class DestinationOperationTests : UploadFilesTestBase
 {
     [TestMethod]
     public void DestinationAction_Append_NoRenameInTransfer()
@@ -43,21 +43,23 @@ public class DestinationActionTests : UploadFilesTestBase
     }
 
     private Result CallUploadFiles(
-        DestinationAction destinationAction, string sourceFileName, string targetDir,
+        DestinationAction destinationAction,
+        string sourceFileName,
+        string targetDir,
         bool renameDestinationFilesDuringTransfer)
     {
         var source = new Source
         {
             Directory = Dir,
             FileName = sourceFileName,
-            Operation = SourceOperation.Nothing
+            Operation = SourceOperation.Nothing,
         };
         var destination = new Destination
         { Directory = targetDir, Action = destinationAction };
         var options = new Options { CreateDestinationDirectories = true, RenameDestinationFileDuringTransfer = renameDestinationFilesDuringTransfer };
         var connection = Helpers.GetFtpsConnection();
 
-        var result = FTP.UploadFiles(source, destination, connection, options, new Info(), new CancellationToken());
+        var result = FTP.UploadFiles(new Input { Source = source, Destination = destination, Info = new Info() }, connection, options, CancellationToken.None);
         return result;
     }
 }

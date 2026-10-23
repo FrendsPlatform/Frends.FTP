@@ -9,6 +9,7 @@
         /// Will delete files after uploading.
         /// </summary>
         Delete,
+
         /// <summary>
         /// Will rename the files after uploading.
         /// </summary>
@@ -22,6 +23,6 @@
         /// <summary>
         /// Will do nothing to source files after uploading.
         /// </summary>
-        Nothing
+        Nothing,
     }
 }

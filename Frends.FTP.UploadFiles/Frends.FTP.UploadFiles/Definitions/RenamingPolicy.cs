@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,18 +6,18 @@ using System.Text.RegularExpressions;
 
 namespace Frends.FTP.UploadFiles.Definitions
 {
-    ///<summary>
+    /// <summary>
     /// Policies for creating names for remote files: expands macros etc.
-    ///</summary>
+    /// </summary>
     internal class RenamingPolicy
     {
-        private readonly IDictionary<string, Func<string, string>> _macroHandlers;
-        private readonly IDictionary<string, Func<string, string>> _sourceFileNameMacroHandlers;
+        private readonly IDictionary<string, Func<string, string>> macroHandlers;
+        private readonly IDictionary<string, Func<string, string>> sourceFileNameMacroHandlers;
 
         public RenamingPolicy(string transferName, Guid transferId)
         {
-            _macroHandlers = InitializeMacroHandlers(transferName, transferId);
-            _sourceFileNameMacroHandlers = InitializeSourceFileNameMacroHandlers();
+            macroHandlers = InitializeMacroHandlers(transferName, transferId);
+            sourceFileNameMacroHandlers = InitializeSourceFileNameMacroHandlers();
         }
 
         /// <summary>
@@ -40,8 +40,8 @@ namespace Frends.FTP.UploadFiles.Definitions
                 return originalFileNameWithoutPath;
 
             if (!IsFileMask(remoteFileDefinition) &&
-                !IsFileMacro(remoteFileDefinition, _macroHandlers) &&
-                !IsFileMacro(remoteFileDefinition, _sourceFileNameMacroHandlers))
+                !IsFileMacro(remoteFileDefinition, macroHandlers) &&
+                !IsFileMacro(remoteFileDefinition, sourceFileNameMacroHandlers))
             {
                 // remoteFileDefinition does not have macros
                 var remoteFileName = Path.GetFileName(remoteFileDefinition);
@@ -77,8 +77,11 @@ namespace Frends.FTP.UploadFiles.Definitions
         /// Creates the file path to use for source operation: Move
         /// The SourceOperationTo should always be a directory. If it is empty, an error should be thrown
         /// The current file name should always be appended to the directory name
-        /// The directory name cannot use file macros or file masks        
-        /// </summary>        
+        /// The directory name cannot use file macros or file masks
+        /// </summary>
+        /// <param name="sourceOperationTo">The directory to move the file to.</param>
+        /// <param name="sourceFilePath">The path of the file to move.</param>
+        /// <returns>The remote file path to move the file to.</returns>
         public string CreateRemoteFileNameForMove(string sourceOperationTo, string sourceFilePath)
         {
             var directoryName = sourceOperationTo;
@@ -99,6 +102,28 @@ namespace Frends.FTP.UploadFiles.Definitions
             return Path.Combine(directoryName, sourceFileName);
         }
 
+        /// <summary>
+        /// Creates the file path to use for source operation: Rename
+        /// </summary>
+        /// <param name="originalFilePath">The original file name with path - the path is needed so the directory settings are preserved</param>
+        /// <param name="sourceOperationTo">The new name to put files to</param>
+        /// <returns>The file path to rename the file to.</returns>
+        public string CreateFilePathForRename(string originalFilePath, string sourceOperationTo)
+        {
+            if (string.IsNullOrWhiteSpace(sourceOperationTo))
+                throw new ArgumentException("When using rename as a source operation, you need to define the new name");
+
+            var filePath = ExpandMacrosAndMasks(originalFilePath, sourceOperationTo);
+
+            var result = CanonizeAndCheckPath(filePath);
+            var originalFileDirectory = Path.GetDirectoryName(originalFilePath);
+
+            // Path Combine will ignore originalFileDirectory is result already
+            // contains absolute path. Thus we either get the whole path in result or, if
+            // it is not an absolute path - then we get a path with original file dir as base.
+            return Path.Combine(originalFileDirectory, result);
+        }
+
         private static string CanonizeAndCheckPath(string path)
         {
             // make all the paths use forward slashes - this should be supported on File, FTP, and SFTP
@@ -117,55 +142,6 @@ namespace Frends.FTP.UploadFiles.Definitions
             return invalidCharacters.ToArray();
         }
 
-
-        /// <summary>
-        /// Creates the file path to use for source operation: Rename
-        /// </summary>        
-        /// <param name="originalFilePath">The original file name with path - the path is needed so the directory settings are preserved</param>
-        /// <param name="sourceOperationTo">The new name to put files to</param>
-        public string CreateFilePathForRename(string originalFilePath, string sourceOperationTo)
-        {
-            if (string.IsNullOrWhiteSpace(sourceOperationTo))
-                throw new ArgumentException("When using rename as a source operation, you need to define the new name");
-
-            var filePath = ExpandMacrosAndMasks(originalFilePath, sourceOperationTo);
-
-            var result = CanonizeAndCheckPath(filePath);
-            var originalFileDirectory = Path.GetDirectoryName(originalFilePath);
-
-            // Path Combine will ignore originalFileDirectory is result already
-            // contains absolute path. Thus we either get the whole path in result or, if
-            // it is not an absolute path - then we get a path with original file dir as base.
-            return Path.Combine(originalFileDirectory, result);
-        }
-
-        private string ExpandMacrosAndMasks(string originalFilePath, string filePath)
-        {
-            var expandedPath = ExpandFileMacros(filePath);
-            expandedPath = ExpandSourceFileNameMacros(expandedPath, originalFilePath);
-            expandedPath = ExpandFileMasks(expandedPath, originalFilePath);
-
-            return expandedPath;
-        }
-
-        private string ExpandFileMacros(string filePath)
-        {
-            string filename = filePath;
-            if (IsFileMacro(filename, _macroHandlers))
-                filename = ReplaceMacro(filename);
-
-            return filename;
-        }
-
-        private string ExpandSourceFileNameMacros(string filePath, string originalFile)
-        {
-            string filename = filePath;
-            if (IsFileMacro(filename, _sourceFileNameMacroHandlers))
-                filename = ReplaceSourceFileMacro(filename, originalFile);
-
-            return filename;
-        }
-
         private static string ExpandFileMasks(string filePath, string originalFileName)
         {
             string filename = filePath;
@@ -177,7 +153,7 @@ namespace Frends.FTP.UploadFiles.Definitions
 
         private static string NameByMask(string filename, string mask)
         {
-            //remove extension if it is wanted to be changed, new extension is added later on to new filename
+            // remove extension if it is wanted to be changed, new extension is added later on to new filename
             if (mask.Contains("*.") && Path.HasExtension(filename))
                 filename = Path.GetFileNameWithoutExtension(filename);
 
@@ -185,10 +161,10 @@ namespace Frends.FTP.UploadFiles.Definitions
             if (i >= 0)
             {
                 string tmp = mask.Substring(0, i);
-                return tmp + filename + mask.Substring(i + 1, (mask.Length - (i + 1)));
+                return tmp + filename + mask.Substring(i + 1, mask.Length - (i + 1));
             }
 
-            //Not an mask return mask.
+            // Not an mask return mask.
             return mask;
         }
 
@@ -202,7 +178,6 @@ namespace Frends.FTP.UploadFiles.Definitions
 
             return false;
         }
-
 
         /// <summary>
         /// Defines if string is file mask
@@ -228,8 +203,8 @@ namespace Frends.FTP.UploadFiles.Definitions
         {
             return new Dictionary<string, Func<string, string>>
                 {
-                    {"%SourceFileName%", Path.GetFileNameWithoutExtension},
-                    {"%SourceFileExtension%", (originalFile) => Path.HasExtension(originalFile) ? Path.GetExtension(originalFile) : String.Empty},
+                    { "%SourceFileName%", Path.GetFileNameWithoutExtension },
+                    { "%SourceFileExtension%", (originalFile) => Path.HasExtension(originalFile) ? Path.GetExtension(originalFile) : string.Empty },
                 };
         }
 
@@ -237,33 +212,23 @@ namespace Frends.FTP.UploadFiles.Definitions
         {
             return new Dictionary<string, Func<string, string>>
                 {
-                    {"%Ticks%", (s) => DateTime.Now.Ticks.ToString()},
-                    {"%DateTimeMs%", (s) => DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-fff")},
-                    {"%DateTime%", (s) => DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss")},
-                    {"%Date%", (s) => DateTime.Now.ToString("yyyy-MM-dd")},
-                    {"%Time%", (s) => DateTime.Now.ToString("HH-mm-ss")},
-                    {"%Year%", (s) => DateTime.Now.ToString("yyyy")},
-                    {"%Month%", (s) => DateTime.Now.ToString("MM")},
-                    {"%Day%", (s) => DateTime.Now.ToString("dd")},
-                    {"%Hour%", (s) => DateTime.Now.ToString("HH")},
-                    {"%Minute%", (s) => DateTime.Now.ToString("mm")},
-                    {"%Second%", (s) => DateTime.Now.ToString("ss")},
-                    {"%Millisecond%", (s) => DateTime.Now.ToString("fff")},
-                    {"%Guid%", (s) => Guid.NewGuid().ToString()},
-                    {"%TransferName%", (s) => !string.IsNullOrWhiteSpace(transferName) ? transferName : string.Empty},
-                    {"%TransferId%", (s) => transferId.ToString().ToUpper()},
-                    {"%WeekDay%", (s) => (DateTime.Now.DayOfWeek > 0 ? (int)DateTime.Now.DayOfWeek : 7).ToString()}
+                    { "%Ticks%", (s) => DateTime.Now.Ticks.ToString() },
+                    { "%DateTimeMs%", (s) => DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-fff") },
+                    { "%DateTime%", (s) => DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") },
+                    { "%Date%", (s) => DateTime.Now.ToString("yyyy-MM-dd") },
+                    { "%Time%", (s) => DateTime.Now.ToString("HH-mm-ss") },
+                    { "%Year%", (s) => DateTime.Now.ToString("yyyy") },
+                    { "%Month%", (s) => DateTime.Now.ToString("MM") },
+                    { "%Day%", (s) => DateTime.Now.ToString("dd") },
+                    { "%Hour%", (s) => DateTime.Now.ToString("HH") },
+                    { "%Minute%", (s) => DateTime.Now.ToString("mm") },
+                    { "%Second%", (s) => DateTime.Now.ToString("ss") },
+                    { "%Millisecond%", (s) => DateTime.Now.ToString("fff") },
+                    { "%Guid%", (s) => Guid.NewGuid().ToString() },
+                    { "%TransferName%", (s) => !string.IsNullOrWhiteSpace(transferName) ? transferName : string.Empty },
+                    { "%TransferId%", (s) => transferId.ToString().ToUpper() },
+                    { "%WeekDay%", (s) => (DateTime.Now.DayOfWeek > 0 ? (int)DateTime.Now.DayOfWeek : 7).ToString() },
                 };
-        }
-
-        private string ReplaceSourceFileMacro(string fileDefinition, string originalFile)
-        {
-            return ExpandMacrosFromDictionary(fileDefinition, _sourceFileNameMacroHandlers, originalFile);
-        }
-
-        private string ReplaceMacro(string fileDefinition)
-        {
-            return ExpandMacrosFromDictionary(fileDefinition, _macroHandlers, "");
         }
 
         private static string ExpandMacrosFromDictionary(string fileDefinition, IDictionary<string, Func<string, string>> macroHandlers, string originalFile)
@@ -274,6 +239,43 @@ namespace Frends.FTP.UploadFiles.Definitions
             }
 
             return fileDefinition;
+        }
+
+        private string ExpandMacrosAndMasks(string originalFilePath, string filePath)
+        {
+            var expandedPath = ExpandFileMacros(filePath);
+            expandedPath = ExpandSourceFileNameMacros(expandedPath, originalFilePath);
+            expandedPath = ExpandFileMasks(expandedPath, originalFilePath);
+
+            return expandedPath;
+        }
+
+        private string ExpandFileMacros(string filePath)
+        {
+            string filename = filePath;
+            if (IsFileMacro(filename, macroHandlers))
+                filename = ReplaceMacro(filename);
+
+            return filename;
+        }
+
+        private string ExpandSourceFileNameMacros(string filePath, string originalFile)
+        {
+            string filename = filePath;
+            if (IsFileMacro(filename, sourceFileNameMacroHandlers))
+                filename = ReplaceSourceFileMacro(filename, originalFile);
+
+            return filename;
+        }
+
+        private string ReplaceSourceFileMacro(string fileDefinition, string originalFile)
+        {
+            return ExpandMacrosFromDictionary(fileDefinition, sourceFileNameMacroHandlers, originalFile);
+        }
+
+        private string ReplaceMacro(string fileDefinition)
+        {
+            return ExpandMacrosFromDictionary(fileDefinition, macroHandlers, string.Empty);
         }
     }
 }

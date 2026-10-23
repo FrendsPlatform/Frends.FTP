@@ -18,6 +18,6 @@
         /// <summary>
         /// Will not log anything and continue execution without any additional actions.
         /// </summary>
-        Ignore
+        Ignore,
     }
 }

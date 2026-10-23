@@ -6,7 +6,7 @@
     public enum DestinationAction
     {
         /// <summary>
-        /// Will either create the file(s) or append content to existing file(s). 
+        /// Will either create the file(s) or append content to existing file(s).
         /// </summary>
         Append,
 
@@ -18,6 +18,6 @@
         /// <summary>
         /// Will throw an error if destination file(s) already exist.
         /// </summary>
-        Error
+        Error,
     }
 }
