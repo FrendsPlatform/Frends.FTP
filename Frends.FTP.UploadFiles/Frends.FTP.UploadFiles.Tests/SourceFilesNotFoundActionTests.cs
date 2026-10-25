@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using Frends.FTP.UploadFiles.Enums;
 using Frends.FTP.UploadFiles.TaskConfiguration;
@@ -83,7 +83,7 @@ public class SourceFilesNotFoundActionTests : UploadFilesTestBase
         var result = FTP.UploadFiles(
             new Input { Source = source, Destination = destination, Info = new Info() },
             connection,
-            new Options { OperationLog = true },
+            new Options { OperationLog = true, ThrowErrorOnFailure = false },
             CancellationToken.None);
         return result;
     }
