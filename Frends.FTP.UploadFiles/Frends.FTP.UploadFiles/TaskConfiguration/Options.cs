@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace Frends.FTP.UploadFiles.TaskConfiguration
 {
@@ -12,7 +12,7 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         /// </summary>
         /// <example>true</example>
         [DefaultValue(true)]
-        public bool ThrowErrorOnFailure { get; set; }
+        public bool ThrowErrorOnFailure { get; set; } = true;
 
         /// <summary>
         /// Custom error message to use when the transfer fails. Leave empty to use the original error message.
