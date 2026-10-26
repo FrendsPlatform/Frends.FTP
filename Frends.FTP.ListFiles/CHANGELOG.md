@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.3.0] - 2026-10-26
+### Changed
+- Aligned the Task with the current Frends harmonization standards. No changes to Task behavior.
+
 ## [2.2.0] - 2026-10-15
 ### Changed
 - Updated the Task to target .NET 8.

@@ -1,15 +1,15 @@
-﻿using NUnit.Framework;
-using Frends.FTP.ListFiles.Definitions;
+﻿using Frends.FTP.ListFiles.Definitions;
+using NUnit.Framework;
 
 namespace Frends.FTP.ListFiles.Tests.Lib;
 
 public class ListFilesTestBase
 {
-    protected string LocalDirFullPath = string.Empty;
-    protected static FtpHelper FtpHelper = new();
-    protected string FtpDir = string.Empty;
+    protected static FtpHelper FtpHelper { get; set; } = new();
 
-    protected Input input = new();
+    protected string FtpDir { get; set; } = string.Empty;
+
+    protected Input Input { get; set; } = new();
 
     [OneTimeSetUp]
     public void OneTimeSetUp()
@@ -34,7 +34,7 @@ public class ListFilesTestBase
             $"Test1.xlsx",
             $"Test1.xml",
             $"testfile.txt",
-            $"DemoTest.txt"
+            $"DemoTest.txt",
         };
 
         foreach (var file in files)
@@ -42,12 +42,12 @@ public class ListFilesTestBase
             FtpHelper.CreateFileOnFTP(FtpDir, file);
         }
 
-        input = new Input
+        Input = new Input
         {
             FileMask = "*",
             Directory = FtpDir,
             IncludeSubdirectories = false,
-            IncludeType = IncludeType.File
+            IncludeType = IncludeType.File,
         };
     }
 
