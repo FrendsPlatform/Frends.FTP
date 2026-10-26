@@ -17,7 +17,7 @@ public class Input
     public string Directory { get; set; }
 
     /// <summary>
-    /// FileMask. 
+    /// FileMask.
     /// The file mask uses regular expressions and for convenience it handles * and ? like wildcards (regex .* and .+).
     /// Parameter can begin with &lt;regex&gt;. For example: &lt;regex&gt;^(?!prof).*_test.txt is same as ^(?!prof).*_test.txt).
     /// Use * or leave empty to list all files.
@@ -39,5 +39,3 @@ public class Input
     /// <example>true</example>
     public bool IncludeSubdirectories { get; set; }
 }
-
-

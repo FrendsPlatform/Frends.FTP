@@ -18,7 +18,7 @@ public class UnitTests : ListFilesTestBase
     public async Task ListFilesFTP_FilenameIsNUll_ListsAllFiles_Test()
     {
         input.FileMask = "";
-        var result = await FTP.ListFiles(input, FtpHelper.GetFtpConnection(), default);
+        var result = await FTP.ListFiles(input, FtpHelper.GetFtpConnection(), new Options(), default);
 
         Assert.AreEqual(5, result.Files.Count);
 
@@ -46,7 +46,7 @@ public class UnitTests : ListFilesTestBase
     [Test]
     public async Task ListFilesFTP_FilenameWithWildcard_ListsAllFiles_Test()
     {
-        var result = await FTP.ListFiles(input, FtpHelper.GetFtpConnection(), default);
+        var result = await FTP.ListFiles(input, FtpHelper.GetFtpConnection(), new Options(), default);
 
         Assert.AreEqual(5, result.Files.Count);
 
@@ -79,7 +79,7 @@ public class UnitTests : ListFilesTestBase
             Directory = "/NoFilesHere"
         };
 
-        var ex = Assert.ThrowsAsync<ArgumentException>(async () => await FTP.ListFiles(input, FtpHelper.GetFtpConnection(), default));
+        var ex = Assert.ThrowsAsync<ArgumentException>(async () => await FTP.ListFiles(input, FtpHelper.GetFtpConnection(), new Options(), default));
 
         Assert.AreEqual("FTP directory '/NoFilesHere' doesn't exist.", ex.Message);
     }
@@ -98,7 +98,7 @@ public class UnitTests : ListFilesTestBase
 
         FtpHelper.CreateDirectoryOnFTP(input.Directory);
 
-        var result = await FTP.ListFiles(input, FtpHelper.GetFtpConnection(), default);
+        var result = await FTP.ListFiles(input, FtpHelper.GetFtpConnection(), new Options(), default);
 
         Assert.AreEqual(0, result.Files.Count);
 
@@ -117,7 +117,7 @@ public class UnitTests : ListFilesTestBase
             Directory = FtpDir
         };
 
-        var result = await FTP.ListFiles(input, FtpHelper.GetFtpsConnection(), default);
+        var result = await FTP.ListFiles(input, FtpHelper.GetFtpsConnection(), new Options(), default);
 
         Assert.AreEqual(1, result.Files.Count);
         Assert.IsTrue(result.Files.Any(x =>
@@ -149,7 +149,7 @@ public class UnitTests : ListFilesTestBase
             Directory = FtpDir,
         };
 
-        var result = await FTP.ListFiles(input, FtpHelper.GetFtpsConnection(), default);
+        var result = await FTP.ListFiles(input, FtpHelper.GetFtpsConnection(), new Options(), default);
 
         Assert.AreEqual(4, result.Files.Count);
 
@@ -178,7 +178,7 @@ public class UnitTests : ListFilesTestBase
     {
         input.FileMask = "Test1.(txt|xlsx)";
 
-        var result = await FTP.ListFiles(input, FtpHelper.GetFtpConnection(), default);
+        var result = await FTP.ListFiles(input, FtpHelper.GetFtpConnection(), new Options(), default);
 
         Assert.AreEqual(2, result.Files.Count);
 
@@ -207,7 +207,7 @@ public class UnitTests : ListFilesTestBase
     {
         input.FileMask = "Test1.[^t][^x][^t]";
 
-        var result = await FTP.ListFiles(input, FtpHelper.GetFtpsConnection(), default);
+        var result = await FTP.ListFiles(input, FtpHelper.GetFtpsConnection(), new Options(), default);
 
         Assert.AreEqual(1, result.Files.Count);
         Assert.IsTrue(result.Files.Any(x =>
@@ -251,7 +251,7 @@ public class UnitTests : ListFilesTestBase
             FtpHelper.CreateFileOnFTP(input.Directory, file);
         }
 
-        var result = await FTP.ListFiles(input, FtpHelper.GetFtpsConnection(), default);
+        var result = await FTP.ListFiles(input, FtpHelper.GetFtpsConnection(), new Options(), default);
 
         Assert.AreEqual(3, result.Files.Count);
 
@@ -283,7 +283,7 @@ public class UnitTests : ListFilesTestBase
         var connection = FtpHelper.GetFtpConnection();
         connection.UserName = string.Empty;
 
-        var ex = Assert.ThrowsAsync<FtpAuthenticationException>(async () => await FTP.ListFiles(input, connection, default));
+        var ex = Assert.ThrowsAsync<FtpAuthenticationException>(async () => await FTP.ListFiles(input, connection, new Options(), default));
         Assert.AreEqual("This is a private system - No anonymous login", ex.Message);
     }
 
@@ -296,7 +296,7 @@ public class UnitTests : ListFilesTestBase
         var connection = FtpHelper.GetFtpConnection();
         connection.Password = string.Empty;
 
-        var ex = Assert.ThrowsAsync<FtpAuthenticationException>(async () => await FTP.ListFiles(input, connection, default));
+        var ex = Assert.ThrowsAsync<FtpAuthenticationException>(async () => await FTP.ListFiles(input, connection, new Options(), default));
         Assert.AreEqual("Login authentication failed", ex.Message);
     }
 
@@ -306,7 +306,7 @@ public class UnitTests : ListFilesTestBase
         var connection = FtpHelper.GetFtpConnection();
         connection.Address = "";
 
-        var result = await FTP.ListFiles(input, connection, default);
+        var result = await FTP.ListFiles(input, connection, new Options(), default);
         Assert.AreEqual(5, result.Files.Count);
     }
 
@@ -320,7 +320,7 @@ public class UnitTests : ListFilesTestBase
         connection.UserName = string.Empty;
         connection.Password = string.Empty;
 
-        var ex = Assert.ThrowsAsync<FtpAuthenticationException>(async () => await FTP.ListFiles(input, connection, default));
+        var ex = Assert.ThrowsAsync<FtpAuthenticationException>(async () => await FTP.ListFiles(input, connection, new Options(), default));
         Assert.AreEqual("This is a private system - No anonymous login", ex.Message);
     }
 
@@ -330,7 +330,7 @@ public class UnitTests : ListFilesTestBase
         var connection = FtpHelper.GetFtpsConnection();
 
         connection.SslMode = FtpsSslMode.None;
-        var result = await FTP.ListFiles(input, connection, default);
+        var result = await FTP.ListFiles(input, connection, new Options(), default);
         Assert.AreEqual(5, result.Files.Count);
     }
 
@@ -340,7 +340,7 @@ public class UnitTests : ListFilesTestBase
         var connection = FtpHelper.GetFtpsConnection();
 
         connection.SslMode = FtpsSslMode.Explicit;
-        var result = await FTP.ListFiles(input, connection, default);
+        var result = await FTP.ListFiles(input, connection, new Options(), default);
         Assert.AreEqual(5, result.Files.Count);
     }
 
@@ -350,7 +350,7 @@ public class UnitTests : ListFilesTestBase
         var connection = FtpHelper.GetFtpsConnection();
 
         connection.SslMode = FtpsSslMode.Auto;
-        var result = await FTP.ListFiles(input, connection, default);
+        var result = await FTP.ListFiles(input, connection, new Options(), default);
         Assert.AreEqual(5, result.Files.Count);
     }
 
@@ -374,7 +374,7 @@ public class UnitTests : ListFilesTestBase
             ClientCertificatePath = ""
         };
 
-        var ex = Assert.ThrowsAsync<AggregateException>(async () => await FTP.ListFiles(input, connection, default));
+        var ex = Assert.ThrowsAsync<AggregateException>(async () => await FTP.ListFiles(input, connection, new Options(), default));
         Assert.IsTrue(ex.Message.Contains("The remote certificate was rejected by the provided RemoteCertificateValidationCallback."));
     }
 }
