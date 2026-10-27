@@ -104,6 +104,11 @@ namespace Frends.FTP.UploadFiles.Definitions
             return result;
         }
 
+        private static bool FileDefinedAndExists(string filename)
+        {
+            return !string.IsNullOrWhiteSpace(filename) && File.Exists(filename);
+        }
+
         /// <summary>
         /// Checks if destination file exists.
         /// </summary>
@@ -251,7 +256,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             switch (batchContext.Source.Operation)
             {
                 case SourceOperation.Move:
-                    var moveToPath = renamingPolicy.CreateRemoteFileNameForMove(batchContext.Source.DirectoryToMoveAfterTransfer, SourceFile.FullPath);
+                    var moveToPath = RenamingPolicy.CreateRemoteFileNameForMove(batchContext.Source.DirectoryToMoveAfterTransfer, SourceFile.FullPath);
                     Trace(TransferState.SourceOperationMove, "Moving source file {0} to {1}", SourceFile.FullPath, moveToPath);
                     File.Move(filePath, moveToPath);
 
@@ -365,11 +370,6 @@ namespace Frends.FTP.UploadFiles.Definitions
             {
                 logger.NotifyError(batchContext, $"Could not clean up local file '{fileName}'", e);
             }
-        }
-
-        private bool FileDefinedAndExists(string filename)
-        {
-            return !string.IsNullOrWhiteSpace(filename) && File.Exists(filename);
         }
 
         private string RestoreSourceFileAfterErrorIfItWasRenamed()

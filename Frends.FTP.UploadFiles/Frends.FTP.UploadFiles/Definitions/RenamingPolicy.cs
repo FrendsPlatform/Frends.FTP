@@ -21,6 +21,35 @@ namespace Frends.FTP.UploadFiles.Definitions
         }
 
         /// <summary>
+        /// Creates the file path to use for source operation: Move
+        /// The SourceOperationTo should always be a directory. If it is empty, an error should be thrown
+        /// The current file name should always be appended to the directory name
+        /// The directory name cannot use file macros or file masks
+        /// </summary>
+        /// <param name="sourceOperationTo">The directory to move the file to.</param>
+        /// <param name="sourceFilePath">The path of the file to move.</param>
+        /// <returns>The remote file path to move the file to.</returns>
+        public static string CreateRemoteFileNameForMove(string sourceOperationTo, string sourceFilePath)
+        {
+            var directoryName = sourceOperationTo;
+            if (string.IsNullOrEmpty(directoryName))
+            {
+                throw new ArgumentException(
+                    "When using move as a source operation, you should always define a directory",
+                    nameof(sourceOperationTo));
+            }
+
+            directoryName = CanonizeAndCheckPath(directoryName);
+
+            // this should always be a directory
+            if (!directoryName.EndsWith('/'))
+                directoryName += "/";
+
+            var sourceFileName = Path.GetFileName(sourceFilePath);
+            return Path.Combine(directoryName, sourceFileName);
+        }
+
+        /// <summary>
         /// Creates a remote file name based on the settings and remote file definition
         /// </summary>
         /// <param name="originalFileName">The original file.</param>
@@ -28,7 +57,7 @@ namespace Frends.FTP.UploadFiles.Definitions
         /// <returns>Remote file name based on the settings and remote file definition</returns>
         public string CreateRemoteFileName(string originalFileName, string remoteFileDefinition)
         {
-            if (!string.IsNullOrWhiteSpace(remoteFileDefinition) && remoteFileDefinition.Contains("?"))
+            if (!string.IsNullOrWhiteSpace(remoteFileDefinition) && remoteFileDefinition.Contains('?'))
                 throw new ArgumentException("Character '?' not allowed in remote filename.", nameof(remoteFileDefinition));
 
             if (string.IsNullOrWhiteSpace(originalFileName))
@@ -54,7 +83,7 @@ namespace Frends.FTP.UploadFiles.Definitions
 
             var result = ExpandMacrosAndMasks(originalFileName, remoteFileDefinition);
 
-            if (result.EndsWith("\\"))
+            if (result.EndsWith('\\'))
                 result = Path.Combine(result, originalFileNameWithoutPath);
 
             return result;
@@ -71,35 +100,6 @@ namespace Frends.FTP.UploadFiles.Definitions
                 throw new Exception("'%SourceFileName%' and '%SourceFileExtension%' are not supported macros for source and destination directories.");
 
             return ExpandFileMacros(directory);
-        }
-
-        /// <summary>
-        /// Creates the file path to use for source operation: Move
-        /// The SourceOperationTo should always be a directory. If it is empty, an error should be thrown
-        /// The current file name should always be appended to the directory name
-        /// The directory name cannot use file macros or file masks
-        /// </summary>
-        /// <param name="sourceOperationTo">The directory to move the file to.</param>
-        /// <param name="sourceFilePath">The path of the file to move.</param>
-        /// <returns>The remote file path to move the file to.</returns>
-        public string CreateRemoteFileNameForMove(string sourceOperationTo, string sourceFilePath)
-        {
-            var directoryName = sourceOperationTo;
-            if (string.IsNullOrEmpty(directoryName))
-            {
-                throw new ArgumentException(
-                    "When using move as a source operation, you should always define a directory",
-                    nameof(sourceOperationTo));
-            }
-
-            directoryName = CanonizeAndCheckPath(directoryName);
-
-            // this should always be a directory
-            if (!directoryName.EndsWith("/"))
-                directoryName += "/";
-
-            var sourceFileName = Path.GetFileName(sourceFilePath);
-            return Path.Combine(directoryName, sourceFileName);
         }
 
         /// <summary>
@@ -157,11 +157,11 @@ namespace Frends.FTP.UploadFiles.Definitions
             if (mask.Contains("*.") && Path.HasExtension(filename))
                 filename = Path.GetFileNameWithoutExtension(filename);
 
-            int i = mask.IndexOf("*", StringComparison.InvariantCulture);
+            int i = mask.IndexOf('*');
             if (i >= 0)
             {
                 string tmp = mask.Substring(0, i);
-                return tmp + filename + mask.Substring(i + 1, mask.Length - (i + 1));
+                return string.Concat(tmp, filename, mask.AsSpan(i + 1, mask.Length - (i + 1)));
             }
 
             // Not an mask return mask.
@@ -173,7 +173,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             if (s == null)
                 return false;
 
-            if (macroDictionary.Keys.Where(e => s.ToUpperInvariant().Contains(e.ToUpperInvariant())).Any())
+            if (macroDictionary.Keys.Where(e => s.Contains(e, StringComparison.OrdinalIgnoreCase)).Any())
                 return true;
 
             return false;
@@ -190,16 +190,16 @@ namespace Frends.FTP.UploadFiles.Definitions
             if (input == null)
                 return false;
 
-            if (input.IndexOf("*", StringComparison.InvariantCulture) >= 0)
+            if (input.Contains('*'))
                 b = true;
 
-            if (input.IndexOf("?", StringComparison.InvariantCulture) >= 0)
+            if (input.Contains('?'))
                 b = true;
 
             return b;
         }
 
-        private static IDictionary<string, Func<string, string>> InitializeSourceFileNameMacroHandlers()
+        private static Dictionary<string, Func<string, string>> InitializeSourceFileNameMacroHandlers()
         {
             return new Dictionary<string, Func<string, string>>
                 {
@@ -208,7 +208,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                 };
         }
 
-        private static IDictionary<string, Func<string, string>> InitializeMacroHandlers(string transferName, Guid transferId)
+        private static Dictionary<string, Func<string, string>> InitializeMacroHandlers(string transferName, Guid transferId)
         {
             return new Dictionary<string, Func<string, string>>
                 {

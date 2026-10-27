@@ -16,10 +16,10 @@ namespace Frends.FTP.UploadFiles.Logging
         /// </summary>
         private const int DefaultInitialLogMessages = 20;
 
-        private readonly IList<Tuple<DateTimeOffset, string>> allMsgsBuffer;
+        private readonly List<Tuple<DateTimeOffset, string>> allMsgsBuffer;
         private readonly CircularBuffer<Tuple<DateTimeOffset, string>> circularBuffer;
 
-        private readonly IList<Tuple<DateTimeOffset, string>> initialLogMessages;
+        private readonly List<Tuple<DateTimeOffset, string>> initialLogMessages;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TransferLogSink"/> class.

@@ -65,7 +65,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                     return FormFailedFileTransferResult(userResultMessage);
                 }
 
-                if (files == null || !files.Any())
+                if (files == null || files.Count == 0)
                 {
                     if (files == null)
                     {
@@ -317,7 +317,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             var userResultMessage = string.Empty;
 
             var errorMessages = results.SelectMany(x => x.ErrorMessages).ToList();
-            if (errorMessages.Any())
+            if (errorMessages.Count != 0)
             {
                 userResultMessage = MessageJoin(
                     userResultMessage,
@@ -325,7 +325,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             }
 
             var transferredFiles = results.Select(x => x.TransferredFile).Where(x => x != null).ToList();
-            userResultMessage = transferredFiles.Any()
+            userResultMessage = transferredFiles.Count != 0
             ? MessageJoin(
                 userResultMessage,
                 string.Format("{0} files transferred: {1}", transferredFiles.Count, string.Join(", ", transferredFiles)))
@@ -346,7 +346,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             if (filePaths != null)
             {
                 fileItems = filePaths.Select(p => new FileItem(p) { Name = p }).ToList();
-                if (fileItems.Any())
+                if (fileItems.Count != 0)
                     return new Tuple<List<FileItem>, bool>(fileItems, true);
                 return new Tuple<List<FileItem>, bool>(fileItems, false);
             }
@@ -359,7 +359,7 @@ namespace Frends.FTP.UploadFiles.Definitions
             var files = Directory.GetFiles(sourceDirectoryWithMacrosExpanded);
 
             // return Tuple with empty list and success.true if files are not found.
-            if (!files.Any())
+            if (files.Length == 0)
                 return new Tuple<List<FileItem>, bool>(fileItems, true);
 
             // create List of FileItems from found files.
