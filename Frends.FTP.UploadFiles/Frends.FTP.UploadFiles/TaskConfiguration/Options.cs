@@ -8,20 +8,6 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
     public class Options
     {
         /// <summary>
-        /// Should an exception be thrown when file transfer fails.
-        /// </summary>
-        /// <example>true</example>
-        [DefaultValue(true)]
-        public bool ThrowErrorOnFailure { get; set; } = true;
-
-        /// <summary>
-        /// Custom error message to use when the transfer fails. Leave empty to use the original error message.
-        /// </summary>
-        /// <example>Upload to the FTP server failed</example>
-        [DefaultValue("")]
-        public string ErrorMessageOnFailure { get; set; }
-
-        /// <summary>
         /// Should the destination file be renamed with temporary file name during file transfer as a locking mechanism.
         /// </summary>
         /// <example>true</example>
@@ -55,5 +41,19 @@ namespace Frends.FTP.UploadFiles.TaskConfiguration
         /// <example>true</example>
         [DefaultValue(true)]
         public bool OperationLog { get; set; } = true;
+
+        /// <summary>
+        /// Should an exception be thrown when file transfer fails.
+        /// </summary>
+        /// <example>true</example>
+        [DefaultValue(true)]
+        public bool ThrowErrorOnFailure { get; set; } = true;
+
+        /// <summary>
+        /// Custom error message to use when the transfer fails. Leave empty to use the original error message.
+        /// </summary>
+        /// <example>Upload to the FTP server failed</example>
+        [DefaultValue("")]
+        public string ErrorMessageOnFailure { get; set; }
     }
 }

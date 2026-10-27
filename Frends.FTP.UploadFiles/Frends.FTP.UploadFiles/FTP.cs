@@ -137,7 +137,7 @@ namespace Frends.FTP.UploadFiles
                     var fileTransporter = new FileTransporter(logger, batchContext, executionId);
                     var result = fileTransporter.Run(cancellationToken);
 
-                    if (options.ThrowErrorOnFailure && !result.Success)
+                    if (!result.Success)
                     {
                         throw new Exception($"FTP transfer failed: {result.UserResultMessage}. " +
                                             $"Latest operations: \n{GetLogLines(transferSink.GetBufferedLogMessages())}");
