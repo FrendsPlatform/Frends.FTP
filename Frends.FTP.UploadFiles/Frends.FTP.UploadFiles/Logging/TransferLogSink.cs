@@ -1,8 +1,8 @@
-﻿using Serilog.Core;
-using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Serilog.Core;
+using Serilog.Events;
 
 namespace Frends.FTP.UploadFiles.Logging
 {
@@ -16,64 +16,71 @@ namespace Frends.FTP.UploadFiles.Logging
         /// </summary>
         private const int DefaultInitialLogMessages = 20;
 
-        private readonly IList<Tuple<DateTimeOffset, string>> _allMsgsBuffer;
-        private readonly CircularBuffer<Tuple<DateTimeOffset, string>> _circularBuffer;
+        private readonly List<Tuple<DateTimeOffset, string>> allMsgsBuffer;
+        private readonly CircularBuffer<Tuple<DateTimeOffset, string>> circularBuffer;
 
-        private readonly IList<Tuple<DateTimeOffset, string>> _initialLogMessages;
+        private readonly List<Tuple<DateTimeOffset, string>> initialLogMessages;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="TransferLogSink"/> class.
         /// Constructor
         /// </summary>
-        /// <param name="maxLogEntries"></param>
+        /// <param name="maxLogEntries">Maximum number of log entries to keep, or null to keep all entries.</param>
         public TransferLogSink(int? maxLogEntries)
         {
             if (maxLogEntries != null)
             {
-                _initialLogMessages = new List<Tuple<DateTimeOffset, string>>(DefaultInitialLogMessages);
-                _circularBuffer = new CircularBuffer<Tuple<DateTimeOffset, string>>(maxLogEntries.Value);
+                initialLogMessages = new List<Tuple<DateTimeOffset, string>>(DefaultInitialLogMessages);
+                circularBuffer = new CircularBuffer<Tuple<DateTimeOffset, string>>(maxLogEntries.Value);
             }
             else
             {
-                _allMsgsBuffer = new List<Tuple<DateTimeOffset, string>>();
+                allMsgsBuffer = new List<Tuple<DateTimeOffset, string>>();
             }
         }
 
         /// <summary>
         /// Emits new messages to the sink
         /// </summary>
-        /// <param name="logEvent"></param>
+        /// <param name="logEvent">Log event to emit.</param>
         public void Emit(LogEvent logEvent)
         {
-            if (_allMsgsBuffer != null)
+            if (allMsgsBuffer != null)
             {
-                _allMsgsBuffer.Add(new Tuple<DateTimeOffset, string>(logEvent.Timestamp, logEvent.RenderMessage()));
+                allMsgsBuffer.Add(new Tuple<DateTimeOffset, string>(logEvent.Timestamp, logEvent.RenderMessage()));
             }
             else
             {
-                if (_initialLogMessages.Count < DefaultInitialLogMessages)
-                    _initialLogMessages.Add(
+                if (initialLogMessages.Count < DefaultInitialLogMessages)
+                {
+                    initialLogMessages.Add(
                         new Tuple<DateTimeOffset, string>(logEvent.Timestamp, logEvent.RenderMessage()));
+                }
                 else
-                    _circularBuffer.Add(
+                {
+                    circularBuffer.Add(
                         new Tuple<DateTimeOffset, string>(logEvent.Timestamp, logEvent.RenderMessage()));
+                }
             }
         }
 
         /// <summary>
         /// Gets the log messages from sink
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The buffered log messages.</returns>
         public IList<Tuple<DateTimeOffset, string>> GetBufferedLogMessages()
         {
-            if (_allMsgsBuffer != null) return _allMsgsBuffer;
+            if (allMsgsBuffer != null) return allMsgsBuffer;
 
-            var bufferedMessages = _circularBuffer.Latest();
+            var bufferedMessages = circularBuffer.Latest();
             if (bufferedMessages.Any())
-                return _initialLogMessages
+            {
+                return initialLogMessages
                     .Concat(new[] { Tuple.Create(DateTimeOffset.MinValue, "...") })
                     .Concat(bufferedMessages).ToList();
+            }
 
-            return _initialLogMessages;
+            return initialLogMessages;
         }
     }
 }

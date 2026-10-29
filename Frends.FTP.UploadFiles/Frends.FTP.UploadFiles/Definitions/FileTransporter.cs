@@ -1,8 +1,3 @@
-﻿using FluentFTP;
-using Frends.FTP.UploadFiles.Enums;
-using Frends.FTP.UploadFiles.Logging;
-using Frends.FTP.UploadFiles.TaskConfiguration;
-using Frends.FTP.UploadFiles.TaskResult;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +7,11 @@ using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
+using FluentFTP;
+using Frends.FTP.UploadFiles.Enums;
+using Frends.FTP.UploadFiles.Logging;
+using Frends.FTP.UploadFiles.TaskConfiguration;
+using Frends.FTP.UploadFiles.TaskResult;
 
 namespace Frends.FTP.UploadFiles.Definitions
 {
@@ -20,33 +20,38 @@ namespace Frends.FTP.UploadFiles.Definitions
     /// </summary>
     internal class FileTransporter
     {
-        private readonly IFtpLogger _logger;
-        private readonly BatchContext _batchContext;
-        private readonly string[] _filePaths;
-        private readonly RenamingPolicy _renamingPolicy;
-        private readonly string _sourceDirectoryWithMacrosExpanded;
-        private readonly string _destinationDirectoryWithMacrosExpanded;
+        private readonly IFtpLogger logger;
+        private readonly BatchContext batchContext;
+        private readonly string[] filePaths;
+        private readonly RenamingPolicy renamingPolicy;
+        private readonly string sourceDirectoryWithMacrosExpanded;
+        private readonly string destinationDirectoryWithMacrosExpanded;
 
         public FileTransporter(IFtpLogger logger, BatchContext context, Guid instanceId)
         {
-            _logger = logger;
-            _batchContext = context;
-            _renamingPolicy = new RenamingPolicy(_batchContext.Info.TransferName, instanceId);
+            this.logger = logger;
+            batchContext = context;
+            renamingPolicy = new RenamingPolicy(batchContext.Info.TransferName, instanceId);
 
-            _sourceDirectoryWithMacrosExpanded =
-                _renamingPolicy.ExpandDirectoryForMacros(_batchContext.Source.Directory);
-            _destinationDirectoryWithMacrosExpanded =
-                _renamingPolicy.ExpandDirectoryForMacros(_batchContext.Destination.Directory);
+            sourceDirectoryWithMacrosExpanded =
+                renamingPolicy.ExpandDirectoryForMacros(batchContext.Source.Directory);
+            destinationDirectoryWithMacrosExpanded =
+                renamingPolicy.ExpandDirectoryForMacros(batchContext.Destination.Directory);
 
             Result = new List<SingleFileTransferResult>();
-            _filePaths = ConvertObjectToStringArray(context.Source.FilePaths);
+            filePaths = ConvertObjectToStringArray(context.Source.FilePaths);
         }
 
         private List<SingleFileTransferResult> Result { get; }
 
+        /// <summary>
+        /// Runs the file transfer.
+        /// </summary>
+        /// <param name="cancellationToken">A cancellation token provided by Frends Platform.</param>
+        /// <returns>The result of the file transfer.</returns>
         public FileTransferResult Run(CancellationToken cancellationToken)
         {
-            var userResultMessage = "";
+            var userResultMessage = string.Empty;
             try
             {
                 // Fetch source file info and check if files were returned.
@@ -55,57 +60,60 @@ namespace Frends.FTP.UploadFiles.Definitions
                 // If source directory doesn't exist, modify userResultMessage accordingly.
                 if (!success)
                 {
-                    userResultMessage = $"Directory '{_sourceDirectoryWithMacrosExpanded}' doesn't exist.";
-                    _logger.NotifyError(_batchContext, userResultMessage, new Exception(userResultMessage));
+                    userResultMessage = $"Directory '{sourceDirectoryWithMacrosExpanded}' doesn't exist.";
+                    logger.NotifyError(batchContext, userResultMessage, new Exception(userResultMessage));
                     return FormFailedFileTransferResult(userResultMessage);
                 }
 
-                if (files == null || !files.Any())
+                if (files == null || files.Count == 0)
                 {
                     if (files == null)
-                        _logger.NotifyInformation(_batchContext,
+                    {
+                        logger.NotifyInformation(
+                            batchContext,
                             "Source end point returned null list for file list. If there are no files to transfer, the result should be an empty list.");
+                    }
 
-                    var noSourceResult = NoSourceOperation(_batchContext, _batchContext.Source);
+                    var noSourceResult = NoSourceOperation(batchContext, batchContext.Source);
                     Result.Add(noSourceResult);
                 }
                 else
                 {
-                    using (var client = CreateFtpClient(_batchContext.Connection))
+                    using (var client = CreateFtpClient(batchContext.Connection))
                     {
                         client.Connect();
 
                         if (!client.IsConnected)
                         {
-                            _logger.NotifyError(_batchContext, "Error while connecting to destination: ", new Exception(userResultMessage));
+                            logger.NotifyError(batchContext, "Error while connecting to destination: ", new Exception(userResultMessage));
                             return FormFailedFileTransferResult(userResultMessage);
                         }
 
                         // Check does the destination directory exists.
-                        if (!client.DirectoryExists(_destinationDirectoryWithMacrosExpanded))
+                        if (!client.DirectoryExists(destinationDirectoryWithMacrosExpanded))
                         {
-                            if (_batchContext.Options.CreateDestinationDirectories)
+                            if (batchContext.Options.CreateDestinationDirectories)
                             {
                                 try
                                 {
-                                    CreateAllDirectories(client, _destinationDirectoryWithMacrosExpanded);
+                                    CreateAllDirectories(client, destinationDirectoryWithMacrosExpanded);
                                 }
                                 catch (Exception ex)
                                 {
-                                    userResultMessage = $"Error while creating destination directory '{_destinationDirectoryWithMacrosExpanded}': {ex.Message}";
-                                    _logger.NotifyError(_batchContext, userResultMessage, new Exception(userResultMessage));
+                                    userResultMessage = $"Error while creating destination directory '{destinationDirectoryWithMacrosExpanded}': {ex.Message}";
+                                    logger.NotifyError(batchContext, userResultMessage, new Exception(userResultMessage));
                                     return FormFailedFileTransferResult(userResultMessage);
                                 }
                             }
                             else
                             {
-                                userResultMessage = $"Destination directory '{_destinationDirectoryWithMacrosExpanded}' was not found.";
-                                _logger.NotifyError(_batchContext, userResultMessage, new Exception(userResultMessage));
+                                userResultMessage = $"Destination directory '{destinationDirectoryWithMacrosExpanded}' was not found.";
+                                logger.NotifyError(batchContext, userResultMessage, new Exception(userResultMessage));
                                 return FormFailedFileTransferResult(userResultMessage);
                             }
                         }
 
-                        client.SetWorkingDirectory(_destinationDirectoryWithMacrosExpanded);
+                        client.SetWorkingDirectory(destinationDirectoryWithMacrosExpanded);
 
                         foreach (var file in files)
                         {
@@ -113,14 +121,15 @@ namespace Frends.FTP.UploadFiles.Definitions
                             if (!client.IsConnected)
                             {
                                 client.Connect();
-                                _logger.NotifyInformation(_batchContext, "Reconnected.");
+                                logger.NotifyInformation(batchContext, "Reconnected.");
                             }
 
                             cancellationToken.ThrowIfCancellationRequested();
-                            var singleTransfer = new SingleFileTransfer(file, _batchContext, client, _renamingPolicy, _logger);
+                            var singleTransfer = new SingleFileTransfer(file, batchContext, client, renamingPolicy, logger);
                             var result = singleTransfer.TransferSingleFile();
                             Result.Add(result);
                         }
+
                         client.Disconnect();
                     }
                 }
@@ -128,14 +137,13 @@ namespace Frends.FTP.UploadFiles.Definitions
             catch (SocketException)
             {
                 userResultMessage = $"Unable to establish the socket: No such host is known.";
-                _logger.NotifyError(_batchContext, userResultMessage, new Exception(userResultMessage));
+                logger.NotifyError(batchContext, userResultMessage, new Exception(userResultMessage));
                 return FormFailedFileTransferResult(userResultMessage);
             }
 
             return FormResultFromSingleTransferResults(Result);
         }
 
-        #region Helper methods
         private static FtpClient CreateFtpClient(Connection connect)
         {
             var client = new FtpClient(connect.Address, connect.Port, connect.UserName, connect.Password)
@@ -147,7 +155,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                     FtpsSslMode.Explicit => FtpEncryptionMode.Explicit,
                     FtpsSslMode.Auto => FtpEncryptionMode.Auto,
                     _ => FtpEncryptionMode.None,
-                }
+                },
             };
 
             if (connect.UseFTPS)
@@ -239,45 +247,11 @@ namespace Frends.FTP.UploadFiles.Definitions
             return client;
         }
 
-        private Tuple<List<FileItem>, bool> GetSourceFiles()
-        {
-            var fileItems = new List<FileItem>();
-
-            if (_filePaths != null)
-            {
-                fileItems = _filePaths.Select(p => new FileItem(p) { Name = p }).ToList();
-                if (fileItems.Any())
-                    return new Tuple<List<FileItem>, bool>(fileItems, true);
-                return new Tuple<List<FileItem>, bool>(fileItems, false);
-            }
-
-            // Return empty list if source directory doesn't exists.
-            if (!Directory.Exists(_sourceDirectoryWithMacrosExpanded))
-                return new Tuple<List<FileItem>, bool>(fileItems, false);
-
-            // fetch all file names in given directory
-            var files = Directory.GetFiles(_sourceDirectoryWithMacrosExpanded);
-
-            // return Tuple with empty list and success.true if files are not found.
-            if (!files.Any())
-                return new Tuple<List<FileItem>, bool>(fileItems, true);
-
-            // create List of FileItems from found files.            
-            foreach (var item in files
-                .Where(e => Util.FileMatchesMask(Path.GetFileName(e), _batchContext.Source.FileName))
-                .Select(e => new FileItem(Path.GetFullPath(e))))
-            {
-                _logger.NotifyInformation(_batchContext, $"FILE LIST {item.FullPath}");
-                fileItems.Add(item);
-            }
-
-            return new Tuple<List<FileItem>, bool>(fileItems, true);
-        }
-
         private static void CreateAllDirectories(FtpClient client, string path)
         {
             // Consistent forward slashes
             path = path.Replace(@"\", "/");
+
             // Ignoring leading/ending/multiple slashes
             foreach (string dir in path.Split('/').Where(e => !string.IsNullOrWhiteSpace(e)))
             {
@@ -309,7 +283,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                 TransferredFileNames = new List<string>(),
                 TransferErrors = new Dictionary<string, IList<string>>(),
                 TransferredFilePaths = new List<string>(),
-                OperationsLog = new Dictionary<string, string>()
+                OperationsLog = new Dictionary<string, string>(),
             };
         }
 
@@ -334,7 +308,7 @@ namespace Frends.FTP.UploadFiles.Definitions
                 TransferredFileNames = transferredFileResults.Select(r => r.TransferredFile ?? "--unknown--").ToList(),
                 TransferErrors = transferErrors,
                 TransferredFilePaths = transferredFileResults.Select(r => r.TransferredFilePath ?? "--unknown--").ToList(),
-                OperationsLog = new Dictionary<string, string>()
+                OperationsLog = new Dictionary<string, string>(),
             };
         }
 
@@ -343,15 +317,18 @@ namespace Frends.FTP.UploadFiles.Definitions
             var userResultMessage = string.Empty;
 
             var errorMessages = results.SelectMany(x => x.ErrorMessages).ToList();
-            if (errorMessages.Any())
-                userResultMessage = MessageJoin(userResultMessage,
+            if (errorMessages.Count != 0)
+            {
+                userResultMessage = MessageJoin(
+                    userResultMessage,
                     $"{errorMessages.Count} Errors: {string.Join(", ", errorMessages)}");
+            }
 
             var transferredFiles = results.Select(x => x.TransferredFile).Where(x => x != null).ToList();
-            userResultMessage = transferredFiles.Any()
-            ? MessageJoin(userResultMessage,
-                string.Format("{0} files transferred: {1}", transferredFiles.Count,
-                    string.Join(", ", transferredFiles)))
+            userResultMessage = transferredFiles.Count != 0
+            ? MessageJoin(
+                userResultMessage,
+                string.Format("{0} files transferred: {1}", transferredFiles.Count, string.Join(", ", transferredFiles)))
             : MessageJoin(userResultMessage, "No files transferred.");
 
             return userResultMessage;
@@ -362,21 +339,56 @@ namespace Frends.FTP.UploadFiles.Definitions
             return string.Join(" ", args.Where(s => !string.IsNullOrWhiteSpace(s)));
         }
 
+        private Tuple<List<FileItem>, bool> GetSourceFiles()
+        {
+            var fileItems = new List<FileItem>();
+
+            if (filePaths != null)
+            {
+                fileItems = filePaths.Select(p => new FileItem(p) { Name = p }).ToList();
+                if (fileItems.Count != 0)
+                    return new Tuple<List<FileItem>, bool>(fileItems, true);
+                return new Tuple<List<FileItem>, bool>(fileItems, false);
+            }
+
+            // Return empty list if source directory doesn't exists.
+            if (!Directory.Exists(sourceDirectoryWithMacrosExpanded))
+                return new Tuple<List<FileItem>, bool>(fileItems, false);
+
+            // fetch all file names in given directory
+            var files = Directory.GetFiles(sourceDirectoryWithMacrosExpanded);
+
+            // return Tuple with empty list and success.true if files are not found.
+            if (files.Length == 0)
+                return new Tuple<List<FileItem>, bool>(fileItems, true);
+
+            // create List of FileItems from found files.
+            foreach (var item in files
+                .Where(e => Util.FileMatchesMask(Path.GetFileName(e), batchContext.Source.FileName))
+                .Select(e => new FileItem(Path.GetFullPath(e))))
+            {
+                logger.NotifyInformation(batchContext, $"FILE LIST {item.FullPath}");
+                fileItems.Add(item);
+            }
+
+            return new Tuple<List<FileItem>, bool>(fileItems, true);
+        }
+
         private SingleFileTransferResult NoSourceOperation(BatchContext context, Source source)
         {
             var transferName = context.Info.TransferName ?? string.Empty;
 
             var msg = context.Source.FilePaths == null
-                ? $"No source files found from directory '{_sourceDirectoryWithMacrosExpanded}' with file mask '{source.FileName}' for transfer '{transferName}'"
+                ? $"No source files found from directory '{sourceDirectoryWithMacrosExpanded}' with file mask '{source.FileName}' for transfer '{transferName}'"
                 : $"No source files found from FilePaths '{string.Join(", ", context.Source.FilePaths)}' for transfer '{transferName}'";
 
-            switch (_batchContext.Source.NotFoundAction)
+            switch (batchContext.Source.NotFoundAction)
             {
                 case SourceNotFoundAction.Error:
-                    _logger.NotifyError(context, msg, new FileNotFoundException());
+                    logger.NotifyError(context, msg, new FileNotFoundException());
                     return new SingleFileTransferResult { Success = false, ErrorMessages = { msg } };
                 case SourceNotFoundAction.Info:
-                    _logger.NotifyInformation(context, msg);
+                    logger.NotifyInformation(context, msg);
                     return new SingleFileTransferResult { Success = true, ActionSkipped = true, ErrorMessages = { msg } };
                 case SourceNotFoundAction.Ignore:
                     return new SingleFileTransferResult { Success = true, ActionSkipped = true, ErrorMessages = { msg } };
@@ -384,6 +396,5 @@ namespace Frends.FTP.UploadFiles.Definitions
                     throw new Exception("Unknown operation in NoSourceOperation");
             }
         }
-        #endregion
     }
 }

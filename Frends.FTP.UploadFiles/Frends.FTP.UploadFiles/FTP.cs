@@ -1,13 +1,14 @@
-﻿using Frends.FTP.UploadFiles.Definitions;
-using Frends.FTP.UploadFiles.Logging;
-using Frends.FTP.UploadFiles.TaskConfiguration;
-using Frends.FTP.UploadFiles.TaskResult;
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
+using Frends.FTP.UploadFiles.Definitions;
+using Frends.FTP.UploadFiles.Helpers;
+using Frends.FTP.UploadFiles.Logging;
+using Frends.FTP.UploadFiles.TaskConfiguration;
+using Frends.FTP.UploadFiles.TaskResult;
+using Serilog;
 
 namespace Frends.FTP.UploadFiles
 {
@@ -17,55 +18,55 @@ namespace Frends.FTP.UploadFiles
     public static class FTP
     {
         /// <summary>
-        /// Upload files to an FTP server. 
+        /// Upload files to an FTP server.
         /// [Documentation](https://tasks.frends.com/tasks/frends-tasks/Frends.FTP.UploadFiles)
         /// </summary>
-        /// <frendsdocs> 
+        /// <frendsdocs>
         /// # Transfer overview
         /// The file transfer progress has the following steps:
         /// 1. Initialize
-        ///     
+        ///
         ///     Initializes the transfer and opens the source connection.
         /// 1. ListFiles
-        ///     
+        ///
         ///     Get a list of files from the source endpoint according to the filename/mask. If there are no files to transfer, the source connections are closed, and the transfer finishes. The result of the task will then depend on what the option `NoSourceAction` was set to. If it was set to Error, either the #result.Success property will be set to false, or if the `ThrowError
-        /// 
+        ///
         /// 1. Transfer files
         ///     If there are files to transfer, they are then transferred individually. For every file in the list returned from the source endpoint, the following process is repeated:
-        /// 
+        ///
         ///     1. GetFile
-        ///     
+        ///
         ///         Get a file from the source endpoint to the local work directory. If the parameter `RenameSourceFileBeforeTransfer` is set to `true`, the file is first renamed with a temporary filename before transfer.
-        /// 
+        ///
         ///     1. Rename or move the source file.
-        ///         
+        ///
         ///         This is done before transferring the file to the destination, this means that possible errors in the renaming or moving that would cause the transfer to fail will happen as early as possible - before we actually try to transfer files onward.
-        /// 
+        ///
         ///     1. Transfer the file.
-        /// 
+        ///
         ///         If destination file already exists, depending on the parameter `DestinationFileExistsAction` either an exception is thrown, the destination file is overwritten or the source file is appended to the destination file.
         ///         If the parameter `RenameDestinationFileDuringTransfer` is `true`, the file is first transferred with a temporary file name and afterwards renamed to intended filename, otherwise the file is transferred with the intended filename. The intended filename has its possible file masks expanded.
-        /// 
+        ///
         ///     1. Do the source file operation.
-        ///         
+        ///
         ///         Perform the operation defined by the `SourceOperation`.
-        /// 
+        ///
         /// 1. Finish
-        /// 
+        ///
         ///     Close the source and destination endpoint connections.
         ///     If the transfer is cancelled (e.g. by calling Terminate on the process instance), the files that are currently being transferred will be processed until finished, but no new files will be transferred. The cancelled transfer end result will be Failed.
-        /// 
+        ///
         /// # Macro reference
-        /// 
+        ///
         /// Macros can be used to dynamically configure source directory, destination directory or destination file name for a file transfer.
-        /// 
+        ///
         /// Generally the following rules apply for macros:
         /// - Macros are case insensitive.
         /// - You can use any number of macros in all of the cases.
         /// - Dates and times are formatted with leading zeros.
-        /// 
+        ///
         /// The following macros can be used with all of dynamically configurable locations for file transfer:
-        /// 
+        ///
         /// - %Ticks% = will be replace with the current time as Ticks.
         /// - %DateTime% = will be replaced with date and time in format: "yyyy-MM-dd-HH-mm-ss".
         /// - %DateTimeMs% = will be replace with date and time in format: "yyyy-MM-dd-HH-mm-ss-fff".
@@ -83,68 +84,86 @@ namespace Frends.FTP.UploadFiles
         /// - %TransferId% = will be replaced with the transfer id.
         /// - %TransferName% = will be replaced with TransferName parameter specified in Connection point schema.
         /// - %TransferGroupName% = will be replaced with TransferGroupName parameter specified in routine's task arguments.
-        /// 
+        ///
         /// Destination file name has two additional macros that can be used for dynamically creating destination file name.
-        /// 
+        ///
         /// - %SourceFileName% = will be replaced with source file name without extension.
         /// - %SourceFileExtension% = will be replaced with source file's extension, with the dot '.' included, i.e. if the source file is named 'foo.txt', the %SourceFileExtension% will be expanded as '.txt'. If the source file name does not have an extension, the macro result will be empty, i.e. for original file name "foo", "bar%SourceFileExtension%" will result in "bar"
         /// </frendsdocs>
-        /// <param name="info">Transfer info parameters</param>
-        /// <param name="connection">Transfer connection parameters</param>
-        /// <param name="source">Source file location</param>
-        /// <param name="destination">Destination directory location</param>
-        /// <param name="options">Transfer options</param>
-        /// <param name="cancellationToken">CancellationToken is given by Frends</param>
-        /// <returns>Result object {bool ActionSkipped, bool Success, string UserResultMessage, int SuccessfulTransferCount, int FailedTransferCount, IEnumerable&lt;string&gt; TransferredFileNames, Dictionary&lt;string, IList&lt;string&gt;&gt; TransferErrors, IEnumerable&lt;string&gt; TransferredFilePaths, IDictionary&lt;string, string&gt; OperationsLog} </returns>
+        /// <param name="input">Essential parameters.</param>
+        /// <param name="connection">Transfer connection parameters.</param>
+        /// <param name="options">Transfer options.</param>
+        /// <param name="cancellationToken">A cancellation token provided by Frends Platform.</param>
+        /// <returns>object { bool ActionSkipped, bool Success, string UserResultMessage, int SuccessfulTransferCount, int FailedTransferCount, IEnumerable&lt;string&gt; TransferredFileNames, Dictionary&lt;string, IList&lt;string&gt;&gt; TransferErrors, IEnumerable&lt;string&gt; TransferredFilePaths, IDictionary&lt;string, string&gt; OperationsLog, object Error { string Message, Exception AdditionalInfo } }</returns>
         public static Result UploadFiles(
-            [PropertyTab] Source source,
-            [PropertyTab] Destination destination,
+            [PropertyTab] Input input,
             [PropertyTab] Connection connection,
             [PropertyTab] Options options,
-            [PropertyTab] Info info,
             CancellationToken cancellationToken)
         {
-            var maxLogEntries = options.OperationLog ? (int?)null : 100;
-            var transferSink = new TransferLogSink(maxLogEntries);
-            var operationsLogger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.Sink(transferSink)
-                .CreateLogger();
-            var fileTransferLog = Log.Logger;
-
-            using (var logger = InitializeFtpLogger(operationsLogger))
+            try
             {
-                if (string.IsNullOrWhiteSpace(info.ProcessUri))
-                    fileTransferLog.Warning("ProcessUri is empty. This means the transfer view cannot link to the correct page");
+                var info = input.Info;
+                var maxLogEntries = options.OperationLog ? (int?)null : 100;
+                var transferSink = new TransferLogSink(maxLogEntries);
+                var operationsLogger = new LoggerConfiguration()
+                    .MinimumLevel.Debug()
+                    .WriteTo.Sink(transferSink)
+                    .CreateLogger();
+                var fileTransferLog = Log.Logger;
 
-                if (!Guid.TryParse(info.TaskExecutionID, out var executionId))
+                using (var logger = InitializeFtpLogger(operationsLogger))
                 {
-                    fileTransferLog.Warning("'{0}' is not a valid task execution ID, will default to random Guid", info.TaskExecutionID);
-                    executionId = Guid.NewGuid();
+                    if (string.IsNullOrWhiteSpace(info.ProcessUri))
+                        fileTransferLog.Warning("ProcessUri is empty. This means the transfer view cannot link to the correct page");
+
+                    if (!Guid.TryParse(info.TaskExecutionID, out var executionId))
+                    {
+                        fileTransferLog.Warning("'{0}' is not a valid task execution ID, will default to random Guid", info.TaskExecutionID);
+                        executionId = Guid.NewGuid();
+                    }
+
+                    var batchContext = new BatchContext
+                    {
+                        Info = info,
+                        Options = options,
+                        InstanceId = executionId,
+                        BatchTransferStartTime = DateTime.Now,
+                        Source = input.Source,
+                        Destination = input.Destination,
+                        Connection = connection,
+                    };
+
+                    var fileTransporter = new FileTransporter(logger, batchContext, executionId);
+                    var result = fileTransporter.Run(cancellationToken);
+
+                    if (options.ThrowErrorOnFailure && !result.Success)
+                    {
+                        throw new Exception($"FTP transfer failed: {result.UserResultMessage}. " +
+                                            $"Latest operations: \n{GetLogLines(transferSink.GetBufferedLogMessages())}");
+                    }
+
+                    if (options.OperationLog)
+                        result.OperationsLog = GetLogDictionary(transferSink.GetBufferedLogMessages());
+
+                    return new Result
+                    {
+                        ActionSkipped = result.ActionSkipped,
+                        Success = result.Success,
+                        UserResultMessage = result.UserResultMessage,
+                        SuccessfulTransferCount = result.SuccessfulTransferCount,
+                        FailedTransferCount = result.FailedTransferCount,
+                        TransferredFileNames = result.TransferredFileNames,
+                        TransferErrors = result.TransferErrors,
+                        TransferredFilePaths = result.TransferredFilePaths,
+                        OperationsLog = result.OperationsLog,
+                        Error = result.Success ? null : new Error { Message = result.UserResultMessage },
+                    };
                 }
-
-                var batchContext = new BatchContext
-                {
-                    Info = info,
-                    Options = options,
-                    InstanceId = executionId,
-                    BatchTransferStartTime = DateTime.Now,
-                    Source = source,
-                    Destination = destination,
-                    Connection = connection
-                };
-
-                var fileTransporter = new FileTransporter(logger, batchContext, executionId);
-                var result = fileTransporter.Run(cancellationToken);
-
-                if (options.ThrowErrorOnFail && !result.Success)
-                    throw new Exception($"SFTP transfer failed: {result.UserResultMessage}. " +
-                                        $"Latest operations: \n{GetLogLines(transferSink.GetBufferedLogMessages())}");
-
-                if (options.OperationLog)
-                    result.OperationsLog = GetLogDictionary(transferSink.GetBufferedLogMessages());
-
-                return new Result(result);
+            }
+            catch (Exception ex)
+            {
+                return ex.Handle(options);
             }
         }
 
@@ -166,7 +185,7 @@ namespace Frends.FTP.UploadFiles
             return logger;
         }
 
-        private static IDictionary<string, string> GetLogDictionary(IList<Tuple<DateTimeOffset, string>> entries)
+        private static Dictionary<string, string> GetLogDictionary(IList<Tuple<DateTimeOffset, string>> entries)
         {
             const string dateFormat = "yyyy-MM-dd HH:mm:ss.f0Z";
 
@@ -184,7 +203,7 @@ namespace Frends.FTP.UploadFiles
             {
                 return new Dictionary<string, string>
                 {
-                    { DateTimeOffset.Now.ToString(dateFormat), $"Error while creating operation log: \n{e}" }
+                    { DateTimeOffset.Now.ToString(dateFormat), $"Error while creating operation log: \n{e}" },
                 };
             }
         }

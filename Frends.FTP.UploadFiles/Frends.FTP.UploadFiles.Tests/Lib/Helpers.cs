@@ -1,11 +1,10 @@
-﻿using FluentFTP;
-using Frends.FTP.UploadFiles.TaskConfiguration;
-using Frends.FTP.UploadFiles.Enums;
-using Ionic.Zip;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.IO.Compression;
+using FluentFTP;
+using Frends.FTP.UploadFiles.Enums;
+using Frends.FTP.UploadFiles.TaskConfiguration;
 
 namespace Frends.FTP.UploadFiles.Tests;
 
@@ -31,7 +30,7 @@ internal static class Helpers
             SslMode = FtpsSslMode.Explicit,
             CertificateHashStringSHA1 = Sha1Hash,
             BufferSize = 4096,
-            VerifyOption = VerifyOptions.None
+            VerifyOption = VerifyOptions.None,
         };
 
         return connection;
@@ -47,7 +46,7 @@ internal static class Helpers
             Port = FtpPort,
             SslMode = FtpsSslMode.None,
             BufferSize = 4096,
-            VerifyOption = VerifyOptions.None
+            VerifyOption = VerifyOptions.None,
         };
 
         return connection;
@@ -64,6 +63,7 @@ internal static class Helpers
                 client.SetWorkingDirectory(subDir);
                 client.DownloadFile(tmpFile, file);
             }
+
             return tmpFile;
         }
         catch (Exception ex)
@@ -89,15 +89,7 @@ internal static class Helpers
             fs.Close();
         }
 
-        using var zipFile = new Ionic.Zip.ZipFile(new UTF8Encoding(false));
-        zipFile.UseZip64WhenSaving = Zip64Option.Never;
-
-        foreach (var file in Directory.GetFiles(subDir))
-        {
-            zipFile.AddFile(file, "");
-        }
-
-        zipFile.Save(Path.Combine(dir, "test.zip"));
+        ZipFile.CreateFromDirectory(subDir, Path.Combine(dir, "test.zip"), CompressionLevel.Optimal, false);
 
         return Path.Combine(dir, "test.zip");
     }
@@ -106,41 +98,12 @@ internal static class Helpers
     {
         try
         {
-            var output = new UnzipOutput();
-            using var zip = ZipFile.Read(source);
-            string path = null;
-            zip.ExtractProgress += (sender, e) => Zip_ExtractProgress(e, output, path);
-            zip.ExtractExistingFile = ExtractExistingFileAction.OverwriteSilently;
-            zip.ExtractAll(destination);
+            ZipFile.ExtractToDirectory(source, destination, true);
             return true;
         }
         catch
         {
             return false;
-        }
-    }
-
-    private static void Zip_ExtractProgress(ExtractProgressEventArgs e, UnzipOutput output, string fullPath)
-    {
-        if (e.EventType == ZipProgressEventType.Extracting_AfterExtractEntry && !e.CurrentEntry.IsDirectory)
-        {
-            // Path.GetFullPath changes directory separator to "\".
-            if (e.ExtractLocation == null) output.ExtractedFiles.Add(Path.GetFullPath(fullPath));
-            else output.ExtractedFiles.Add(Path.GetFullPath(Path.Combine(e.ExtractLocation, e.CurrentEntry.FileName)));
-        }
-    }
-
-    public class UnzipOutput
-    {
-        /// <summary>
-        /// a List-object of extracted files.
-        /// </summary>
-        /// <example>"ExtractedFiles": ["C:\\temp\\sample.txt",	"C:\\temp\\sample2.txt"]</example>
-        public List<string> ExtractedFiles { get; set; }
-
-        internal UnzipOutput()
-        {
-            ExtractedFiles = new List<string>();
         }
     }
 }

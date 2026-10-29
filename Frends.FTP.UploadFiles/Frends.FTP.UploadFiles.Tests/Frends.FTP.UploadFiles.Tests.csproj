@@ -1,8 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<LangVersion>Latest</LangVersion>
+		<Nullable>disable</Nullable>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
@@ -17,14 +18,11 @@
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
 		<PackageReference Include="MSTest.TestAdapter" Version="2.2.8" />
 		<PackageReference Include="MSTest.TestFramework" Version="2.2.8" />
+		<PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Frends.FTP.UploadFiles\Frends.FTP.UploadFiles.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="DotNetZip" Version="1.16.0" />
 	</ItemGroup>
 
 	<ItemGroup>
