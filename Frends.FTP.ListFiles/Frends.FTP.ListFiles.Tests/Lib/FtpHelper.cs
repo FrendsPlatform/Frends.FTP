@@ -13,12 +13,24 @@ public class FtpHelper : IDisposable
     internal static readonly string FtpUsername = "frendsuser";
     internal static readonly string FtpPassword = "frendspass";
     internal static readonly string Sha1Hash = "D911262984DE9CC32A3518A1094CD24249EA5C49";
-    readonly FtpClient client = new();
+    private readonly FtpClient client = new();
 
     public FtpHelper()
     {
         client = new FtpClient(FtpHost, FtpPort, FtpUsername, FtpPassword);
         client.Connect();
+    }
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        client.Disconnect();
+        if (!client.IsDisposed) client.Dispose();
+    }
+
+    public void DeleteDirectoryOnFTP(string ftpDir)
+    {
+        client.DeleteDirectory(ftpDir, FtpListOption.Recursive);
     }
 
     internal static Connection GetFtpsConnection()
@@ -31,7 +43,7 @@ public class FtpHelper : IDisposable
             Password = FtpPassword,
             Port = FtpsPort,
             SslMode = FtpsSslMode.Explicit,
-            CertificateHashStringSHA1 = Sha1Hash
+            CertificateHashStringSHA1 = Sha1Hash,
         };
 
         return connection;
@@ -45,7 +57,7 @@ public class FtpHelper : IDisposable
             UserName = FtpUsername,
             Password = FtpPassword,
             Port = FtpPort,
-            SslMode = FtpsSslMode.None
+            SslMode = FtpsSslMode.None,
         };
 
         return connection;
@@ -62,17 +74,5 @@ public class FtpHelper : IDisposable
     internal void CreateDirectoryOnFTP(string subDir)
     {
         client.CreateDirectory(subDir);
-    }
-
-    public void Dispose()
-    {
-        GC.SuppressFinalize(this);
-        client.Disconnect();
-        if (!client.IsDisposed) client.Dispose();
-    }
-
-    public void DeleteDirectoryOnFTP(string ftpDir)
-    {
-        client.DeleteDirectory(ftpDir, FtpListOption.Recursive);
     }
 }
